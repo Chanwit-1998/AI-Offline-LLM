@@ -18,8 +18,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install CMake
-      run: sudo apt-get update && sudo apt-get install -y cmake
+    - name: Install Exact CMake 3.31.6
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.31.6'
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
