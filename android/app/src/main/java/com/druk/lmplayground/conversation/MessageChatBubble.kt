@@ -1,6 +1,9 @@
 package com.druk.lmplayground.conversation
 
 import android.content.Intent
+import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -8,29 +11,40 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.automirrored.outlined.CallSplit
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.CallSplit
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -38,21 +52,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.druk.lmplayground.R
+import java.util.Locale
+import java.util.UUID
+import kotlinx.coroutines.delay
 
 @Composable
 fun ChatItemBubble(
@@ -66,11 +92,55 @@ fun ChatItemBubble(
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
+    // Text-to-Speech (อ่านออกเสียง) state and lifecycle management
+    var isSpeaking by remember { mutableStateOf(false) }
+    var ttsInstance by remember { mutableStateOf<TextToSpeech?>(null) }
+
+    DisposableEffect(context) {
+        var engine: TextToSpeech? = null
+        engine = TextToSpeech(context.applicationContext) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val thaiLocale = Locale("th", "TH")
+                val result = engine?.setLanguage(thaiLocale)
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    engine?.language = Locale.getDefault()
+                }
+                engine?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                        isSpeaking = true
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                        isSpeaking = false
+                    }
+
+                    @Deprecated("Deprecated in Java")
+                    override fun onError(utteranceId: String?) {
+                        isSpeaking = false
+                    }
+
+                    override fun onError(utteranceId: String?, errorCode: Int) {
+                        isSpeaking = false
+                    }
+                })
+                ttsInstance = engine
+            }
+        }
+        onDispose {
+            engine?.stop()
+            engine?.shutdown()
+            ttsInstance = null
+            isSpeaking = false
+        }
+    }
+
     val hasToolCalls = !message.toolCalls.isNullOrEmpty()
     val isWaitingForResponse = !showActions
         && message.content.isEmpty()
         && !hasToolCalls
     val isGenerating = !showActions
+
+    val split = remember(message.content) { splitThinking(message.content) }
 
     Column {
         if (isWaitingForResponse) {
@@ -83,8 +153,6 @@ fun ChatItemBubble(
                 val inputLabel = stringResource(R.string.tool_call_input)
                 val outputLabel = stringResource(R.string.tool_call_output)
                 for (toolCall in message.toolCalls!!) {
-                    // This round's thinking, rendered immediately before its
-                    // tool call so multi-step turns read in chronological order.
                     if (toolCall.precedingThinking.isNotEmpty()) {
                         val pre = remember(toolCall.precedingThinking) {
                             splitThinking(toolCall.precedingThinking)
@@ -121,13 +189,12 @@ fun ChatItemBubble(
                 }
             }
 
-            // ③ If still generating after tool calls, show thinking indicator
+            // If still generating after tool calls, show thinking indicator
             if (isGenerating && hasToolCalls && message.content.isEmpty()) {
                 ThinkingIndicator()
             }
 
-            // ④ Post-tool thinking + ⑤ Response (from content)
-            val split = remember(message.content) { splitThinking(message.content) }
+            // Post-tool thinking + Response (split into normal text & styled code blocks)
             val hasThinking = split.thinkingContent.isNotEmpty()
 
             if (hasThinking) {
@@ -147,15 +214,37 @@ fun ChatItemBubble(
             }
 
             if (split.responseContent.isNotEmpty()) {
-                val styledMessage = messageFormatter(
-                    text = split.responseContent,
-                    primary = false
-                )
-                SelectionContainer {
-                    Text(
-                        text = styledMessage,
-                        style = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current)
-                    )
+                val blocks = remember(split.responseContent) {
+                    parseMarkdownBlocks(split.responseContent)
+                }
+                blocks.forEachIndexed { index, block ->
+                    when (block) {
+                        is MessageBlock.TextBlock -> {
+                            if (block.text.isNotBlank()) {
+                                val styledMessage = messageFormatter(
+                                    text = block.text,
+                                    primary = false
+                                )
+                                SelectionContainer {
+                                    Text(
+                                        text = styledMessage,
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            color = LocalContentColor.current
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        is MessageBlock.CodeBlock -> {
+                            CodeBlockCard(
+                                language = block.language,
+                                code = block.code
+                            )
+                        }
+                    }
+                    if (index < blocks.lastIndex) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                    }
                 }
             }
         }
@@ -181,87 +270,138 @@ fun ChatItemBubble(
         }
 
         if (showActions) {
+            if (message.responseTokens + message.thinkingTokens > 0) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = formatResponseStats(message),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .then(
+                            if (onTokenCountClicked != null) {
+                                Modifier.clickable(onClick = onTokenCountClicked)
+                            } else {
+                                Modifier
+                            }
+                        )
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
+
+            // Bottom action bar: left group (Copy, Upvote, Downvote, Read Aloud, Share, Branch)
+            // + far-right Reset/Regenerate button
             Row(
-                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val shareLabel = stringResource(id = R.string.share)
-                IconButton(
-                    onClick = {
-                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, stripThinkTags(message.content))
-                        }
-                        context.startActivity(Intent.createChooser(sendIntent, shareLabel))
-                    },
-                    modifier = Modifier.size(38.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Share,
-                        contentDescription = shareLabel,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        clipboardManager.setText(AnnotatedString(stripThinkTags(message.content)))
-                    },
-                    modifier = Modifier.size(38.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ContentCopy,
-                        contentDescription = stringResource(id = R.string.copy),
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = { /* upvote - no-op */ },
-                    modifier = Modifier.size(38.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ThumbUp,
-                        contentDescription = stringResource(id = R.string.upvote),
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = { showRatingSheet = true },
-                    modifier = Modifier.size(38.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ThumbDown,
-                        contentDescription = stringResource(id = R.string.downvote),
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                if (onRegenerate != null || onBranch != null) {
-                    var menuOpen by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(38.dp)) {
-                            Icon(
-                                imageVector = Icons.Outlined.MoreVert,
-                                contentDescription = stringResource(id = R.string.more_options),
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                            if (onRegenerate != null) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(id = R.string.regenerate)) },
-                                    leadingIcon = { Icon(Icons.Outlined.Refresh, contentDescription = null) },
-                                    onClick = {
-                                        menuOpen = false
-                                        onRegenerate()
-                                    }
+                    // 1. Copy full message
+                    IconButton(
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(stripThinkTags(message.content)))
+                        },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ContentCopy,
+                            contentDescription = stringResource(id = R.string.copy),
+                            modifier = Modifier.size(17.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    // 2. Upvote
+                    IconButton(
+                        onClick = { /* upvote - no-op */ },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ThumbUp,
+                            contentDescription = stringResource(id = R.string.upvote),
+                            modifier = Modifier.size(17.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    // 3. Downvote
+                    IconButton(
+                        onClick = { showRatingSheet = true },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ThumbDown,
+                            contentDescription = stringResource(id = R.string.downvote),
+                            modifier = Modifier.size(17.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    // 4. Read Aloud (ปุ่มอ่านออกเสียง)
+                    IconButton(
+                        onClick = {
+                            val tts = ttsInstance ?: return@IconButton
+                            if (isSpeaking) {
+                                tts.stop()
+                                isSpeaking = false
+                            } else {
+                                val textToRead = cleanTextForSpeech(
+                                    split.responseContent.ifBlank { stripThinkTags(message.content) }
+                                )
+                                if (textToRead.isNotBlank()) {
+                                    isSpeaking = true
+                                    val params = Bundle()
+                                    val utteranceId = UUID.randomUUID().toString()
+                                    tts.speak(textToRead, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
+                                }
+                            }
+                        },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isSpeaking) Icons.Outlined.Stop else Icons.AutoMirrored.Outlined.VolumeUp,
+                            contentDescription = if (isSpeaking) "หยุดอ่าน" else "อ่านออกเสียง",
+                            modifier = Modifier.size(18.dp),
+                            tint = if (isSpeaking) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    // 5. Share
+                    val shareLabel = stringResource(id = R.string.share)
+                    IconButton(
+                        onClick = {
+                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, stripThinkTags(message.content))
+                            }
+                            context.startActivity(Intent.createChooser(sendIntent, shareLabel))
+                        },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Share,
+                            contentDescription = shareLabel,
+                            modifier = Modifier.size(17.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    // Optional Branch option
+                    if (onBranch != null) {
+                        var menuOpen by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(38.dp)) {
+                                Icon(
+                                    imageVector = Icons.Outlined.MoreVert,
+                                    contentDescription = stringResource(id = R.string.more_options),
+                                    modifier = Modifier.size(17.dp),
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
-                            if (onBranch != null) {
+                            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                                 DropdownMenuItem(
                                     text = { Text(stringResource(id = R.string.branch_from_here)) },
                                     leadingIcon = {
@@ -276,21 +416,26 @@ fun ChatItemBubble(
                         }
                     }
                 }
-                if (message.responseTokens + message.thinkingTokens > 0) {
-                    Text(
-                        text = formatResponseStats(message),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .then(
-                                if (onTokenCountClicked != null) {
-                                    Modifier.clickable(onClick = onTokenCountClicked)
-                                } else {
-                                    Modifier
-                                }
-                            )
-                    )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // 6. Reset / Regenerate button pinned to the far right
+                if (onRegenerate != null) {
+                    IconButton(
+                        onClick = {
+                            ttsInstance?.stop()
+                            isSpeaking = false
+                            onRegenerate()
+                        },
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Refresh,
+                            contentDescription = stringResource(id = R.string.regenerate),
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
                 }
             }
         }
@@ -299,6 +444,243 @@ fun ChatItemBubble(
     if (showRatingSheet) {
         RatingBottomSheet(onDismiss = { showRatingSheet = false })
     }
+}
+
+/**
+ * Represents either a normal prose block or a fenced code block inside an AI response.
+ */
+private sealed interface MessageBlock {
+    data class TextBlock(val text: String) : MessageBlock
+    data class CodeBlock(val language: String, val code: String) : MessageBlock
+}
+
+/**
+ * Parses Markdown content into alternating [MessageBlock.TextBlock] and [MessageBlock.CodeBlock].
+ * Also supports unclosed code blocks while streaming responses.
+ */
+private fun parseMarkdownBlocks(markdown: String): List<MessageBlock> {
+    val result = mutableListOf<MessageBlock>()
+    val lines = markdown.lines()
+    val textBuffer = StringBuilder()
+    val codeBuffer = StringBuilder()
+    var inCodeBlock = false
+    var currentLang = ""
+    var fenceMarker = "```"
+
+    for (line in lines) {
+        val trimmedStart = line.trimStart()
+        if (!inCodeBlock) {
+            if (trimmedStart.startsWith("```") || trimmedStart.startsWith("~~~")) {
+                if (textBuffer.isNotEmpty()) {
+                    result.add(MessageBlock.TextBlock(textBuffer.toString().trimEnd()))
+                    textBuffer.clear()
+                }
+                fenceMarker = if (trimmedStart.startsWith("~~~")) "~~~" else "```"
+                currentLang = trimmedStart.removePrefix(fenceMarker).trim().substringBefore(" ")
+                inCodeBlock = true
+            } else {
+                if (textBuffer.isNotEmpty()) textBuffer.append('\n')
+                textBuffer.append(line)
+            }
+        } else {
+            if (trimmedStart.startsWith(fenceMarker)) {
+                result.add(
+                    MessageBlock.CodeBlock(
+                        language = currentLang.ifBlank { "code" },
+                        code = codeBuffer.toString()
+                    )
+                )
+                codeBuffer.clear()
+                currentLang = ""
+                inCodeBlock = false
+            } else {
+                if (codeBuffer.isNotEmpty()) codeBuffer.append('\n')
+                codeBuffer.append(line)
+            }
+        }
+    }
+
+    if (inCodeBlock) {
+        result.add(
+            MessageBlock.CodeBlock(
+                language = currentLang.ifBlank { "code" },
+                code = codeBuffer.toString()
+            )
+        )
+    } else if (textBuffer.isNotEmpty()) {
+        result.add(MessageBlock.TextBlock(textBuffer.toString().trimEnd()))
+    }
+
+    return result
+}
+
+/**
+ * Styled code block card with rounded border, language label header,
+ * "คัดลอก" (Copy code only) button, and multi-language syntax highlighting.
+ */
+@Composable
+private fun CodeBlockCard(
+    language: String,
+    code: String
+) {
+    val clipboardManager = LocalClipboardManager.current
+    val isDark = isSystemInDarkTheme()
+    var copied by remember { mutableStateOf(false) }
+
+    LaunchedEffect(copied) {
+        if (copied) {
+            delay(1500)
+            copied = false
+        }
+    }
+
+    val cardBackground = if (isDark) Color(0xFF1E1F22) else Color(0xFFF7F8FA)
+    val headerBackground = if (isDark) Color(0xFF26282C) else Color(0xFFF1F3F5)
+    val borderColor = if (isDark) Color(0xFF383A40) else Color(0xFFE2E5E9)
+
+    val highlightedCode = remember(code, language, isDark) {
+        highlightCodeSyntax(code = code, isDark = isDark)
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = cardBackground,
+        border = BorderStroke(1.dp, borderColor)
+    ) {
+        Column {
+            // Header bar: language name on left, "คัดลอก" button on right
+            Surface(
+                color = headerBackground,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = language.lowercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable {
+                                clipboardManager.setText(AnnotatedString(code))
+                                copied = true
+                            }
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (copied) Icons.Outlined.Check else Icons.Outlined.ContentCopy,
+                            contentDescription = "คัดลอกโค้ด",
+                            modifier = Modifier.size(15.dp),
+                            tint = if (copied) Color(0xFF16A34A) else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (copied) "คัดลอกแล้ว" else "คัดลอก",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (copied) Color(0xFF16A34A) else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider(thickness = 0.5.dp, color = borderColor)
+
+            // Syntax-highlighted scrollable code body
+            SelectionContainer {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(14.dp)
+                ) {
+                    Text(
+                        text = highlightedCode,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 13.5.sp,
+                            lineHeight = 20.sp,
+                            color = if (isDark) Color(0xFFE5E7EB) else Color(0xFF1F2937)
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Lightweight multi-language syntax highlighter for Python, Bash/Shell, Kotlin, Java,
+ * JavaScript/TypeScript, C/C++, JSON, SQL, etc.
+ */
+private fun highlightCodeSyntax(code: String, isDark: Boolean): AnnotatedString {
+    val keywordColor = if (isDark) Color(0xFFC084FC) else Color(0xFF7C3AED)
+    val stringColor = if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
+    val commentColor = if (isDark) Color(0xFF9CA3AF) else Color(0xFF6B7280)
+    val functionColor = if (isDark) Color(0xFFFBBF24) else Color(0xFFB45309)
+    val numberColor = if (isDark) Color(0xFF60A5FA) else Color(0xFF2563EB)
+    val decoratorColor = if (isDark) Color(0xFF2DD4BF) else Color(0xFF0D9488)
+
+    val tripleDouble = "\"\"\"[\\s\\S]*?\"\"\""
+    val tripleSingle = "\'\'\'[\\s\\S]*?\'\'\'"
+    val singleOrDouble = "\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`"
+    val comments = "#[^\\n]*|//[^\\n]*|/\\*[\\s\\S]*?\\*/"
+    val decorators = "@[A-Za-z_][A-Za-z0-9_]*"
+    val keywords = "\\b(def|class|if|elif|else|for|while|return|import|from|try|except|finally|with|as|pass|break|continue|in|is|not|and|or|lambda|yield|raise|global|nonlocal|assert|del|True|False|None|self|cls|fun|val|var|when|object|interface|enum|sealed|data|package|public|private|protected|internal|override|suspend|companion|init|this|super|null|true|false|function|const|let|export|default|async|await|new|typeof|instanceof|void|int|float|double|boolean|char|String|echo|sudo|pkg|pip|pip3|apt|npm|npx|yarn|git|cd|ls|mkdir|rm|cp|mv|chmod|chown|cat|grep|curl|wget|python|python3|node|java|javac|kotlin|gradle)\\b"
+    val funcCalls = "\\b([A-Za-z_][A-Za-z0-9_]*)(?=\\s*\\()"
+    val numbers = "\\b(\\d+(?:\\.\\d+)?)\\b"
+
+    val tokenRegex = Regex(
+        "($tripleDouble|$tripleSingle)|($singleOrDouble)|($comments)|($decorators)|$keywords|$funcCalls|$numbers"
+    )
+
+    return buildAnnotatedString {
+        append(code)
+        for (match in tokenRegex.findAll(code)) {
+            val style = when {
+                match.groups[1] != null || match.groups[2] != null ->
+                    SpanStyle(color = stringColor)
+                match.groups[3] != null ->
+                    SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)
+                match.groups[4] != null ->
+                    SpanStyle(color = decoratorColor)
+                match.groups[5] != null ->
+                    SpanStyle(color = keywordColor, fontWeight = FontWeight.Medium)
+                match.groups[6] != null ->
+                    SpanStyle(color = functionColor)
+                match.groups[7] != null ->
+                    SpanStyle(color = numberColor)
+                else -> null
+            }
+            if (style != null) {
+                addStyle(style = style, start = match.range.first, end = match.range.last + 1)
+            }
+        }
+    }
+}
+
+/**
+ * Strips Markdown symbols and code fences so Text-to-Speech reads naturally.
+ */
+private fun cleanTextForSpeech(raw: String): String {
+    return stripThinkTags(raw)
+        .replace(Regex("```[a-zA-Z0-9_-]*"), " ")
+        .replace("```", " ")
+        .replace("`", "")
+        .replace(Regex("[#*_~>|]+"), " ")
+        .replace(Regex("\\s+"), " ")
+        .trim()
 }
 
 /**
