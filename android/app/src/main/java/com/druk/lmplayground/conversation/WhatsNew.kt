@@ -1,5 +1,6 @@
 package com.druk.ai_offline_llm.conversation
 
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -17,12 +18,10 @@ import androidx.compose.ui.unit.dp
 import com.druk.ai_offline_llm.R
 
 @Composable
-fun WhatsNewText(modifier: Modifier = Modifier) {
-    val items = listOf(
-        stringResource(R.string.whats_new_voice),
-        stringResource(R.string.whats_new_voice_detail),
-        stringResource(R.string.whats_new_voice_languages)
-    )
+fun WhatsNewText(modifier: Modifier = Modifier,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            textAlign = 
 
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 32.dp),

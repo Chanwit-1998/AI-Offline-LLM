@@ -29,53 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.druk.ai_offline_llm.R
-import com.druk.ai_offline_llm.theme.PlaygroundTheme
-
-private const val GITHUB_URL = "https://github.com/Chanwit-1998/LMPlayground"
-
-private data class FaqItem(
-    @StringRes val questionRes: Int,
-    @StringRes val answerRes: Int,
-    val hasGithubLink: Boolean = false
-)
-
-private val faqItems = listOf(
-    FaqItem(R.string.faq_q1, R.string.faq_a1),
-    FaqItem(R.string.faq_q2, R.string.faq_a2),
-    FaqItem(R.string.faq_q3, R.string.faq_a3),
-    FaqItem(R.string.faq_q4, R.string.faq_a4),
-    FaqItem(R.string.faq_q5, R.string.faq_a5),
-    FaqItem(R.string.faq_q6, R.string.faq_a6),
-    FaqItem(R.string.faq_q7, R.string.faq_a7),
-    FaqItem(R.string.faq_q8, R.string.faq_a8, hasGithubLink = true),
-    FaqItem(R.string.faq_q9, R.string.faq_a9),
-    FaqItem(R.string.faq_q10, R.string.faq_a10),
-    FaqItem(R.string.faq_q11, R.string.faq_a11),
-    FaqItem(R.string.faq_q12, R.string.faq_a12),
-    FaqItem(R.string.faq_q13, R.string.faq_a13),
-    FaqItem(R.string.faq_q14, R.string.faq_a14),
-    FaqItem(R.string.faq_q15, R.string.faq_a15),
-)
+import androidx.compose.material3.
 
 @Composable
 fun FaqScreen(
