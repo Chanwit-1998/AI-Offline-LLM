@@ -590,6 +590,13 @@ class ConversationFragment : Fragment() {
                         onDismissRequest = { showDictationDownloadPrompt = false },
                         title = { Text(stringResource(R.string.dictation_model_dialog_title)) },
                         text = {
+                            Text(
+                                stringResource(
+                                    R.string.dictation_model_dialog_message,
+                                    dictationModel.name,
+                                    dictationModel.description.substringAfterLast("· "),
+                                )
+                            )
                         },
                         confirmButton = {
                             TextButton(onClick = {
