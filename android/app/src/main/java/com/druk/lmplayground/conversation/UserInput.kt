@@ -14,14 +14,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,8 +28,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,21 +49,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -66,9 +65,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
@@ -78,7 +75,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -93,6 +89,9 @@ import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
 import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.dictation.DictationState
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -111,28 +110,9 @@ fun UserInputPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInput(
-    /**
-     * On tablets / wide layouts, the parent renders a permanent sidebar so the
-     * chat pane only occupies part of the screen width. The original
-     * tonally-elevated bottom dock then looks like a half-coloured band that
-     * stops at the sidebar. Setting this to true flattens the surface so the
-     * input flows into the chat pane background.
-     */
     integrateWithSurface: Boolean = false,
-    /**
-     * On the tablet (flat-surface) path the parent toggles this true only when
-     * the message list actually has content scrolled behind the input dock —
-     * so the divider acts as a scroll-edge indicator rather than always-on
-     * chrome. Defaults to [integrateWithSurface] for the standalone preview.
-     */
     showTopDivider: Boolean = integrateWithSurface,
     modifier: Modifier = Modifier,
-    /**
-     * When supplied, the input dock blurs the chat content scrolling behind it
-     * (frosted glass) instead of painting an opaque tonal surface. The blur
-     * region spans the full dock — including the area behind the navigation bar
-     * and keyboard — since the nav/ime padding lives on the inner content.
-     */
     hazeState: HazeState? = null,
     hazeStyle: HazeStyle = HazeStyle.Unspecified,
     status: UserInputStatus = UserInputStatus.IDLE,
@@ -152,36 +132,19 @@ fun UserInput(
     onCancelClicked: () -> Unit = {},
     resetScroll: () -> Unit = {},
     dictationState: DictationState = DictationState.Idle,
-    /** 0..1 while the dictation model downloads, negative if queued, null if not. */
     dictationDownloadProgress: Float? = null,
-    /** Whether the dictation toggle is on. */
     micOn: Boolean = false,
-    /** True once the microphone is actually delivering audio. */
     micRecording: StateFlow<Boolean> = IdleMicRecording,
-    /** Loudness 0..1 while recording, for the mic button's ring. */
     micLevel: StateFlow<Float> = IdleMicLevel,
     onMicClick: () -> Unit = {},
-    /**
-     * The user edited or sent the text while dictation was still writing into
-     * it. The caller must stop dictation and deliver nothing more.
-     */
     onDictationAbandoned: () -> Unit = {},
-    /**
-     * A finished transcript waiting to be inserted at the cursor. The composer
-     * owns the text field, so the caller hands the text over and is told when
-     * it landed via [onTranscriptConsumed].
-     */
     pendingTranscript: String? = null,
     onTranscriptConsumed: () -> Unit = {},
 ) {
-
     var textState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
-    // Text the composer held before dictation began. Recognized words are
-    // written on top of it as they arrive, so re-writing never compounds.
-    // Null whenever dictation is not writing into the field.
     var dictationBase by remember { mutableStateOf<TextFieldValue?>(null) }
 
     LaunchedEffect(dictationState) {
@@ -192,92 +155,79 @@ fun UserInput(
 
     LaunchedEffect(pendingTranscript) {
         val transcript = pendingTranscript ?: return@LaunchedEffect
-        // Terminal event: the final text replaces whatever was written live,
-        // and an empty one (nothing heard) restores the base.
         textState = (dictationBase ?: textState).insertAtCursor(transcript)
         dictationBase = null
         onTranscriptConsumed()
     }
 
-    // The field is the user's again the moment they change it: dictation
-    // stops rather than rewriting their edit with a late tail of the phrase.
     fun releaseFromDictation() {
         if (dictationBase == null) return
         dictationBase = null
         onDictationAbandoned()
     }
 
-    // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     var dragAccumulator by remember { mutableStateOf(0f) }
-    val swipeThreshold = -150f // negative = upward
+    val swipeThreshold = -150f
     val draggableState = rememberDraggableState { delta ->
         dragAccumulator += delta
     }
 
     val frosted = hazeState != null
     Surface(
-        // Frosted: paint nothing of our own and let hazeEffect blur the chat
-        // behind the whole dock. Otherwise keep the original tonal surface.
         modifier = if (frosted) {
             Modifier.fillMaxWidth().hazeEffect(hazeState!!, hazeStyle)
         } else {
-            Modifier
+            Modifier.fillMaxWidth()
         },
         color = if (frosted) Color.Transparent else MaterialTheme.colorScheme.surface,
-        tonalElevation = if (frosted || integrateWithSurface) 0.dp else 2.dp,
-        contentColor = MaterialTheme.colorScheme.secondary
+        tonalElevation = 0.dp,
+        contentColor = MaterialTheme.colorScheme.onSurface
     ) {
         Column(
-            modifier = modifier.draggable(
-                state = draggableState,
-                orientation = Orientation.Vertical,
-                onDragStarted = { dragAccumulator = 0f },
-                onDragStopped = {
-                    if (dragAccumulator < swipeThreshold) {
-                        onSwipeUp()
+            modifier = modifier
+                .padding(horizontal = 12.dp, vertical = if (integrateWithSurface) 4.dp else 8.dp)
+                .draggable(
+                    state = draggableState,
+                    orientation = Orientation.Vertical,
+                    onDragStarted = { dragAccumulator = 0f },
+                    onDragStopped = {
+                        if (dragAccumulator < swipeThreshold) {
+                            onSwipeUp()
+                        }
+                        dragAccumulator = 0f
                     }
-                    dragAccumulator = 0f
-                }
-            )
+                )
         ) {
-            // Scroll-edge divider: drawn only when the parent says the message
-            // list has content hidden behind the input. At the bottom of the
-            // chat we let the input float without a line.
-            // Left inset (matches the top-bar divider) keeps the line from
-            // butting against the master card on tablet layouts.
             if (showTopDivider) {
                 androidx.compose.material3.HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 12.dp)
+                    modifier = Modifier.padding(bottom = 6.dp)
                 )
             }
-            // Staged image preview (shown until the message is sent): a rounded
-            // thumbnail with a circular remove button overlapping its top-right
-            // corner, mirroring the Google AI Edge attachment style.
+
             if (attachedImageUri != null) {
                 Box(
-                    modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 4.dp)
+                    modifier = Modifier.padding(start = 6.dp, bottom = 8.dp)
                 ) {
                     AsyncImage(
                         model = attachedImageUri,
                         contentDescription = "Attached image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            // inset from the Box top/end so the button can overlap the corner
                             .padding(top = 6.dp, end = 6.dp)
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .size(76.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .border(
-                                width = 2.dp,
+                                width = 1.5.dp,
                                 color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(14.dp)
                             )
                     )
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .size(24.dp)
+                            .size(22.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.inverseSurface)
                             .clickable(onClick = onClearImage),
@@ -287,14 +237,24 @@ fun UserInput(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Remove image",
                             tint = MaterialTheme.colorScheme.inverseOnSurface,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(14.dp)
                         )
                     }
                 }
             }
 
-            UserInputText(
-                    status,
+            // ChatGPT-style rounded pill composer container
+            Surface(
+                shape = RoundedCornerShape(28.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                UserInputText(
+                    status = status,
                     focusRequester = focusRequester,
                     supportsThinking = supportsThinking,
                     thinkingEnabled = thinkingEnabled,
@@ -311,14 +271,10 @@ fun UserInput(
                     dictationDownloadProgress = dictationDownloadProgress,
                     textFieldValue = textState,
                     onTextChanged = {
-                        // Selection-only changes (moving the caret) keep
-                        // dictation going; any change to the text ends it.
                         if (it.text != textState.text) releaseFromDictation()
                         textState = it
                     },
-                    // Only show the keyboard if there's no input selector and text field has focus
                     keyboardShown = textFieldFocusState,
-                    // Close extended selector if text field receives focus
                     onTextFieldFocused = { focused ->
                         if (focused) {
                             resetScroll()
@@ -329,27 +285,17 @@ fun UserInput(
                     onMessageSent = {
                         releaseFromDictation()
                         onMessageSent(textState.text)
-                        // Reset text field and close keyboard
                         textState = TextFieldValue()
-                        // Move scroll to bottom
                         resetScroll()
                     },
                     onCancelClicked = onCancelClicked,
-                    // On tablet landscape (integrateWithSurface) reduce the row's
-                    // vertical padding from 8dp → 2dp so the input dock saves ~12dp
-                    // of message area — vertical space is the constrained dimension
-                    // when the IME is open.
                     compact = integrateWithSurface
                 )
+            }
         }
     }
 }
 
-/**
- * Splice [text] in at the caret, replacing any selection, and leave the caret
- * after the inserted text. Spacing is normalized so dictating twice in a row
- * doesn't run words together.
- */
 private fun TextFieldValue.insertAtCursor(text: String): TextFieldValue {
     if (text.isEmpty()) return this
     val start = selection.min.coerceIn(0, this.text.length)
@@ -392,7 +338,6 @@ fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
 val KeyboardShownKey = SemanticsPropertyKey<Boolean>("KeyboardShownKey")
 var SemanticsPropertyReceiver.keyboardShownProperty by KeyboardShownKey
 
-/** The level of a mic that is not recording, for callers that have none. */
 private val IdleMicLevel: StateFlow<Float> = MutableStateFlow(0f)
 private val IdleMicRecording: StateFlow<Boolean> = MutableStateFlow(false)
 
@@ -425,16 +370,15 @@ private fun UserInputText(
     compact: Boolean = false
 ) {
     val a11ylabel = stringResource(id = R.string.textfield_desc)
-    // The attach (+) button shows for every loaded model (documents are
-    // model-agnostic); the photo entries inside its menu stay vision-gated.
     val showAttach = status != UserInputStatus.NOT_LOADED
     val hasLeftButtons = supportsThinking || showAttach
-    val textStartPadding = if (hasLeftButtons) 4.dp else 32.dp
+    val textStartPadding = if (hasLeftButtons) 4.dp else 18.dp
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = if (compact) 2.dp else 8.dp)
-            .heightIn(min = if (compact) 40.dp else 48.dp, max = 320.dp),
+            .padding(horizontal = 6.dp, vertical = if (compact) 3.dp else 6.dp)
+            .heightIn(min = if (compact) 42.dp else 48.dp, max = 320.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -445,25 +389,19 @@ private fun UserInputText(
             Box {
                 IconButton(
                     onClick = {
-                        // Vision models get a menu (photos + document);
-                        // text-only models go straight to the document picker.
                         if (supportsVision) menuExpanded = true else onAttachDocument()
                     },
                     enabled = !isDisabled,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.size(38.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Attach",
-                        modifier = if (isDisabled) Modifier.alpha(0.8f) else Modifier,
-                        tint = LocalContentColor.current
+                        modifier = if (isDisabled) Modifier.alpha(0.5f) else Modifier,
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 if (menuExpanded) {
-                    // Material3 DropdownMenu's `offset` is ignored for the
-                    // upward-opening case, so we drive a Popup with an explicit
-                    // position: the menu's bottom sits a fixed gap above the top
-                    // of the anchor row (the input block).
                     val gapPx = with(density) { 16.dp.roundToPx() }
                     val positionProvider = remember(gapPx) {
                         object : PopupPositionProvider {
@@ -487,11 +425,11 @@ private fun UserInputText(
                         properties = PopupProperties(focusable = true)
                     ) {
                         Surface(
-                            shape = MaterialTheme.shapes.extraSmall,
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            shadowElevation = 3.dp
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            shadowElevation = 4.dp
                         ) {
-                            Column(modifier = Modifier.width(IntrinsicSize.Max).padding(vertical = 8.dp)) {
+                            Column(modifier = Modifier.width(IntrinsicSize.Max).padding(vertical = 6.dp)) {
                                 if (cameraAvailable) {
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.take_photo)) },
@@ -530,63 +468,39 @@ private fun UserInputText(
                 }
             }
         }
+
         if (supportsThinking) {
             val isDisabled = status == UserInputStatus.GENERATING
             IconButton(
                 onClick = onThinkingToggle,
                 enabled = !isDisabled,
-                // When the attach (+) button precedes it, pull the bulb left so the
-                // two sit as a tight pair rather than a full icon-button gap apart.
-                modifier = if (showAttach) {
-                    Modifier.offset(x = (-12).dp)
-                } else {
-                    Modifier.padding(start = 4.dp)
-                }
+                modifier = Modifier.size(36.dp)
             ) {
                 Icon(
                     imageVector = if (thinkingEnabled) Icons.Filled.Lightbulb else Icons.Outlined.Lightbulb,
                     contentDescription = if (thinkingEnabled) "Disable thinking" else "Enable thinking",
-                    modifier = if (isDisabled) Modifier.alpha(0.8f) else Modifier,
-                    tint = LocalContentColor.current
+                    modifier = if (isDisabled) Modifier.alpha(0.5f) else Modifier,
+                    tint = if (thinkingEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
 
         Box(Modifier.weight(1f)) {
             UserInputTextField(
-                true,
-                focusRequester,
-                textFieldValue,
-                onTextChanged,
-                onTextFieldFocused,
-                keyboardType,
-                textStartPadding,
-                Modifier.semantics {
+                isEnabled = true,
+                focusRequester = focusRequester,
+                textFieldValue = textFieldValue,
+                onTextChanged = onTextChanged,
+                onTextFieldFocused = onTextFieldFocused,
+                keyboardType = keyboardType,
+                startPadding = textStartPadding,
+                modifier = Modifier.semantics {
                     contentDescription = a11ylabel
                     keyboardShownProperty = keyboardShown
                 }
             )
         }
 
-        val border = if (!sendMessageEnabled) {
-            BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            )
-        } else {
-            null
-        }
-
-        val disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-
-        val buttonColors = ButtonDefaults.buttonColors(
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = disabledContentColor
-        )
-
-        // A toggle: tap to start, tap to stop. Dictation works without a chat
-        // model loaded (it runs its own engine), so the mic is live except
-        // while generating.
         MicButton(
             micOn = micOn,
             enabled = status != UserInputStatus.GENERATING,
@@ -594,38 +508,53 @@ private fun UserInputText(
             recording = micRecording,
             level = micLevel,
             onClick = onMicClick,
-            modifier = Modifier.padding(horizontal = 4.dp),
+            modifier = Modifier.padding(horizontal = 2.dp),
         )
 
-        // Send button
-        Box {
-            when (status) {
-                UserInputStatus.IDLE, UserInputStatus.NOT_LOADED -> {
-                    Button(
-                        modifier = Modifier.align(Alignment.Center).padding(end = 8.dp),
-                        enabled = sendMessageEnabled && status == UserInputStatus.IDLE,
-                        onClick = onMessageSent,
-                        colors = buttonColors,
-                        border = border,
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.send),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+        Spacer(modifier = Modifier.width(2.dp))
+
+        // ChatGPT-style circular Send / Stop button
+        when (status) {
+            UserInputStatus.IDLE, UserInputStatus.NOT_LOADED -> {
+                val canSend = sendMessageEnabled && status == UserInputStatus.IDLE
+                Surface(
+                    onClick = onMessageSent,
+                    enabled = canSend,
+                    shape = CircleShape,
+                    color = if (canSend) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f)
+                    },
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowUpward,
+                            contentDescription = stringResource(id = R.string.send),
+                            tint = if (canSend) {
+                                MaterialTheme.colorScheme.surface
+                            } else {
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            },
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
-                UserInputStatus.GENERATING -> {
-                    Button(
-                        modifier = Modifier.align(Alignment.Center).padding(end = 8.dp),
-                        onClick = onCancelClicked,
-                        colors = buttonColors,
-                        border = border,
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.stop),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+            }
+            UserInputStatus.GENERATING -> {
+                Surface(
+                    onClick = onCancelClicked,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Filled.Stop,
+                            contentDescription = stringResource(id = R.string.stop),
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -650,7 +579,7 @@ private fun BoxScope.UserInputTextField(
         value = textFieldValue,
         onValueChange = { onTextChanged(it) },
         modifier = modifier
-            .padding(start = startPadding)
+            .padding(start = startPadding, end = 6.dp)
             .align(Alignment.CenterStart)
             .fillMaxWidth()
             .focusRequester(focusRequester)
@@ -667,19 +596,19 @@ private fun BoxScope.UserInputTextField(
         ),
         enabled = isEnabled,
         maxLines = 4,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
-        textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+        textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurface)
     )
 
-    val disableContentColor =
-        MaterialTheme.colorScheme.onSurfaceVariant
     if (textFieldValue.text.isEmpty()) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = startPadding),
             text = stringResource(R.string.textfield_hint),
-            style = MaterialTheme.typography.bodyLarge.copy(color = disableContentColor)
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         )
     }
 }

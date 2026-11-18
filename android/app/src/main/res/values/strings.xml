@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">AI Offline LLM</string>
+    <string name="app_name" translatable="false">ChatLLM</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -17,7 +17,7 @@
     <string name="send">Send</string>
     <string name="author_me">me</string>
     <string name="members">%d members</string>
-    <string name="textfield_hint">Message</string>
+    <string name="textfield_hint">Ask ChatLLM</string>
     <string name="take_photo">Take photo</string>
     <string name="choose_from_library">Choose from library</string>
     <string name="camera_unavailable">No camera available</string>
@@ -357,7 +357,7 @@
          model is loaded so the OS does not evict the :llama process). -->
     <string name="inference_notification_channel_name">Inference engine</string>
     <string name="inference_notification_channel_description">Keeps the AI model loaded and ready to respond.</string>
-    <string name="inference_notification_title">AI-OFFLINE-LLM</string>
+    <string name="inference_notification_title">ChatLLM</string>
     <string name="inference_notification_text">Model loaded — ready to chat.</string>
     <!-- Title shown on the FGS notification while a model is loaded. The
          description below is built from the user-facing model name and
@@ -431,4 +431,22 @@
     <string name="branch_title">%1$s (branch)</string>
     <string name="branch_title_numbered">%1$s (branch %2$d)</string>
     <string name="branch_created">Continuing in a new chat</string>
+
+    <!-- ChatLLM Navigation & Menus -->
+    <string name="menu_my_models">AI Models</string>
+    <string name="menu_model_store">Model Store</string>
+    <string name="menu_ai_skills">AI Skills &amp; Personas</string>
+    <string name="drawer_new_chat_button">Chat</string>
+    <string name="no_chat_history">No chat history yet</string>
+    <string name="chat_history_label">Chat History</string>
+    <string name="use_model">Use</string>
+    <string name="model_in_use">Active</string>
+    <string name="go_to_model_store">Browse Model Store</string>
+    <string name="tab_ai_persona">Personas &amp; Prompts</string>
+    <string name="tab_ai_tools">Skills &amp; Tools</string>
+    <string name="saved_personas_header">Your Saved Personas</string>
+    <string name="preset_personas_header">Quick Starter Personas</string>
+    <string name="use_in_chat">Apply to Chat</string>
+    <string name="persona_applied_toast">Persona applied to chat</string>
+    
 </resources>

@@ -3,9 +3,11 @@
 package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
@@ -18,20 +20,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.AppBar
+import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.models.ModelInfo
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import java.time.LocalDate
@@ -45,12 +45,6 @@ fun ConversationBar(
     modifier: Modifier = Modifier,
     colors: TopAppBarColors? = null,
     showNavIcon: Boolean = true,
-    /**
-     * Compact mode collapses the model name + status onto a single line so the
-     * bar feels less heavy on tablet landscape, where vertical space is the
-     * constrained dimension. The bar's own height stays at the Material 3
-     * default (64dp), but the title content drops from ~50dp to ~28dp tall.
-     */
     compact: Boolean = false,
     onModelNamePressed: () -> Unit = { },
     onNavIconPressed: () -> Unit = { },
@@ -60,91 +54,107 @@ fun ConversationBar(
         modifier = modifier.testTag(ConversationBarTestTag),
         colors = colors,
         showNavIcon = showNavIcon,
-        // Compact bar: shrink from M3 default 64dp to 40dp on tablet
-        // landscape. The title content is a single line of titleMedium so it
-        // fits; the trailing IconButton stays at its 40dp minimum tap target.
         expandedHeight = if (compact) 40.dp else Dp.Unspecified,
         onNavIconPressed = onNavIconPressed,
         title = {
+            val pillColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.72f)
+            val pillBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f))
+
             if (modelInfo != null) {
                 Surface(
                     onClick = onModelNamePressed,
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0f),
+                    shape = RoundedCornerShape(22.dp),
+                    color = pillColor,
+                    border = pillBorder,
                 ) {
                     if (compact) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = modelInfo.name,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             val status = modelStatus ?: modelInfo.description
                             if (status.isNotBlank()) {
                                 Text(
                                     text = "  ·  $status",
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                             Icon(
                                 imageVector = Icons.Outlined.ArrowDropDown,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                contentDescription = null
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     } else {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = modelInfo.name,
-                                    style = MaterialTheme.typography.titleMedium,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center,
-                                    maxLines = 1
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Icon(
                                     imageVector = Icons.Outlined.ArrowDropDown,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
-                            Text(
-                                text = modelStatus ?: modelInfo.description,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
+                            val sub = modelStatus ?: modelInfo.description
+                            if (sub.isNotBlank()) {
+                                Text(
+                                    text = sub,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }
             } else {
                 Surface(
                     onClick = onModelNamePressed,
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0f),
+                    shape = RoundedCornerShape(22.dp),
+                    color = pillColor,
+                    border = pillBorder,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.select_model),
-                            style = MaterialTheme.typography.titleMedium,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Icon(
                             imageVector = Icons.Outlined.ArrowDropDown,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -155,7 +165,7 @@ fun ConversationBar(
                 Icon(
                     imageVector = Icons.Outlined.EditNote,
                     contentDescription = stringResource(R.string.new_conversation),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -176,13 +186,13 @@ fun ChannelBarWithModelInfoPreview() {
     PlaygroundTheme {
         ConversationBar(
             modelInfo = ModelInfo(
-                name = "Model Name Model Name Model Name Model Name Model Name",
+                name = "Gemma 3 4B",
                 filename = "model.gguf",
                 remoteUri = Uri.parse("https://example.com/model.gguf"),
                 releaseDate = LocalDate.parse("2025-01-01"),
-                description = "Model Description"
+                description = "พร้อมใช้งาน"
             ),
-            modelStatus = "Loading 50%"
+            modelStatus = "พร้อมใช้งาน"
         )
     }
 }

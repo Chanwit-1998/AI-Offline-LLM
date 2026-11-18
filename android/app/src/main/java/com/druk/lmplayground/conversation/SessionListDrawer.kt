@@ -1,34 +1,43 @@
 package com.druk.ai_offline_llm.conversation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.OutlinedTextField
@@ -37,6 +46,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +55,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,9 +72,16 @@ fun SessionListDrawer(
     onDeleteSession: (String) -> Unit,
     onRenameSession: (String, String) -> Unit,
     onPinSession: (String, Boolean) -> Unit,
-    onSettingsClicked: () -> Unit
+    onSettingsClicked: () -> Unit,
+    onModelsClicked: () -> Unit = {},
+    onModelStoreClicked: () -> Unit = {},
+    onAiSkillsClicked: () -> Unit = {},
+    onNewChatClicked: () -> Unit = {}
 ) {
-    ModalDrawerSheet(modifier = Modifier.width(300.dp)) {
+    ModalDrawerSheet(
+        modifier = Modifier.width(304.dp),
+        drawerContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
+    ) {
         SessionListContent(
             sessions = sessions,
             currentSessionId = currentSessionId,
@@ -70,7 +89,11 @@ fun SessionListDrawer(
             onDeleteSession = onDeleteSession,
             onRenameSession = onRenameSession,
             onPinSession = onPinSession,
-            onSettingsClicked = onSettingsClicked
+            onModelsClicked = onModelsClicked,
+            onModelStoreClicked = onModelStoreClicked,
+            onAiSkillsClicked = onAiSkillsClicked,
+            onSettingsClicked = onSettingsClicked,
+            onNewChatClicked = onNewChatClicked
         )
     }
 }
@@ -84,14 +107,12 @@ fun PermanentSessionList(
     onRenameSession: (String, String) -> Unit,
     onPinSession: (String, Boolean) -> Unit,
     onSettingsClicked: () -> Unit,
+    onModelsClicked: () -> Unit = {},
+    onModelStoreClicked: () -> Unit = {},
+    onAiSkillsClicked: () -> Unit = {},
+    onNewChatClicked: () -> Unit = {},
     width: Dp = 320.dp
 ) {
-    // "Floating card" sidebar (Apple Maps / Liquid Glass style): the drawer
-    // sheet itself is transparent so the chat surface bleeds through around
-    // the card, and the actual sessions list sits inside an inset Surface
-    // with rounded corners and a small tonal step. The card is padded from
-    // every edge (status bar at top picked up by safeDrawing insets), so it
-    // visibly floats rather than meeting any window edge.
     PermanentDrawerSheet(
         modifier = Modifier.width(width),
         drawerContainerColor = Color.Transparent,
@@ -100,13 +121,6 @@ fun PermanentSessionList(
         Surface(
             modifier = Modifier
                 .fillMaxHeight()
-                // Only inset from the left edge — the status bar above and
-                // navigation bar below already provide vertical breathing
-                // room, and the chat pane handles the right side itself.
-                // Small 4dp top breathing room so the card doesn't kiss the
-                // status bar. The inner header spacer is dropped to 0 to
-                // compensate so "Conversations" / gear stay at the same
-                // absolute Y as the chat title / new-chat icon.
                 .padding(start = 12.dp, top = 4.dp),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surfaceContainer,
@@ -119,11 +133,11 @@ fun PermanentSessionList(
                 onDeleteSession = onDeleteSession,
                 onRenameSession = onRenameSession,
                 onPinSession = onPinSession,
+                onModelsClicked = onModelsClicked,
+                onModelStoreClicked = onModelStoreClicked,
+                onAiSkillsClicked = onAiSkillsClicked,
                 onSettingsClicked = onSettingsClicked,
-                // Tablet path runs alongside the compact (40dp) top bar, so
-                // the sidebar header shrinks to match — "Conversations" lines
-                // up with "Select Model" and the gear icon with the new-chat
-                // icon on the right.
+                onNewChatClicked = onNewChatClicked,
                 compact = true,
             )
         }
@@ -139,23 +153,17 @@ private fun SessionListContent(
     onDeleteSession: (String) -> Unit,
     onRenameSession: (String, String) -> Unit,
     onPinSession: (String, Boolean) -> Unit,
+    onModelsClicked: () -> Unit,
+    onModelStoreClicked: () -> Unit,
+    onAiSkillsClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
-    /**
-     * When true, the header row matches the 40dp compact top bar height so
-     * the "Conversations" title aligns horizontally with the chat title and
-     * the gear icon aligns with the new-chat icon. Defaults to the 64dp
-     * phone layout used by the modal drawer.
-     */
+    onNewChatClicked: () -> Unit,
     compact: Boolean = false
 ) {
     var contextMenuSessionId by remember { mutableStateOf<String?>(null) }
     var renameDialogSession by remember { mutableStateOf<ChatSessionEntity?>(null) }
     val listState = rememberLazyListState()
 
-    // A new chat (sent, or branched) is inserted at the top, but the list
-    // keeps its first visible row anchored by key, so the new row lands just
-    // above the viewport. Bring the current chat into view when it changes
-    // or the list's head does.
     LaunchedEffect(currentSessionId, sessions.firstOrNull()?.id) {
         val index = sessions.indexOfFirst { it.id == currentSessionId }
         if (index < 0) return@LaunchedEffect
@@ -168,38 +176,88 @@ private fun SessionListContent(
     }
 
     Column(
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
+            .fillMaxHeight()
+            .statusBarsPadding()
     ) {
-            // Header alignment with the chat top bar is now handled by the
-            // sidebar Surface's 4dp top padding (see PermanentSessionList).
-            // No inner spacer needed.
-            Row(
+        // 1. หัวข้อชื่อแอป ChatLLM (รูป A1 / รูป B1)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (compact) 46.dp else 56.dp)
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "ChatLLM",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        // 2. เมนูหลัก 4 ช่อง (รูป A1 / รูป B1)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            DrawerNavMenuItem(
+                icon = Icons.Outlined.Storage,
+                title = stringResource(R.string.menu_my_models),
+                onClick = onModelsClicked
+            )
+            DrawerNavMenuItem(
+                icon = Icons.Outlined.Download,
+                title = stringResource(R.string.menu_model_store),
+                onClick = onModelStoreClicked
+            )
+            DrawerNavMenuItem(
+                icon = Icons.Outlined.AutoAwesome,
+                title = stringResource(R.string.menu_ai_skills),
+                onClick = onAiSkillsClicked
+            )
+            DrawerNavMenuItem(
+                icon = Icons.Outlined.Settings,
+                title = stringResource(R.string.settings),
+                onClick = onSettingsClicked
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            thickness = 0.8.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 3. ประวัติการสนทนา (รูป A1 มีประวัติ / รูป B1 ว่างเปล่า)
+        if (sessions.isEmpty()) {
+            Box(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth()
-                    .height(if (compact) 40.dp else 64.dp)
-                    .padding(start = 16.dp, end = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.conversations),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f)
+                    text = stringResource(R.string.no_chat_history),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
                 )
-                IconButton(onClick = onSettingsClicked) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = stringResource(R.string.settings),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
-
+        } else {
+            Text(
+                text = stringResource(R.string.chat_history_label),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
+            )
             LazyColumn(
                 state = listState,
-                // .imePadding() so the list shrinks when the soft keyboard
-                // opens — otherwise the LazyColumn extends behind the IME and
-                // its bottom items are unreachable (you can't scroll because
-                // it thinks everything already fits).
                 modifier = Modifier
                     .weight(1f)
                     .imePadding()
@@ -209,30 +267,22 @@ private fun SessionListContent(
                     val showMenu = contextMenuSessionId == session.id
 
                     Surface(
-                        // Unselected rows are transparent so they inherit the
-                        // sidebar's surfaceContainer tint; only the selected
-                        // pill draws contrast.
                         color = if (isSelected)
                             MaterialTheme.colorScheme.secondaryContainer
                         else
                             Color.Transparent,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                            // Clip BEFORE combinedClickable so the ripple /
-                            // long-press indication is bounded to the pill
-                            // shape — otherwise it draws on the full row
-                            // rectangle and looks square against the rounded
-                            // selected state.
-                            .clip(RoundedCornerShape(24.dp))
+                            .padding(horizontal = 12.dp, vertical = 2.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .combinedClickable(
                                 onClick = { onSessionSelected(session.id) },
                                 onLongClick = { contextMenuSessionId = session.id }
                             )
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 11.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
@@ -301,7 +351,41 @@ private fun SessionListContent(
                 }
             }
         }
-    // Rename dialog
+
+        // 4. ปุ่ม "✎ แชท" ด้านล่างสุด (รูป A1 และ รูป B1)
+        Surface(
+            onClick = onNewChatClicked,
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .height(46.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.EditNote,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.drawer_new_chat_button),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+
     renameDialogSession?.let { session ->
         var text by remember(session.id) { mutableStateOf(session.title) }
         AlertDialog(
@@ -330,6 +414,38 @@ private fun SessionListContent(
                     Text(stringResource(R.string.cancel))
                 }
             }
+        )
+    }
+}
+
+@Composable
+private fun DrawerNavMenuItem(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(21.dp)
+        )
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

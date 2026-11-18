@@ -2,19 +2,23 @@
 
 package com.druk.ai_offline_llm
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -27,13 +31,6 @@ fun AppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors? = null,
     showNavIcon: Boolean = true,
-    /**
-     * Lets the call-site override the Material 3 default of 64dp. Passed as
-     * `expandedHeight` to [CenterAlignedTopAppBar] so the bar actually shrinks
-     * (not just its inner title slot). [Dp.Unspecified] means "use the M3
-     * default", since `TopAppBarDefaults.TopAppBarExpandedHeight` isn't a
-     * compile-time constant.
-     */
     expandedHeight: Dp = Dp.Unspecified,
     onNavIconPressed: () -> Unit = { },
     title: @Composable () -> Unit,
@@ -52,11 +49,32 @@ fun AppBar(
         },
         navigationIcon = {
             if (showNavIcon) {
-                IconButton(onClick = onNavIconPressed) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = stringResource(id = R.string.navigation_drawer_open),
-                    )
+                val desc = stringResource(id = R.string.navigation_drawer_open)
+                val lineColor = MaterialTheme.colorScheme.onSurface
+                IconButton(
+                    onClick = onNavIconPressed,
+                    modifier = Modifier.semantics { contentDescription = desc }
+                ) {
+                    Canvas(modifier = Modifier.size(22.dp)) {
+                        val stroke = 2.2.dp.toPx()
+                        val startX = 2.dp.toPx()
+                        val topY = size.height * 0.34f
+                        val bottomY = size.height * 0.66f
+                        drawLine(
+                            color = lineColor,
+                            start = Offset(startX, topY),
+                            end = Offset(size.width - 2.dp.toPx(), topY),
+                            strokeWidth = stroke,
+                            cap = StrokeCap.Round
+                        )
+                        drawLine(
+                            color = lineColor,
+                            start = Offset(startX, bottomY),
+                            end = Offset(size.width * 0.62f, bottomY),
+                            strokeWidth = stroke,
+                            cap = StrokeCap.Round
+                        )
+                    }
                 }
             }
         }

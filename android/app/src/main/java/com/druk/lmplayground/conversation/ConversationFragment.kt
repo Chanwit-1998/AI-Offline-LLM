@@ -459,6 +459,37 @@ class ConversationFragment : Fragment() {
                     }
                 }
 
+                // รับค่าการสลับโมเดลจากหน้า "โมเดล AI" หรือการใช้บุคลิกจากหน้า "ทักษะและบุคลิก AI"
+                val navBackStackEntry = remember { findNavController().currentBackStackEntry }
+                val selectedModelFromScreen by (
+                    navBackStackEntry?.savedStateHandle
+                        ?.getLiveData<String>("selected_model_filename")
+                        ?.observeAsState()
+                        ?: remember { mutableStateOf(null) }
+                )
+                LaunchedEffect(selectedModelFromScreen) {
+                    val filename = selectedModelFromScreen ?: return@LaunchedEffect
+                    navBackStackEntry?.savedStateHandle?.remove<String>("selected_model_filename")
+                    viewModel.loadModelByFilename(filename)
+                }
+
+                val appliedPromptId by (
+                    navBackStackEntry?.savedStateHandle
+                        ?.getLiveData<String>("apply_system_prompt_id")
+                        ?.observeAsState()
+                        ?: remember { mutableStateOf(null) }
+                )
+                LaunchedEffect(appliedPromptId) {
+                    val pId = appliedPromptId ?: return@LaunchedEffect
+                    val pText = navBackStackEntry?.savedStateHandle?.get<String>("apply_system_prompt_text") ?: ""
+                    navBackStackEntry?.savedStateHandle?.remove<String>("apply_system_prompt_id")
+                    navBackStackEntry?.savedStateHandle?.remove<String>("apply_system_prompt_text")
+                    if (pText.isNotBlank()) {
+                        viewModel.applySystemPrompt(pId, pText)
+                        Toast.makeText(toastContext, R.string.persona_applied_toast, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
                 // Check if storage is configured on first launch
                 LaunchedEffect(Unit) {
                     storageViewModel.checkStorageConfigured()
@@ -1088,10 +1119,37 @@ class ConversationFragment : Fragment() {
                                 onPinSession = { sessionId, pinned ->
                                     viewModel.pinSession(sessionId, pinned)
                                 },
+                                onModelsClicked = {
+                                    if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                        findNavController().navigate(
+                                            R.id.action_home_to_models,
+                                            bundleOf(
+                                                "mode" to "downloaded",
+                                                "active_model_filename" to modelInfo?.filename
+                                            )
+                                        )
+                                    }
+                                },
+                                onModelStoreClicked = {
+                                    if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                        findNavController().navigate(
+                                            R.id.action_home_to_models,
+                                            bundleOf("mode" to "store")
+                                        )
+                                    }
+                                },
+                                onAiSkillsClicked = {
+                                    if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                        findNavController().navigate(R.id.action_home_to_ai_skills)
+                                    }
+                                },
                                 onSettingsClicked = {
                                     if (findNavController().currentDestination?.id == R.id.nav_home) {
                                         findNavController().navigate(R.id.action_home_to_settings)
                                     }
+                                },
+                                onNewChatClicked = {
+                                    viewModel.newConversation()
                                 }
                             )
                         }
@@ -1116,12 +1174,51 @@ class ConversationFragment : Fragment() {
                                 onPinSession = { sessionId, pinned ->
                                     viewModel.pinSession(sessionId, pinned)
                                 },
+                                onModelsClicked = {
+                                    scope.launch {
+                                        drawerState.close()
+                                        if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                            findNavController().navigate(
+                                                R.id.action_home_to_models,
+                                                bundleOf(
+                                                    "mode" to "downloaded",
+                                                    "active_model_filename" to modelInfo?.filename
+                                                )
+                                            )
+                                        }
+                                    }
+                                },
+                                onModelStoreClicked = {
+                                    scope.launch {
+                                        drawerState.close()
+                                        if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                            findNavController().navigate(
+                                                R.id.action_home_to_models,
+                                                bundleOf("mode" to "store")
+                                            )
+                                        }
+                                    }
+                                },
+                                onAiSkillsClicked = {
+                                    scope.launch {
+                                        drawerState.close()
+                                        if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                            findNavController().navigate(R.id.action_home_to_ai_skills)
+                                        }
+                                    }
+                                },
                                 onSettingsClicked = {
                                     scope.launch {
                                         drawerState.close()
                                         if (findNavController().currentDestination?.id == R.id.nav_home) {
                                             findNavController().navigate(R.id.action_home_to_settings)
                                         }
+                                    }
+                                },
+                                onNewChatClicked = {
+                                    scope.launch {
+                                        drawerState.close()
+                                        viewModel.newConversation()
                                     }
                                 }
                             )

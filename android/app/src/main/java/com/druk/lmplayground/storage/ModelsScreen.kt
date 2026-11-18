@@ -6,6 +6,7 @@ import android.content.Context
 import android.text.format.Formatter
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,15 +30,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -79,6 +84,12 @@ import com.druk.ai_offline_llm.models.releaseDateLabel
 import com.druk.ai_offline_llm.models.supportsLanguage
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
+enum class ModelsScreenMode {
+    ALL,
+    DOWNLOADED_ONLY,
+    STORE_ONLY
+}
+
 @Composable
 fun ModelsScreen(
     storageInfo: StorageInfo?,
@@ -98,16 +109,25 @@ fun ModelsScreen(
     onConfirmMigration: () -> Unit,
     onSkipMigration: () -> Unit,
     onCancelMigration: () -> Unit,
+    mode: ModelsScreenMode = ModelsScreenMode.ALL,
+    activeModelFilename: String? = null,
+    onSelectModel: ((ModelInfo) -> Unit)? = null,
+    onOpenStoreClick: (() -> Unit)? = null,
     embeddingModel: ModelWithStatus? = null,
     dictationModel: ModelWithStatus? = null,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val screenTitle = when (mode) {
+        ModelsScreenMode.DOWNLOADED_ONLY -> stringResource(R.string.menu_my_models)
+        ModelsScreenMode.STORE_ONLY -> stringResource(R.string.menu_model_store)
+        ModelsScreenMode.ALL -> stringResource(R.string.models)
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.models)) },
+                title = { Text(screenTitle) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -128,6 +148,10 @@ fun ModelsScreen(
             migrationProgress = migrationProgress,
             deviceLanguage = deviceLanguage,
             snackbarHostState = snackbarHostState,
+            mode = mode,
+            activeModelFilename = activeModelFilename,
+            onSelectModel = onSelectModel,
+            onOpenStoreClick = onOpenStoreClick,
             onChangeFolderClick = onChangeFolderClick,
             onDeleteModel = onDeleteModel,
             onDownloadModel = onDownloadModel,
@@ -166,6 +190,10 @@ fun ModelsContent(
     onSkipMigration: () -> Unit,
     onCancelMigration: () -> Unit,
     modifier: Modifier = Modifier,
+    mode: ModelsScreenMode = ModelsScreenMode.ALL,
+    activeModelFilename: String? = null,
+    onSelectModel: ((ModelInfo) -> Unit)? = null,
+    onOpenStoreClick: (() -> Unit)? = null,
     maxContentWidth: Dp = 960.dp,
     embeddingModel: ModelWithStatus? = null,
     dictationModel: ModelWithStatus? = null,
@@ -180,7 +208,6 @@ fun ModelsContent(
         }
     }
 
-    // แคชรายการที่กรองแล้วด้วย remember เพื่อลดการคำนวณซ้ำตอนเลื่อนหน้าจอหรือตอนดาวน์โหลด
     val splitByLanguage = deviceLanguage != "en"
     val (downloadedModels, supportedModels, otherModels) = remember(allModels, deviceLanguage) {
         val downloaded = allModels.filter { it.isDownloaded }
@@ -225,6 +252,9 @@ fun ModelsContent(
         }
     }
 
+    val showDownloadedSection = mode == ModelsScreenMode.ALL || mode == ModelsScreenMode.DOWNLOADED_ONLY
+    val showStoreSection = mode == ModelsScreenMode.ALL || mode == ModelsScreenMode.STORE_ONLY
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter
@@ -245,7 +275,6 @@ fun ModelsContent(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Storage info card
                 if (storageInfo != null) {
                     item(key = "storage_card", span = { GridItemSpan(maxLineSpan) }) {
                         StorageInfoCard(
@@ -256,154 +285,201 @@ fun ModelsContent(
                     }
                 }
 
-                // Downloaded section header
-                item(key = "header_downloaded", span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = stringResource(R.string.downloaded_models),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 2.dp)
-                    )
-                }
-
-                if (downloadedModels.isEmpty() && !showEmbeddingRow && !showDictationRow) {
-                    item(key = "empty_downloaded", span = { GridItemSpan(maxLineSpan) }) {
+                // ส่วนโมเดลที่ดาวน์โหลดแล้ว (เมนู 1: โมเดล AI)
+                if (showDownloadedSection) {
+                    item(key = "header_downloaded", span = { GridItemSpan(maxLineSpan) }) {
                         Text(
-                            text = stringResource(R.string.no_downloaded_models),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                            text = stringResource(R.string.downloaded_models),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 2.dp)
                         )
                     }
-                } else {
-                    items(
-                        items = downloadedModels,
-                        key = { "dl_" + it.model.filename },
-                        contentType = { "downloaded_model" }
-                    ) { modelWithStatus ->
-                        DownloadedModelItem(
-                            model = modelWithStatus.model,
-                            vision = modelWithStatus.isMmprojDownloaded,
-                            onDeleteClick = { modelToDelete = modelWithStatus.model }
-                        )
-                    }
-                }
 
-                if (showEmbeddingRow && embeddingModel != null) {
-                    item(
-                        key = "embedding_" + embeddingModel.model.filename,
-                        contentType = "special_model"
-                    ) {
-                        if (embeddingModel.isDownloaded) {
+                    if (downloadedModels.isEmpty() && !showEmbeddingRow && !showDictationRow) {
+                        item(key = "empty_downloaded", span = { GridItemSpan(maxLineSpan) }) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.no_downloaded_models),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                if (onOpenStoreClick != null) {
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Button(onClick = onOpenStoreClick) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Download,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(stringResource(R.string.go_to_model_store))
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        items(
+                            items = downloadedModels,
+                            key = { "dl_" + it.model.filename },
+                            contentType = { "downloaded_model" }
+                        ) { modelWithStatus ->
+                            val isCurrent = activeModelFilename != null &&
+                                activeModelFilename == modelWithStatus.model.filename
                             DownloadedModelItem(
-                                model = embeddingModel.model,
-                                vision = false,
-                                onDeleteClick = { modelToDelete = embeddingModel.model }
+                                model = modelWithStatus.model,
+                                vision = modelWithStatus.isMmprojDownloaded,
+                                isActive = isCurrent,
+                                onSelectClick = onSelectModel?.let { { it(modelWithStatus.model) } },
+                                onDeleteClick = { modelToDelete = modelWithStatus.model }
                             )
-                        } else {
-                            AvailableModelItem(
-                                modelWithStatus = embeddingModel,
-                                moduleOnly = false,
-                                downloadProgress = embeddingDownloadProgress,
-                                onDownloadClick = {},
-                                onCancelClick = { onCancelDownload(embeddingModel.model) }
-                            )
+                        }
+
+                        if (mode == ModelsScreenMode.DOWNLOADED_ONLY && onOpenStoreClick != null) {
+                            item(key = "more_in_store", span = { GridItemSpan(maxLineSpan) }) {
+                                OutlinedButton(
+                                    onClick = onOpenStoreClick,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Download,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(R.string.go_to_model_store))
+                                }
+                            }
+                        }
+                    }
+
+                    if (showEmbeddingRow && embeddingModel != null) {
+                        item(
+                            key = "embedding_" + embeddingModel.model.filename,
+                            contentType = "special_model"
+                        ) {
+                            if (embeddingModel.isDownloaded) {
+                                DownloadedModelItem(
+                                    model = embeddingModel.model,
+                                    vision = false,
+                                    isActive = false,
+                                    onSelectClick = null,
+                                    onDeleteClick = { modelToDelete = embeddingModel.model }
+                                )
+                            } else {
+                                AvailableModelItem(
+                                    modelWithStatus = embeddingModel,
+                                    moduleOnly = false,
+                                    downloadProgress = embeddingDownloadProgress,
+                                    onDownloadClick = {},
+                                    onCancelClick = { onCancelDownload(embeddingModel.model) }
+                                )
+                            }
+                        }
+                    }
+
+                    if (showDictationRow && dictationModel != null) {
+                        item(
+                            key = "dictation_" + dictationModel.model.filename,
+                            contentType = "special_model"
+                        ) {
+                            if (dictationModel.isDownloaded) {
+                                DownloadedModelItem(
+                                    model = dictationModel.model,
+                                    vision = false,
+                                    isActive = false,
+                                    onSelectClick = null,
+                                    onDeleteClick = { modelToDelete = dictationModel.model }
+                                )
+                            } else {
+                                AvailableModelItem(
+                                    modelWithStatus = dictationModel,
+                                    moduleOnly = false,
+                                    downloadProgress = dictationDownloadProgress,
+                                    onDownloadClick = {},
+                                    onCancelClick = { onCancelDownload(dictationModel.model) }
+                                )
+                            }
                         }
                     }
                 }
 
-                if (showDictationRow && dictationModel != null) {
-                    item(
-                        key = "dictation_" + dictationModel.model.filename,
-                        contentType = "special_model"
-                    ) {
-                        if (dictationModel.isDownloaded) {
-                            DownloadedModelItem(
-                                model = dictationModel.model,
-                                vision = false,
-                                onDeleteClick = { modelToDelete = dictationModel.model }
+                // ส่วนร้านค้าโมเดล (เมนู 2: ร้านค้าโมเดล)
+                if (showStoreSection) {
+                    if (supportedModels.isNotEmpty()) {
+                        item(key = "header_supported", span = { GridItemSpan(maxLineSpan) }) {
+                            Text(
+                                text = stringResource(
+                                    if (splitByLanguage) R.string.supports_your_language
+                                    else R.string.available_models
+                                ),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(top = if (showDownloadedSection) 12.dp else 4.dp, bottom = 2.dp)
                             )
-                        } else {
+                        }
+
+                        items(
+                            items = supportedModels,
+                            key = { "avail_" + it.model.filename },
+                            contentType = { "available_model" }
+                        ) { modelWithStatus ->
+                            val moduleOnly = modelWithStatus.needsVisionModule
+                            val progressKey = if (moduleOnly)
+                                modelWithStatus.model.name + " (vision)"
+                            else
+                                modelWithStatus.model.name
                             AvailableModelItem(
-                                modelWithStatus = dictationModel,
-                                moduleOnly = false,
-                                downloadProgress = dictationDownloadProgress,
-                                onDownloadClick = {},
-                                onCancelClick = { onCancelDownload(dictationModel.model) }
+                                modelWithStatus = modelWithStatus,
+                                moduleOnly = moduleOnly,
+                                downloadProgress = downloadingModels[progressKey],
+                                onDownloadClick = { onAvailableDownload(modelWithStatus) },
+                                onCancelClick = { onCancelDownload(modelWithStatus.model) }
                             )
                         }
                     }
-                }
 
-                // Supported / Available models
-                if (supportedModels.isNotEmpty()) {
-                    item(key = "header_supported", span = { GridItemSpan(maxLineSpan) }) {
-                        Text(
-                            text = stringResource(
-                                if (splitByLanguage) R.string.supports_your_language
-                                else R.string.available_models
-                            ),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                        )
-                    }
+                    if (otherModels.isNotEmpty()) {
+                        item(key = "header_other", span = { GridItemSpan(maxLineSpan) }) {
+                            Text(
+                                text = stringResource(R.string.other_models),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+                            )
+                        }
 
-                    items(
-                        items = supportedModels,
-                        key = { "avail_" + it.model.filename },
-                        contentType = { "available_model" }
-                    ) { modelWithStatus ->
-                        val moduleOnly = modelWithStatus.needsVisionModule
-                        val progressKey = if (moduleOnly)
-                            modelWithStatus.model.name + " (vision)"
-                        else
-                            modelWithStatus.model.name
-                        AvailableModelItem(
-                            modelWithStatus = modelWithStatus,
-                            moduleOnly = moduleOnly,
-                            downloadProgress = downloadingModels[progressKey],
-                            onDownloadClick = { onAvailableDownload(modelWithStatus) },
-                            onCancelClick = { onCancelDownload(modelWithStatus.model) }
-                        )
-                    }
-                }
-
-                // Other models
-                if (otherModels.isNotEmpty()) {
-                    item(key = "header_other", span = { GridItemSpan(maxLineSpan) }) {
-                        Text(
-                            text = stringResource(R.string.other_models),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                        )
-                    }
-
-                    items(
-                        items = otherModels,
-                        key = { "other_" + it.model.filename },
-                        contentType = { "available_model" }
-                    ) { modelWithStatus ->
-                        val moduleOnly = modelWithStatus.needsVisionModule
-                        val progressKey = if (moduleOnly)
-                            modelWithStatus.model.name + " (vision)"
-                        else
-                            modelWithStatus.model.name
-                        AvailableModelItem(
-                            modelWithStatus = modelWithStatus,
-                            moduleOnly = moduleOnly,
-                            downloadProgress = downloadingModels[progressKey],
-                            onDownloadClick = { onAvailableDownload(modelWithStatus) },
-                            onCancelClick = { onCancelDownload(modelWithStatus.model) }
-                        )
+                        items(
+                            items = otherModels,
+                            key = { "other_" + it.model.filename },
+                            contentType = { "available_model" }
+                        ) { modelWithStatus ->
+                            val moduleOnly = modelWithStatus.needsVisionModule
+                            val progressKey = if (moduleOnly)
+                                modelWithStatus.model.name + " (vision)"
+                            else
+                                modelWithStatus.model.name
+                            AvailableModelItem(
+                                modelWithStatus = modelWithStatus,
+                                moduleOnly = moduleOnly,
+                                downloadProgress = downloadingModels[progressKey],
+                                onDownloadClick = { onAvailableDownload(modelWithStatus) },
+                                onCancelClick = { onCancelDownload(modelWithStatus.model) }
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    // Delete confirmation dialog
     modelToDelete?.let { model ->
         AlertDialog(
             onDismissRequest = { modelToDelete = null },
@@ -427,7 +503,6 @@ fun ModelsContent(
         )
     }
 
-    // Vision download choice
     downloadChoiceModel?.let { model ->
         AlertDialog(
             onDismissRequest = { downloadChoiceModel = null },
@@ -461,7 +536,6 @@ fun ModelsContent(
         )
     }
 
-    // Migration confirmation dialog
     pendingMigration?.let { migration ->
         val context = LocalContext.current
         val totalSize = remember(migration) { migration.modelsToMigrate.sumOf { it.sizeBytes } }
@@ -515,7 +589,6 @@ fun ModelsContent(
         )
     }
 
-    // Migration progress dialog
     migrationProgress?.let { progress ->
         AlertDialog(
             onDismissRequest = { },
@@ -637,6 +710,8 @@ private fun StorageInfoCard(
 private fun DownloadedModelItem(
     model: ModelInfo,
     vision: Boolean,
+    isActive: Boolean = false,
+    onSelectClick: (() -> Unit)? = null,
     onDeleteClick: () -> Unit
 ) {
     val dateLabel = remember(model.releaseDate) { model.releaseDateLabel() }
@@ -644,10 +719,24 @@ private fun DownloadedModelItem(
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+            containerColor = if (isActive)
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+            else
+                MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-        modifier = Modifier.fillMaxWidth()
+        border = BorderStroke(
+            width = if (isActive) 1.5.dp else 1.dp,
+            color = if (isActive)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (onSelectClick != null) Modifier.clickable(onClick = onSelectClick)
+                else Modifier
+            )
     ) {
         Row(
             modifier = Modifier
@@ -701,6 +790,39 @@ private fun DownloadedModelItem(
                 }
             }
             Spacer(modifier = Modifier.width(8.dp))
+            if (onSelectClick != null) {
+                if (isActive) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.model_in_use),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else {
+                    FilledTonalButton(
+                        onClick = onSelectClick,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.use_model),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(6.dp))
+            }
             FilledTonalIconButton(
                 onClick = onDeleteClick,
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
@@ -880,7 +1002,7 @@ private fun formatDownloadStats(context: Context, progress: DownloadProgress): S
         parts.add(formatEta(progress.etaSeconds))
     }
 
-    return parts.joinToString(" \u2022 ")
+    return parts.joinToString(" • ")
 }
 
 private fun formatEta(seconds: Long): String {
@@ -910,21 +1032,11 @@ private fun ModelsScreenPreview() {
             allModels = ModelInfoProvider.allModels.take(5).mapIndexed { index, model ->
                 ModelWithStatus(model = model, isDownloaded = index < 2)
             },
-            downloadingModels = mapOf(
-                "Gemma 3 4B" to DownloadProgress(
-                    modelName = "Gemma 3 4B",
-                    progress = 0.45f,
-                    status = "Downloading…",
-                    bytesDownloaded = 1_200_000_000L,
-                    totalBytes = 2_700_000_000L,
-                    speedBytesPerSec = 15_000_000L,
-                    etaSeconds = 100L
-                )
-            ),
+            downloadingModels = emptyMap(),
             snackbarMessage = null,
             pendingMigration = null,
             migrationProgress = null,
-            deviceLanguage = "en",
+            deviceLanguage = "th",
             onBackClick = {},
             onChangeFolderClick = {},
             onDeleteModel = {},

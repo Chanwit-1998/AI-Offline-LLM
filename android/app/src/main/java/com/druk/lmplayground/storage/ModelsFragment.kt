@@ -19,6 +19,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,8 +30,6 @@ class ModelsFragment : Fragment() {
 
     private val viewModel: StorageViewModel by viewModels()
 
-    // Action deferred across the notification-permission prompt (a download
-    // kicked off only after the user answers the permission dialog).
     private var pendingDownload: (() -> Unit)? = null
 
     private val folderPickerLauncher = registerForActivityResult(
@@ -53,7 +52,6 @@ class ModelsFragment : Fragment() {
         pendingDownload = null
     }
 
-    /** Run [action] (a download) after ensuring the notification permission has been asked for. */
     private fun withNotificationPermission(action: () -> Unit) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             action()
@@ -96,6 +94,13 @@ class ModelsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View = ComposeView(inflater.context).apply {
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        val mode = when (arguments?.getString("mode")) {
+            "downloaded" -> ModelsScreenMode.DOWNLOADED_ONLY
+            "store" -> ModelsScreenMode.STORE_ONLY
+            else -> ModelsScreenMode.ALL
+        }
+        val activeModelFilename = arguments?.getString("active_model_filename")
+
         setContent {
             val storageInfo by viewModel.storageInfo.observeAsState()
             val allModels by viewModel.allModels.observeAsState(emptyList())
@@ -123,13 +128,27 @@ class ModelsFragment : Fragment() {
                     pendingMigration = pendingMigration,
                     migrationProgress = migrationProgress,
                     deviceLanguage = viewModel.deviceLanguage,
+                    mode = mode,
+                    activeModelFilename = activeModelFilename,
+                    onSelectModel = { model ->
+                        val nav = findNavController()
+                        nav.previousBackStackEntry?.savedStateHandle?.set(
+                            "selected_model_filename",
+                            model.filename
+                        )
+                        nav.popBackStack()
+                    },
+                    onOpenStoreClick = {
+                        val nav = findNavController()
+                        if (nav.currentDestination?.id == R.id.nav_models) {
+                            nav.navigate(R.id.nav_models, bundleOf("mode" to "store"))
+                        }
+                    },
                     onBackClick = { findNavController().popBackStack() },
                     onChangeFolderClick = {
                         try {
                             folderPickerLauncher.launch(null)
                         } catch (_: ActivityNotFoundException) {
-                            // No DocumentsUI on this device — offer the
-                            // app-private fallback folder instead.
                             val fallbackUri = StorageDocuments.appStorageFallbackUri(requireContext())
                             if (fallbackUri != null) {
                                 Toast.makeText(

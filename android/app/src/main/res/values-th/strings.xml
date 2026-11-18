@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">AI Offline LLM</string>
+    <string name="app_name" translatable="false">ChatLLM</string>
 
     <string name="navigation_drawer_open">เปิดลิ้นชักนำทาง</string>
     <string name="navigation_drawer_close">ปิดลิ้นชักนำทาง</string>
@@ -18,7 +18,7 @@
     <string name="send">ส่ง</string>
     <string name="author_me">ฉัน</string>
     <string name="members">สมาชิก %d คน</string>
-    <string name="textfield_hint">ข้อความ</string>
+    <string name="textfield_hint">ถาม ChatLLM</string>
     <string name="swipe_to_cancel_recording">&#x25C0; ปัดเพื่อยกเลิก</string>
     <string name="emojis_label">อีโมจิ</string>
     <string name="stickers_label">สติกเกอร์</string>
@@ -292,7 +292,7 @@
          model is loaded so the OS does not evict the :llama process). -->
     <string name="inference_notification_channel_name">เครื่องมือประมวลผล AI</string>
     <string name="inference_notification_channel_description">รักษาโมเดล AI ให้โหลดอยู่และพร้อมตอบสนอง</string>
-    <string name="inference_notification_title">AI-OFFLINE-LLM</string>
+    <string name="inference_notification_title">ChatLLM</string>
     <string name="inference_notification_text">โหลดโมเดลแล้ว — พร้อมแชท</string>
     <string name="inference_notification_loaded_title">โหลดโมเดลแล้ว</string>
     <string name="inference_engine_crashed">อุ๊ปส์ — เกิดข้อผิดพลาด\nโปรดโหลดโมเดลอีกครั้ง</string>
@@ -403,4 +403,22 @@
     <string name="branch_title">%1$s (แขนง)</string>
     <string name="branch_title_numbered">%1$s (แขนง %2$d)</string>
     <string name="branch_created">กำลังทำต่อในแชทใหม่</string>
+
+    <!-- ChatLLM Navigation & Menus -->
+    <string name="menu_my_models">โมเดล AI</string>
+    <string name="menu_model_store">ร้านค้าโมเดล</string>
+    <string name="menu_ai_skills">ทักษะและบุคลิก AI</string>
+    <string name="drawer_new_chat_button">แชท</string>
+    <string name="no_chat_history">ยังไม่มีประวัติการสนทนา</string>
+    <string name="chat_history_label">ประวัติการสนทนา</string>
+    <string name="use_model">ใช้งาน</string>
+    <string name="model_in_use">กำลังใช้งาน</string>
+    <string name="go_to_model_store">ไปที่ร้านค้าโมเดล</string>
+    <string name="tab_ai_persona">บุคลิกและคำสั่ง AI</string>
+    <string name="tab_ai_tools">ทักษะเสริม (Tools)</string>
+    <string name="saved_personas_header">บุคลิกที่บันทึกไว้</string>
+    <string name="preset_personas_header">เทมเพลตบุคลิกสำเร็จรูป</string>
+    <string name="use_in_chat">ใช้ในแชทนี้</string>
+    <string name="persona_applied_toast">นำบุคลิก AI มาใช้กับแชทแล้ว</string>
+    
 </resources>
