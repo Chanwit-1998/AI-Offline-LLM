@@ -1,5 +1,5 @@
 
-<h1 align="center">LM Playground</h1>
+<h1 align="center"> AI-OFFLINE-LLM</h1>
 
 <p align="center">
 <img src="logo.png"/>
