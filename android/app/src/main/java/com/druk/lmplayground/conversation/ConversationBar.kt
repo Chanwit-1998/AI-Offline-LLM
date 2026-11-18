@@ -7,14 +7,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -62,7 +56,6 @@ fun ConversationBar(
 
             if (modelInfo != null) {
                 Surface(
-                    onClick = onModelNamePressed,
                     shape = RoundedCornerShape(22.dp),
                     color = pillColor,
                     border = pillBorder,
@@ -70,7 +63,7 @@ fun ConversationBar(
                     if (compact) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = modelInfo.name,
@@ -90,35 +83,21 @@ fun ConversationBar(
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
-                            Icon(
-                                imageVector = Icons.Outlined.ArrowDropDown,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
                         }
                     } else {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 5.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = modelInfo.name,
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Icon(
-                                    imageVector = Icons.Outlined.ArrowDropDown,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
+                            Text(
+                                text = modelInfo.name,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             val sub = modelStatus ?: modelInfo.description
                             if (sub.isNotBlank()) {
                                 Text(
@@ -135,14 +114,13 @@ fun ConversationBar(
                 }
             } else {
                 Surface(
-                    onClick = onModelNamePressed,
                     shape = RoundedCornerShape(22.dp),
                     color = pillColor,
                     border = pillBorder,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.select_model),
@@ -150,25 +128,11 @@ fun ConversationBar(
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowDropDown,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
                     }
                 }
             }
         },
-        actions = {
-            IconButton(onClick = onNewSessionPressed) {
-                Icon(
-                    imageVector = Icons.Outlined.EditNote,
-                    contentDescription = stringResource(R.string.new_conversation),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
+        actions = {}
     )
 }
 

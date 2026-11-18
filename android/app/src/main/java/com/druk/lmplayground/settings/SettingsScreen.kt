@@ -24,14 +24,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Policy
-import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VolumeUp
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,12 +59,6 @@ import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import java.util.Locale
 
-/**
- * Sub-screens that the tablet detail pane can render inline. Models and
- * SystemPrompts now render inline too via the [modelsDetailContent] /
- * [promptsDetailContent] slots — the caller owns the ViewModels and passes
- * the appropriate Composable when on tablet.
- */
 private enum class SettingsDetail { Models, Prompts, Language, Tools, SoundHaptic, Advanced, PrivacyPolicy, Faq }
 
 @Composable
@@ -83,53 +74,14 @@ fun SettingsScreen(
     onAdvancedClick: () -> Unit,
     onSendFeedbackClick: () -> Unit,
     appVersion: String,
-    /**
-     * Tablet-only: when non-null, tapping Models in the master pane opens
-     * this composable inline in the detail pane instead of navigating to
-     * the full-screen ModelsFragment. Phones leave it null and use
-     * [onModelsClick] navigation.
-     */
     modelsDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Tablet-only mirror of [modelsDetailContent] for System Prompts.
-     */
     promptsDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Tablet-only mirror of [modelsDetailContent] for Language. The
-     * picker is just a list — no ViewModel — so the caller can simply
-     * pass `{ LanguageContent() }`.
-     */
     languageDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Tablet-only mirror of [modelsDetailContent] for the Tools section.
-     */
     toolsDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Tablet-only mirror of [modelsDetailContent] for the Sound and Haptic
-     * section.
-     */
     soundHapticDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Tablet-only mirror of [modelsDetailContent] for the Advanced section.
-     */
     advancedDetailContent: (@Composable () -> Unit)? = null,
-    /**
-     * Optional deep-link target: when "tools", the screen opens directly on the
-     * Tools detail (tablet). Used by the What's New "Set up tools" button.
-     */
     initialDetailKey: String? = null,
-    /**
-     * Width of the master pane on tablet. Defaults to 320dp to match the
-     * chat sidebar — callers can pass a different value to align the
-     * master/detail boundary with a foldable's hinge.
-     */
     masterWidth: androidx.compose.ui.unit.Dp = 320.dp,
-    /**
-     * Debug-only: if non-null, renders a "Crash inference engine" row that
-     * triggers a SIGSEGV-equivalent in the `:llama` process. Used to
-     * exercise the crash-isolation + recovery flow on a real device. The
-     * settings fragment only wires this on debug builds.
-     */
     onCrashEngineClick: (() -> Unit)? = null,
 ) {
     val configuration = LocalConfiguration.current
@@ -139,7 +91,7 @@ fun SettingsScreen(
         mutableStateOf<SettingsDetail?>(
             when (initialDetailKey) {
                 "tools" -> SettingsDetail.Tools
-                else -> if (modelsDetailContent != null) SettingsDetail.Models else null
+                else -> null
             }
         )
     }
@@ -313,10 +265,6 @@ private fun SettingsList(
 ) {
     val isDark = isSystemInDarkTheme()
 
-    // Badge colors per category
-    val aiGreenTint = if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
-    val aiGreenBg = aiGreenTint.copy(alpha = 0.14f)
-
     val usageBlueTint = if (isDark) Color(0xFF60A5FA) else Color(0xFF2563EB)
     val usageBlueBg = usageBlueTint.copy(alpha = 0.14f)
 
@@ -338,42 +286,7 @@ private fun SettingsList(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        // 1. ปัญญาประดิษฐ์และโมเดล (AI & Models)
-        SettingsGroupCard(
-            title = if (isThai) "ปัญญาประดิษฐ์และโมเดล" else "AI & Models"
-        ) {
-            SettingsRow(
-                icon = Icons.Outlined.Storage,
-                title = stringResource(R.string.models),
-                subtitle = stringResource(R.string.models_subtitle),
-                selected = selectedDetail == SettingsDetail.Models,
-                iconTint = aiGreenTint,
-                iconBgColor = aiGreenBg,
-                onClick = onModelsClick
-            )
-            CardItemDivider()
-            SettingsRow(
-                icon = Icons.AutoMirrored.Outlined.Article,
-                title = stringResource(R.string.system_prompts),
-                subtitle = stringResource(R.string.system_prompts_subtitle),
-                selected = selectedDetail == SettingsDetail.Prompts,
-                iconTint = aiGreenTint,
-                iconBgColor = aiGreenBg,
-                onClick = onSystemPromptsClick
-            )
-            CardItemDivider()
-            SettingsRow(
-                icon = Icons.Outlined.Build,
-                title = stringResource(R.string.tools),
-                subtitle = stringResource(R.string.tools_subtitle),
-                selected = selectedDetail == SettingsDetail.Tools,
-                iconTint = aiGreenTint,
-                iconBgColor = aiGreenBg,
-                onClick = onToolsClick
-            )
-        }
-
-        // 2. การใช้งานและประสิทธิภาพ (Usage & Performance)
+        // 1. การใช้งานและประสิทธิภาพ (Usage & Performance)
         SettingsGroupCard(
             title = if (isThai) "การใช้งานและประสิทธิภาพ" else "Usage & Performance"
         ) {
@@ -416,7 +329,7 @@ private fun SettingsList(
             )
         }
 
-        // 3. ข้อมูลและความช่วยเหลือ (Information & Help)
+        // 2. ข้อมูลและความช่วยเหลือ (Information & Help)
         SettingsGroupCard(
             title = if (isThai) "ข้อมูลและความช่วยเหลือ" else "Information & Help"
         ) {
@@ -440,7 +353,7 @@ private fun SettingsList(
             )
         }
 
-        // 4. สำหรับนักพัฒนา (Debug)
+        // 3. สำหรับนักพัฒนา (Debug)
         if (onCrashEngineClick != null) {
             SettingsGroupCard(
                 title = if (isThai) "สำหรับนักพัฒนา (Debug)" else "Developer (Debug)"
@@ -456,24 +369,35 @@ private fun SettingsList(
             }
         }
 
-        // 5. Footer Version
-        Row(
+        // 4. Footer Version & Developer Credit (รูป D3)
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 4.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(top = 4.dp, bottom = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.outline
-            )
-            Spacer(modifier = Modifier.width(6.dp))
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.outline
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "เวอร์ชัน v1.0.0",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
             Text(
-                text = stringResource(R.string.version, appVersion),
+                text = "©︎ 2026 Chanwit™",
                 style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.outline
             )
         }
@@ -598,7 +522,7 @@ private fun SettingsScreenPreview() {
             onPrivacyPolicyClick = {},
             onFaqClick = {},
             onSendFeedbackClick = {},
-            appVersion = "1.10.2-debug"
+            appVersion = "1.0.0"
         )
     }
 }
