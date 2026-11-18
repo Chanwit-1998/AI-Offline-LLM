@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 // Deliberately a plain Kotlin/JVM module, not an Android library: everything
