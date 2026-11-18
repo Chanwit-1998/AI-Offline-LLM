@@ -1,7 +1,7 @@
-package com.druk.lmplayground.harness.probes
+package com.druk.ai_offline_llm.harness.probes
 
-import com.druk.lmplayground.harness.*
-import com.druk.lmplayground.harness.Engine.newGreedySession
+import com.druk.ai_offline_llm.harness.*
+import com.druk.ai_offline_llm.harness.Engine.newGreedySession
 
 /**
  * Compares the template's declared capabilities against both what we expect

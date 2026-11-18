@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.content.Context
 import android.text.format.Formatter
@@ -70,14 +70,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.models.ModelCapabilityIcons
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.models.ModelWithStatus
-import com.druk.lmplayground.models.releaseDateLabel
-import com.druk.lmplayground.models.supportsLanguage
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.models.ModelCapabilityIcons
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.ModelWithStatus
+import com.druk.ai_offline_llm.models.releaseDateLabel
+import com.druk.ai_offline_llm.models.supportsLanguage
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 @Composable
 fun ModelsScreen(

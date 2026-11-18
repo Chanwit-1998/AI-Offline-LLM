@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.content.Context
 import android.util.Log
@@ -8,7 +8,7 @@ import java.io.File
  * Startup migration: remove stray model files left in the app's private files
  * directories by the old download flow.
  *
- * Before the move to streaming-direct-to-SAF, [com.druk.lmplayground.download.DownloadWorker]
+ * Before the move to streaming-direct-to-SAF, [com.druk.ai_offline_llm.download.DownloadWorker]
  * downloaded into `getExternalFilesDir()/<name>.gguf` and then copied the
  * finished file into the user's SAF folder. If that copy failed — or the worker
  * process was killed mid-copy, which is exactly what happened when the device

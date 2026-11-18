@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -68,13 +68,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import com.druk.lmplayground.settings.SettingsFragment
-import com.druk.lmplayground.MainActivity
-import com.druk.lmplayground.R
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.models.SelectModelDialog
-import com.druk.lmplayground.storage.StorageViewModel
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.settings.SettingsFragment
+import com.druk.ai_offline_llm.MainActivity
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.SelectModelDialog
+import com.druk.ai_offline_llm.storage.StorageViewModel
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -82,7 +82,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.druk.lmplayground.dictation.DictationState
+import com.druk.ai_offline_llm.dictation.DictationState
 import kotlinx.coroutines.launch
 
 class ConversationFragment : Fragment() {
@@ -164,7 +164,7 @@ class ConversationFragment : Fragment() {
      * The stored grant is persistable but the file may be gone (deleted,
      * provider removed) — every failure funnels into one toast.
      */
-    private fun openAttachedDocument(doc: com.druk.lmplayground.data.RagDocumentEntity) {
+    private fun openAttachedDocument(doc: com.druk.ai_offline_llm.data.RagDocumentEntity) {
         val uri = doc.sourceUri?.let(Uri::parse)
         if (uri == null) {
             Toast.makeText(requireContext(), R.string.document_source_unavailable, Toast.LENGTH_SHORT).show()
@@ -305,7 +305,7 @@ class ConversationFragment : Fragment() {
             val sessionDocuments by viewModel.sessionDocuments.observeAsState(emptyList())
             val embeddingModelPrompt by viewModel.embeddingModelPrompt.observeAsState()
             var documentPendingRemoval by remember {
-                mutableStateOf<com.druk.lmplayground.data.RagDocumentEntity?>(null)
+                mutableStateOf<com.druk.ai_offline_llm.data.RagDocumentEntity?>(null)
             }
             var showParamsSheet by remember { mutableStateOf(false) }
 
@@ -418,7 +418,7 @@ class ConversationFragment : Fragment() {
                 // align the sidebar boundary with it so the seam between
                 // master/detail lands on the crease instead of arbitrarily
                 // bisecting one display. Fall back to 320dp on flat devices.
-                val hingeWidth = com.druk.lmplayground.util.rememberHingeWidthDp(requireActivity())
+                val hingeWidth = com.druk.ai_offline_llm.util.rememberHingeWidthDp(requireActivity())
                 val sidebarWidth = if (hingeWidth != androidx.compose.ui.unit.Dp.Unspecified) {
                     // Clamp the lower bound so the master pane doesn't shrink
                     // below the comfortable 320dp the rest of the UI expects.
@@ -900,7 +900,7 @@ class ConversationFragment : Fragment() {
                                 onAttachDocument = {
                                     try {
                                         openDocumentLauncher.launch(
-                                            com.druk.lmplayground.rag.DocumentTextExtractors.OPENABLE_MIME_TYPES
+                                            com.druk.ai_offline_llm.rag.DocumentTextExtractors.OPENABLE_MIME_TYPES
                                         )
                                     } catch (e: ActivityNotFoundException) {
                                         Toast.makeText(

@@ -83,10 +83,10 @@ val spirvIncludeDir: String? = run {
 
 android {
     compileSdk = libs.versions.compileSdk.get().toInt()
-    namespace = "com.druk.lmplayground"
+    namespace = "com.druk.ai_offline_llm"
 
     defaultConfig {
-        applicationId = "com.druk.lmplayground"
+        applicationId = "com.druk.ai_offline_llm"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         val versionProps = Properties().apply {

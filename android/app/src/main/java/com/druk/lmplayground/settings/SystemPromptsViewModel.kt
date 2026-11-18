@@ -1,4 +1,4 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.app.Application
 import androidx.annotation.MainThread
@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.druk.lmplayground.App
-import com.druk.lmplayground.data.SystemPromptEntity
-import com.druk.lmplayground.data.SystemPromptRepository
+import com.druk.ai_offline_llm.App
+import com.druk.ai_offline_llm.data.SystemPromptEntity
+import com.druk.ai_offline_llm.data.SystemPromptRepository
 import kotlinx.coroutines.launch
 import java.util.UUID
 

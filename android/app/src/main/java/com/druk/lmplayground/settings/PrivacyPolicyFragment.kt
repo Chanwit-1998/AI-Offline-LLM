@@ -1,4 +1,4 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -11,8 +11,8 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.druk.lmplayground.R
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 class PrivacyPolicyFragment : Fragment() {
 

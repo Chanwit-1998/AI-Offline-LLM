@@ -1,4 +1,4 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 class SoundHapticFragment : Fragment() {
 

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.inference
+package com.druk.ai_offline_llm.inference
 
 import android.app.NotificationManager
 import android.app.Service
@@ -934,7 +934,7 @@ class LlamaService : Service() {
             // so production users can never trip the kill switch. Used by
             // instrumented tests and the debug-only Settings button to
             // validate crash isolation.
-            if (!com.druk.lmplayground.BuildConfig.DEBUG) {
+            if (!com.druk.ai_offline_llm.BuildConfig.DEBUG) {
                 Log.w(TAG, "crashForTest ignored in release build")
                 return
             }
@@ -991,7 +991,7 @@ class LlamaService : Service() {
     /**
      * Map an AIDL (path?, pfd?) pair into a string the native side accepts.
      * "fd:N" is a sentinel recognized by our llama.cpp fork's patched
-     * ggml_fopen / llama-mmap (see andriydruk/llama.cpp-android). Plain
+     * ggml_fopen / llama-mmap (see Chanwit-1998/llama.cpp-android). Plain
      * libc reopen via /proc/self/fd/N would EACCES under Scoped Storage
      * — the kernel re-runs path-based permission checks with our UID
      * instead of inheriting the SAF fd's privilege. dup() of the

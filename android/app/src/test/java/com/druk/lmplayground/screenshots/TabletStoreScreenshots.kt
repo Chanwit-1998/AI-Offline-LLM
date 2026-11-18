@@ -1,6 +1,6 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.screenshots
+package com.druk.ai_offline_llm.screenshots
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
@@ -90,19 +90,19 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.ScreenOrientation
-import com.druk.lmplayground.R
-import com.druk.lmplayground.conversation.ConversationBar
-import com.druk.lmplayground.conversation.DocumentChipsRow
-import com.druk.lmplayground.conversation.Message
-import com.druk.lmplayground.conversation.PermanentSessionList
-import com.druk.lmplayground.conversation.UserInput
-import com.druk.lmplayground.data.ChatSessionEntity
-import com.druk.lmplayground.data.RagDocumentEntity
-import com.druk.lmplayground.models.Model
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.models.ModelWithStatus
-import com.druk.lmplayground.settings.ToolsContent
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.conversation.ConversationBar
+import com.druk.ai_offline_llm.conversation.DocumentChipsRow
+import com.druk.ai_offline_llm.conversation.Message
+import com.druk.ai_offline_llm.conversation.PermanentSessionList
+import com.druk.ai_offline_llm.conversation.UserInput
+import com.druk.ai_offline_llm.data.ChatSessionEntity
+import com.druk.ai_offline_llm.data.RagDocumentEntity
+import com.druk.ai_offline_llm.models.Model
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.models.ModelWithStatus
+import com.druk.ai_offline_llm.settings.ToolsContent
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import com.druk.llamacpp.tools.Tool
 import org.junit.Rule
 import org.junit.Test
@@ -920,12 +920,12 @@ class TabletStoreScreenshots(
                                         .weight(1f)
                                         .padding(horizontal = 8.dp)
                                 ) {
-                                    com.druk.lmplayground.conversation.Message(
+                                    com.druk.ai_offline_llm.conversation.Message(
                                         msg = Message("User", question),
                                         isUserMe = true,
                                         showActions = false
                                     )
-                                    com.druk.lmplayground.conversation.Message(
+                                    com.druk.ai_offline_llm.conversation.Message(
                                         msg = Message(
                                             author = "Assistant",
                                             content = "<think>Let me explain machine learning clearly and concisely.</think>\n$response",
@@ -1000,12 +1000,12 @@ class TabletStoreScreenshots(
                                         .weight(1f)
                                         .padding(horizontal = 8.dp)
                                 ) {
-                                    com.druk.lmplayground.conversation.Message(
+                                    com.druk.ai_offline_llm.conversation.Message(
                                         msg = Message("User", question),
                                         isUserMe = true,
                                         showActions = false
                                     )
-                                    com.druk.lmplayground.conversation.Message(
+                                    com.druk.ai_offline_llm.conversation.Message(
                                         msg = Message(
                                             author = "Assistant",
                                             content = response,
@@ -1069,7 +1069,7 @@ class TabletStoreScreenshots(
                                         .padding(horizontal = 8.dp)
                                 ) {
                                     UserImageMessage(R.drawable.sample_vision_sheep, question)
-                                    com.druk.lmplayground.conversation.Message(
+                                    com.druk.ai_offline_llm.conversation.Message(
                                         msg = Message(
                                             author = "Assistant",
                                             content = response,

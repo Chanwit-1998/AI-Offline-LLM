@@ -1,4 +1,4 @@
-package com.druk.lmplayground.tools
+package com.druk.ai_offline_llm.tools
 
 import com.druk.llamacpp.tools.Tool
 import com.druk.llamacpp.tools.WebLinkStore

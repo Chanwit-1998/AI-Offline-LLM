@@ -1,4 +1,4 @@
-package com.druk.lmplayground.download
+package com.druk.ai_offline_llm.download
 
 import android.content.Context
 import android.content.pm.ServiceInfo
@@ -9,7 +9,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.druk.lmplayground.storage.StorageDocuments
+import com.druk.ai_offline_llm.storage.StorageDocuments
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.BufferedOutputStream

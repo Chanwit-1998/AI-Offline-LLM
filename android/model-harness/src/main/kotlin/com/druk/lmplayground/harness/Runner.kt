@@ -1,6 +1,6 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
-import com.druk.lmplayground.harness.probes.*
+import com.druk.ai_offline_llm.harness.probes.*
 import java.io.File
 
 /** Everything observed about one model. */

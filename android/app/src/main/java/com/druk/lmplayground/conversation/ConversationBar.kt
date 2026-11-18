@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
@@ -30,10 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.AppBar
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.AppBar
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import java.time.LocalDate
 
 const val ConversationBarTestTag = "ConversationBarTestTag"

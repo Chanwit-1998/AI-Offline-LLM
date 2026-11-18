@@ -1,13 +1,13 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import android.app.Application
 import android.net.Uri
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.druk.lmplayground.data.AppDatabase
-import com.druk.lmplayground.data.ChatSessionEntity
-import com.druk.lmplayground.data.RagDocumentEntity
-import com.druk.lmplayground.models.ModelInfo
+import com.druk.ai_offline_llm.data.AppDatabase
+import com.druk.ai_offline_llm.data.ChatSessionEntity
+import com.druk.ai_offline_llm.data.RagDocumentEntity
+import com.druk.ai_offline_llm.models.ModelInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

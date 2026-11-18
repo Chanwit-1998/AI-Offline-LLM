@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.util.Log
 import com.druk.llamacpp.LlamaGenerationCallback
@@ -7,10 +7,10 @@ import com.druk.llamacpp.jni.NativeLlamaCpp
 import com.druk.llamacpp.jni.NativeLlamaModel
 import com.druk.llamacpp.jni.NativeLlamaSession
 import com.druk.llamacpp.tools.ToolRegistry
-import com.druk.lmplayground.tools.createDefault
-import com.druk.lmplayground.tools.WebSearchTool
-import com.druk.lmplayground.tools.JavaScriptTool
-import com.druk.lmplayground.tools.WebFetchTool
+import com.druk.ai_offline_llm.tools.createDefault
+import com.druk.ai_offline_llm.tools.WebSearchTool
+import com.druk.ai_offline_llm.tools.JavaScriptTool
+import com.druk.ai_offline_llm.tools.WebFetchTool
 import org.json.JSONArray
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
@@ -802,9 +802,9 @@ class ToolCallingTest {
 
     @Test
     fun testTask_webFetchLmPlaygroundIdentifiesApp() {
-        // Target our own site (https://lmplayground.app) — the rendered
+        // Target our own site (https://ai_offline_llm.app) — the rendered
         // body text is ~2.6 KB after Jsoup strips nav/footer/script, with
-        // "LM Playground" and "Android" prominent in both title and body.
+        // "AI-OFFLINE-LLM" and "Android" prominent in both title and body.
         // Smaller, more stable, and more recognizable than the previous
         // httpbin.org/html target (5 KB of Moby-Dick excerpt) which a 2B
         // model couldn't reliably summarize in a 512-token budget.
@@ -826,7 +826,7 @@ class ToolCallingTest {
             // visible output; (3) we ask for the page title, which
             // web_fetch returns as a top-level field — always present.
             prompt = "Use the web_fetch tool with max_length=200 to retrieve " +
-                "https://lmplayground.app, then in one short sentence give me the page title.",
+                "https://ai_offline_llm.app, then in one short sentence give me the page title.",
             // Even with max_length=200 the model may ignore the hint and
             // pull the full 2.6 KB body. With thinking auto-enabled for
             // Gemma 4 (see runToolCycle), generation can spend a lot of
@@ -842,11 +842,11 @@ class ToolCallingTest {
         }
         assertEquals("Should call web_fetch", "web_fetch", outcome.toolName)
         // Tool result is deterministic — both literals appear in the
-        // fetched body text, and "LM Playground" sits in the title field
+        // fetched body text, and "AI-OFFLINE-LLM" sits in the title field
         // even when the model truncates content via max_length.
         assertTrue(
-            "Tool content must include 'LM Playground'. content head=${outcome.toolContent.take(400)}",
-            outcome.toolContent.contains("LM Playground")
+            "Tool content must include 'AI-OFFLINE-LLM'. content head=${outcome.toolContent.take(400)}",
+            outcome.toolContent.contains("AI-OFFLINE-LLM")
         )
         assertTrue(
             "Tool content must include 'Android'. content head=${outcome.toolContent.take(400)}",
@@ -858,8 +858,8 @@ class ToolCallingTest {
         val resp = outcome.finalResponse
         assertTrue(
             "Final response should surface fetched content " +
-                "(LM Playground / Android). response=$resp",
-            resp.contains("LM Playground", ignoreCase = true) ||
+                "(AI-OFFLINE-LLM / Android). response=$resp",
+            resp.contains("AI-OFFLINE-LLM", ignoreCase = true) ||
                 resp.contains("Playground", ignoreCase = true) ||
                 resp.contains("Android", ignoreCase = true)
         )

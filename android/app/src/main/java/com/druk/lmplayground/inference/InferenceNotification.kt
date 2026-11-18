@@ -1,4 +1,4 @@
-package com.druk.lmplayground.inference
+package com.druk.ai_offline_llm.inference
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -7,8 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.druk.lmplayground.MainActivity
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.MainActivity
+import com.druk.ai_offline_llm.R
 
 internal object InferenceNotification {
     // v2 because pre-1.5.3 dev builds created an "inference_engine" channel

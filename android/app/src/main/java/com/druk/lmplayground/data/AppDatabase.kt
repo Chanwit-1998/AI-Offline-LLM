@@ -1,4 +1,4 @@
-package com.druk.lmplayground.data
+package com.druk.ai_offline_llm.data
 
 import android.content.Context
 import androidx.room.Database
@@ -171,7 +171,7 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "lmplayground.db"
+                    "ai_offline_llm.db"
                 )
                     .addMigrations(
                         MIGRATION_1_2,

@@ -1,13 +1,13 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import android.util.Log
 import com.druk.llamacpp.LlamaCpp
 import com.druk.llamacpp.LlamaEmbeddingSession
 import com.druk.llamacpp.LlamaModel
 import com.druk.llamacpp.LlamaProgressCallback
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.storage.StorageRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

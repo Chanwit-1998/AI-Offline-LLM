@@ -1,7 +1,7 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
-import com.druk.lmplayground.harness.probes.AsrProbe
-import com.druk.lmplayground.harness.probes.EmbeddingProbe
+import com.druk.ai_offline_llm.harness.probes.AsrProbe
+import com.druk.ai_offline_llm.harness.probes.EmbeddingProbe
 import java.io.File
 
 /**
@@ -124,7 +124,7 @@ fun main(args: Array<String>) {
 
 private fun modelsDir() = File(
     System.getenv("LMP_MODELS_DIR")
-        ?: File(System.getProperty("user.home"), ".cache/lmplayground/models").path
+        ?: File(System.getProperty("user.home"), ".cache/ai_offline_llm/models").path
 )
 
 private fun runInWorker(entry: CatalogEntry, opts: Args): ModelReport {
@@ -134,7 +134,7 @@ private fun runInWorker(entry: CatalogEntry, opts: Args): ModelReport {
         "-Djava.library.path=" + System.getProperty("java.library.path"),
         "-Dlmp.nativeLibDir=" + System.getProperty("lmp.nativeLibDir"),
         "-cp", System.getProperty("java.class.path"),
-        "com.druk.lmplayground.harness.MainKt",
+        "com.druk.ai_offline_llm.harness.MainKt",
         "--worker", entry.filename,
     )
     if (opts.probes.isNotEmpty()) { cmd += "--probes"; cmd += opts.probes.joinToString(",") }

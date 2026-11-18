@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals

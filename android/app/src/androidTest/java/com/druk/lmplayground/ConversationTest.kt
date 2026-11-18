@@ -1,9 +1,9 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.druk.lmplayground.conversation.ConversationBarTestTag
+import com.druk.ai_offline_llm.conversation.ConversationBarTestTag
 import org.junit.Rule
 import org.junit.Test
 

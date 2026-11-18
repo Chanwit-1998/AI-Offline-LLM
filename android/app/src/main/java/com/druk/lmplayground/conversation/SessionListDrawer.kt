@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -49,8 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.data.ChatSessionEntity
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.data.ChatSessionEntity
 
 @Composable
 fun SessionListDrawer(

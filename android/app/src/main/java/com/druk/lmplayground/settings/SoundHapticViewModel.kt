@@ -1,15 +1,15 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Backs Settings → Sound and Haptic. Two independent toggles, both ON by
  * default: the background-completion chime and the per-token generation
- * haptic. Values are read by [com.druk.lmplayground.conversation.ConversationViewModel]
+ * haptic. Values are read by [com.druk.ai_offline_llm.conversation.ConversationViewModel]
  * at generation time straight from [StoragePreferences].
  */
 class SoundHapticViewModel(app: Application) : AndroidViewModel(app) {

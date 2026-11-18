@@ -1,4 +1,4 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect

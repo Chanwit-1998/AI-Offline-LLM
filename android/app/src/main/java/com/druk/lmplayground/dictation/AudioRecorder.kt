@@ -1,4 +1,4 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -41,7 +41,7 @@
         android:theme="@style/Theme.App.NoActionBar">
 
         <activity
-            android:name="com.druk.lmplayground.MainActivity"
+            android:name="com.druk.ai_offline_llm.MainActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|density"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
@@ -80,7 +80,7 @@
              Promoted to foreground while a model is loaded so Android does
              not evict the process under memory pressure. -->
         <service
-            android:name="com.druk.lmplayground.inference.LlamaService"
+            android:name="com.druk.ai_offline_llm.inference.LlamaService"
             android:process=":llama"
             android:foregroundServiceType="dataSync"
             android:exported="false" />
@@ -98,10 +98,10 @@
         </service>
 
         <receiver
-            android:name="com.druk.lmplayground.download.DownloadNotificationManager$CancelDownloadReceiver"
+            android:name="com.druk.ai_offline_llm.download.DownloadNotificationManager$CancelDownloadReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.druk.lmplayground.CANCEL_DOWNLOAD" />
+                <action android:name="com.druk.ai_offline_llm.CANCEL_DOWNLOAD" />
             </intent-filter>
         </receiver>
 
@@ -121,7 +121,7 @@
              notification. Runs in the main process (not :llama) so it has a
              foreground context for the clipboard write and share chooser. -->
         <activity
-            android:name="com.druk.lmplayground.inference.ResponseActionActivity"
+            android:name="com.druk.ai_offline_llm.inference.ResponseActionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:noHistory="true"

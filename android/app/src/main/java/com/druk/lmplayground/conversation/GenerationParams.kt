@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 data class GenerationParams(
     val contextSize: Int = 4096,

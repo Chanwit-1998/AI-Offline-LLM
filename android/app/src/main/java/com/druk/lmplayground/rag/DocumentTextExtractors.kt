@@ -1,11 +1,11 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.druk.lmplayground.rag.DocumentTextExtractor.Companion.MAX_EXTRACTED_CHARS
-import com.druk.lmplayground.rag.DocumentTextExtractor.Companion.MAX_PDF_PAGES
-import com.druk.lmplayground.tools.HtmlToMarkdown
+import com.druk.ai_offline_llm.rag.DocumentTextExtractor.Companion.MAX_EXTRACTED_CHARS
+import com.druk.ai_offline_llm.rag.DocumentTextExtractor.Companion.MAX_PDF_PAGES
+import com.druk.ai_offline_llm.tools.HtmlToMarkdown
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 @Composable
 fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit) {

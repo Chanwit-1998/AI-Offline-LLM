@@ -1,4 +1,4 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import com.druk.llamacpp.jni.NativeLlamaModel
 import java.io.File

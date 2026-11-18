@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.content.Context
 import android.net.Uri
@@ -33,7 +33,7 @@ class StoragePreferences(context: Context) {
      * second resident copy of the weights (~2x footprint) and can OOM-crash
      * large models on low-RAM devices. Users who hit those crashes can turn
      * this ON to trade decode speed for a far smaller resident set. Read by
-     * [com.druk.lmplayground.conversation.ConversationViewModel] at load time.
+     * [com.druk.ai_offline_llm.conversation.ConversationViewModel] at load time.
      */
     // Stored inverted under the legacy "disable_repack" key so existing
     // installs keep their setting; the UI reads the positive form.

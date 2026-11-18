@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.content.ComponentName
 import android.content.Context
@@ -13,7 +13,7 @@ import com.druk.llamacpp.ILlamaGenerationCallback
 import com.druk.llamacpp.ILlamaProgressCallback
 import com.druk.llamacpp.ILlamaService
 import com.druk.llamacpp.SamplerParams
-import com.druk.lmplayground.inference.LlamaService
+import com.druk.ai_offline_llm.inference.LlamaService
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals

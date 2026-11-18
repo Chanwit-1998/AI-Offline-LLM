@@ -1,4 +1,4 @@
-package com.druk.lmplayground.inference
+package com.druk.ai_offline_llm.inference
 
 import android.app.NotificationManager
 import android.content.Context
@@ -6,7 +6,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.util.Log
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 /**
  * Plays a short "response ready" chime. Intended to be fired when a

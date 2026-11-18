@@ -1,4 +1,4 @@
-package com.druk.lmplayground.download
+package com.druk.ai_offline_llm.download
 
 import android.content.Context
 import android.net.Uri
@@ -13,10 +13,10 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.storage.DownloadProgress
-import com.druk.lmplayground.storage.StorageDocuments
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.storage.DownloadProgress
+import com.druk.ai_offline_llm.storage.StorageDocuments
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import java.util.concurrent.TimeUnit
 
 class DownloadRepository(private val context: Context) {

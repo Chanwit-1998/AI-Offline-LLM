@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
@@ -8,8 +8,8 @@ import com.druk.llamacpp.jni.NativeLlamaCpp
 import com.druk.llamacpp.jni.NativeLlamaModel
 import com.druk.llamacpp.jni.NativeLlamaSession
 import com.druk.llamacpp.tools.ToolRegistry
-import com.druk.lmplayground.tools.WebFetchTool
-import com.druk.lmplayground.tools.WebSearchTool
+import com.druk.ai_offline_llm.tools.WebFetchTool
+import com.druk.ai_offline_llm.tools.WebSearchTool
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Assume.assumeNotNull

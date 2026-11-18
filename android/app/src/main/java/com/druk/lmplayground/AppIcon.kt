@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

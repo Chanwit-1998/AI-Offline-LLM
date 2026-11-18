@@ -1,7 +1,7 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.models.supportsLanguage
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.supportsLanguage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

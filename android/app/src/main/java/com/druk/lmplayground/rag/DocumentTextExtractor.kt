@@ -1,4 +1,4 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import android.content.Context
 import android.net.Uri

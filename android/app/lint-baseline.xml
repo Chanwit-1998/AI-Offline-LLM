@@ -799,7 +799,7 @@
         errorLine1="    val screenHeightDp = LocalConfiguration.current.screenHeightDp"
         errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/GenerationParamsSheet.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/GenerationParamsSheet.kt"
             line="106"
             column="26"/>
     </issue>
@@ -810,7 +810,7 @@
         errorLine1="                val twoPane = configuration.screenWidthDp >= 840"
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SettingsFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SettingsFragment.kt"
             line="181"
             column="31"/>
     </issue>
@@ -821,7 +821,7 @@
         errorLine1="    val twoPane = configuration.screenWidthDp >= 840"
         errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SettingsScreen.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SettingsScreen.kt"
             line="134"
             column="19"/>
     </issue>
@@ -832,7 +832,7 @@
         errorLine1="    val isWide = configuration.screenWidthDp >= 840"
         errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SystemPromptsScreen.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SystemPromptsScreen.kt"
             line="129"
             column="18"/>
     </issue>
@@ -843,7 +843,7 @@
         errorLine1="    modifier: Modifier = Modifier,"
         errorLine2="    ~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/ConversationBar.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/ConversationBar.kt"
             line="45"
             column="5"/>
     </issue>
@@ -854,7 +854,7 @@
         errorLine1="    modifier: Modifier = Modifier,"
         errorLine2="    ~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SystemPromptEditorSheet.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SystemPromptEditorSheet.kt"
             line="88"
             column="5"/>
     </issue>
@@ -865,7 +865,7 @@
         errorLine1="    modifier: Modifier = Modifier,"
         errorLine2="    ~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/UserInput.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/UserInput.kt"
             line="124"
             column="5"/>
     </issue>
@@ -1137,7 +1137,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;bn&quot; (Bangla) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-bn/strings.xml"
@@ -1148,7 +1148,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;da&quot; (Danish) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-da/strings.xml"
@@ -1159,7 +1159,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;fi&quot; (Finnish) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-fi/strings.xml"
@@ -1170,7 +1170,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ms&quot; (Malay) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ms/strings.xml"
@@ -1181,7 +1181,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;nb&quot; (Norwegian Bokmål) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-nb/strings.xml"
@@ -1192,7 +1192,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;sv&quot; (Swedish) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-sv/strings.xml"
@@ -1203,7 +1203,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;cs&quot; (Czech) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-cs/strings.xml"
@@ -1214,7 +1214,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;iw&quot; (Hebrew) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-iw/strings.xml"
@@ -1225,7 +1225,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;nl&quot; (Dutch) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-nl/strings.xml"
@@ -1236,7 +1236,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;app_name&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;th&quot; (Thai) here"
-        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>LM Playground&lt;/string>"
+        errorLine1="    &lt;string name=&quot;app_name&quot; translatable=&quot;false&quot;>AI-OFFLINE-LLM&lt;/string>"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-th/strings.xml"
@@ -1577,7 +1577,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;bn&quot; (Bangla) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-bn/strings.xml"
@@ -1588,7 +1588,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;da&quot; (Danish) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-da/strings.xml"
@@ -1599,7 +1599,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ms&quot; (Malay) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ms/strings.xml"
@@ -1610,7 +1610,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;nb&quot; (Norwegian Bokmål) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-nb/strings.xml"
@@ -1621,7 +1621,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;sv&quot; (Swedish) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-sv/strings.xml"
@@ -1632,7 +1632,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;fi&quot; (Finnish) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-fi/strings.xml"
@@ -1643,7 +1643,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;iw&quot; (Hebrew) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-iw/strings.xml"
@@ -1654,7 +1654,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;nl&quot; (Dutch) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-nl/strings.xml"
@@ -1665,7 +1665,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;th&quot; (Thai) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-th/strings.xml"
@@ -1676,7 +1676,7 @@
     <issue
         id="Untranslatable"
         message="The resource string &quot;privacy_policy_contact_email&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;cs&quot; (Czech) here"
-        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>andriydruk@gmail.com&lt;/string>"
+        errorLine1="    &lt;string name=&quot;privacy_policy_contact_email&quot; translatable=&quot;false&quot;>Chanwit-1998@gmail.com&lt;/string>"
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-cs/strings.xml"
@@ -2097,7 +2097,7 @@
         errorLine1="                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &amp;&amp;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/GenerationHaptics.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/GenerationHaptics.kt"
             line="43"
             column="17"/>
     </issue>
@@ -2108,7 +2108,7 @@
         errorLine1="                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/GenerationHaptics.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/GenerationHaptics.kt"
             line="58"
             column="17"/>
     </issue>
@@ -2119,7 +2119,7 @@
         errorLine1="            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/inference/LlamaService.kt"
+            file="src/main/java/com/druk/ai_offline_llm/inference/LlamaService.kt"
             line="548"
             column="17"/>
     </issue>
@@ -2130,7 +2130,7 @@
         errorLine1="        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/inference/ProcessUtils.kt"
+            file="src/main/java/com/druk/ai_offline_llm/inference/ProcessUtils.kt"
             line="9"
             column="20"/>
     </issue>
@@ -2159,7 +2159,7 @@
         errorLine1="    var selectedTab by rememberSaveable { mutableStateOf(0) }"
         errorLine2="                                          ~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/GenerationParamsSheet.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/GenerationParamsSheet.kt"
             line="100"
             column="43"/>
     </issue>
@@ -2170,7 +2170,7 @@
         errorLine1="    var dragAccumulator by remember { mutableStateOf(0f) }"
         errorLine2="                                      ~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/UserInput.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/UserInput.kt"
             line="157"
             column="39"/>
     </issue>
@@ -2885,7 +2885,7 @@
         errorLine1="                    .offset(x = 0.dp, y = -bottomOffset)"
         errorLine2="                     ~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/JumpToBottom.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/JumpToBottom.kt"
             line="74"
             column="22"/>
     </issue>
@@ -2896,7 +2896,7 @@
         errorLine1="                    .offset(x = 0.dp, y = -bottomOffset)"
         errorLine2="                     ~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/JumpToBottom.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/JumpToBottom.kt"
             line="108"
             column="22"/>
     </issue>
@@ -2907,7 +2907,7 @@
         errorLine1="                remoteUri = Uri.parse(&quot;https://example.com/model.gguf&quot;),"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/ConversationBar.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/ConversationBar.kt"
             line="181"
             column="29"/>
     </issue>
@@ -2918,7 +2918,7 @@
         errorLine1="            val s = Bitmap.createScaledBitmap(bitmap, targetW, targetH, true)"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/conversation/ConversationViewModel.kt"
+            file="src/main/java/com/druk/ai_offline_llm/conversation/ConversationViewModel.kt"
             line="1946"
             column="21"/>
     </issue>
@@ -2929,7 +2929,7 @@
         errorLine1="        val storageUri = Uri.parse(storageUriString)"
         errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/download/DownloadWorker.kt"
+            file="src/main/java/com/druk/ai_offline_llm/download/DownloadWorker.kt"
             line="115"
             column="26"/>
     </issue>
@@ -2940,7 +2940,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="43"
             column="25"/>
     </issue>
@@ -2951,7 +2951,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="52"
             column="25"/>
     </issue>
@@ -2962,7 +2962,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="61"
             column="25"/>
     </issue>
@@ -2973,7 +2973,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-0.8B-GGUF/resolve/main/Qwen_Qwen3.5-0.8B-Q3_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="70"
             column="25"/>
     </issue>
@@ -2984,7 +2984,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-0.8B-GGUF/resolve/main/mmproj-Qwen_Qwen3.5-0.8B-f16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="76"
             column="25"/>
     </issue>
@@ -2995,7 +2995,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF/resolve/main/Qwen_Qwen3.5-2B-Q3_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="81"
             column="25"/>
     </issue>
@@ -3006,7 +3006,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF/resolve/main/mmproj-Qwen_Qwen3.5-2B-f16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="87"
             column="25"/>
     </issue>
@@ -3017,7 +3017,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-4B-GGUF/resolve/main/Qwen_Qwen3.5-4B-Q3_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="92"
             column="25"/>
     </issue>
@@ -3028,7 +3028,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/bartowski/Qwen_Qwen3.5-4B-GGUF/resolve/main/mmproj-Qwen_Qwen3.5-4B-f16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="98"
             column="25"/>
     </issue>
@@ -3039,7 +3039,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="103"
             column="25"/>
     </issue>
@@ -3050,7 +3050,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="112"
             column="25"/>
     </issue>
@@ -3061,7 +3061,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-mmproj-f16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="118"
             column="25"/>
     </issue>
@@ -3072,7 +3072,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Llama-3.2-1B-Instruct-GGUF/resolve/main/Llama-3.2-1B-Instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="123"
             column="25"/>
     </issue>
@@ -3083,7 +3083,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="132"
             column="25"/>
     </issue>
@@ -3094,7 +3094,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="141"
             column="25"/>
     </issue>
@@ -3105,7 +3105,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="150"
             column="25"/>
     </issue>
@@ -3116,7 +3116,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="159"
             column="25"/>
     </issue>
@@ -3127,7 +3127,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/LiquidAI/LFM2.5-350M-GGUF/resolve/main/LFM2.5-350M-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="168"
             column="25"/>
     </issue>
@@ -3138,7 +3138,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/LFM2.5-1.2B-Thinking-GGUF/resolve/main/LFM2.5-1.2B-Thinking-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="177"
             column="25"/>
     </issue>
@@ -3149,7 +3149,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="186"
             column="25"/>
     </issue>
@@ -3160,7 +3160,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/mmproj-Ministral-3-3B-Instruct-2512-F16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="192"
             column="25"/>
     </issue>
@@ -3171,7 +3171,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-3B-Reasoning-2512-GGUF/resolve/main/Ministral-3-3B-Reasoning-2512-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="197"
             column="25"/>
     </issue>
@@ -3182,7 +3182,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-3B-Reasoning-2512-GGUF/resolve/main/mmproj-Ministral-3-3B-Reasoning-2512-F16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="203"
             column="25"/>
     </issue>
@@ -3193,7 +3193,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-8B-Instruct-2512-GGUF/resolve/main/Ministral-3-8B-Instruct-2512-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="208"
             column="25"/>
     </issue>
@@ -3204,7 +3204,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-8B-Instruct-2512-GGUF/resolve/main/mmproj-Ministral-3-8B-Instruct-2512-F16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="214"
             column="25"/>
     </issue>
@@ -3215,7 +3215,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-8B-Reasoning-2512-GGUF/resolve/main/Ministral-3-8B-Reasoning-2512-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="219"
             column="25"/>
     </issue>
@@ -3226,7 +3226,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Ministral-3-8B-Reasoning-2512-GGUF/resolve/main/mmproj-Ministral-3-8B-Reasoning-2512-F16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="225"
             column="25"/>
     </issue>
@@ -3237,7 +3237,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/granite-4.0-micro-GGUF/resolve/main/granite-4.0-micro-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="230"
             column="25"/>
     </issue>
@@ -3248,7 +3248,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/granite-4.0-h-tiny-GGUF/resolve/main/granite-4.0-h-tiny-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="239"
             column="25"/>
     </issue>
@@ -3259,7 +3259,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/granite-4.1-3b-GGUF/resolve/main/granite-4.1-3b-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="248"
             column="25"/>
     </issue>
@@ -3270,7 +3270,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/granite-4.1-8b-GGUF/resolve/main/granite-4.1-8b-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="257"
             column="25"/>
     </issue>
@@ -3281,7 +3281,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-4B-GGUF/resolve/main/NVIDIA-Nemotron3-Nano-4B-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="266"
             column="25"/>
     </issue>
@@ -3292,7 +3292,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-3n-E2B-it-text-GGUF/resolve/main/gemma-3n-E2B-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="275"
             column="25"/>
     </issue>
@@ -3303,7 +3303,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-3n-E4B-it-text-GGUF/resolve/main/gemma-3n-E4B-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="284"
             column="25"/>
     </issue>
@@ -3314,7 +3314,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="293"
             column="25"/>
     </issue>
@@ -3325,7 +3325,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E2B-it-GGUF/resolve/main/mmproj-gemma-4-E2B-it-BF16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="301"
             column="25"/>
     </issue>
@@ -3336,7 +3336,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="306"
             column="25"/>
     </issue>
@@ -3347,7 +3347,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E4B-it-GGUF/resolve/main/mmproj-gemma-4-E4B-it-BF16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="312"
             column="25"/>
     </issue>
@@ -3358,7 +3358,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="317"
             column="25"/>
     </issue>
@@ -3369,7 +3369,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="329"
             column="25"/>
     </issue>
@@ -3380,7 +3380,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E2B-it-GGUF/resolve/main/mmproj-gemma-4-E2B-it-BF16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="336"
             column="25"/>
     </issue>
@@ -3391,7 +3391,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="341"
             column="25"/>
     </issue>
@@ -3402,7 +3402,7 @@
         errorLine1="            mmprojUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/gemma-4-E4B-it-GGUF/resolve/main/mmproj-gemma-4-E4B-it-BF16.gguf&quot;)"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="348"
             column="25"/>
     </issue>
@@ -3413,7 +3413,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/gemma-4-12B-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="353"
             column="25"/>
     </issue>
@@ -3424,7 +3424,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="363"
             column="25"/>
     </issue>
@@ -3435,7 +3435,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="372"
             column="25"/>
     </issue>
@@ -3446,7 +3446,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/bartowski/Phi-3.5-mini-instruct-GGUF/resolve/main/Phi-3.5-mini-instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="381"
             column="25"/>
     </issue>
@@ -3457,7 +3457,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="390"
             column="25"/>
     </issue>
@@ -3468,7 +3468,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="399"
             column="25"/>
     </issue>
@@ -3479,7 +3479,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/bartowski/gemma-2-9b-it-GGUF/resolve/main/gemma-2-9b-it-Q4_K_M.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="408"
             column="25"/>
     </issue>
@@ -3490,7 +3490,7 @@
         errorLine1="            remoteUri = Uri.parse(&quot;https://huggingface.co/ggml-org/gpt-oss-20b-GGUF/resolve/main/gpt-oss-20b-mxfp4.gguf&quot;),"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt"
+            file="src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt"
             line="417"
             column="25"/>
     </issue>
@@ -3501,7 +3501,7 @@
         errorLine1="        requireContext().getSharedPreferences(&quot;download_prefs&quot;, 0)"
         errorLine2="        ^">
         <location
-            file="src/main/java/com/druk/lmplayground/storage/ModelsFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/storage/ModelsFragment.kt"
             line="84"
             column="9"/>
     </issue>
@@ -3512,7 +3512,7 @@
         errorLine1="                            data = Uri.parse(&quot;mailto:$email&quot;)"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/PrivacyPolicyFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/PrivacyPolicyFragment.kt"
             line="32"
             column="36"/>
     </issue>
@@ -3523,7 +3523,7 @@
         errorLine1="                            data = Uri.parse(&quot;mailto:$email&quot;)"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/PrivacyPolicyFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/PrivacyPolicyFragment.kt"
             line="32"
             column="36"/>
     </issue>
@@ -3534,7 +3534,7 @@
         errorLine1="        requireContext().getSharedPreferences(&quot;download_prefs&quot;, 0)"
         errorLine2="        ^">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SettingsFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SettingsFragment.kt"
             line="110"
             column="9"/>
     </issue>
@@ -3545,7 +3545,7 @@
         errorLine1="                            data = Uri.parse(&quot;mailto:$email&quot;)"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SettingsFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SettingsFragment.kt"
             line="238"
             column="36"/>
     </issue>
@@ -3556,7 +3556,7 @@
         errorLine1="                            data = Uri.parse(&quot;mailto:$email&quot;)"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/druk/lmplayground/settings/SettingsFragment.kt"
+            file="src/main/java/com/druk/ai_offline_llm/settings/SettingsFragment.kt"
             line="238"
             column="36"/>
     </issue>

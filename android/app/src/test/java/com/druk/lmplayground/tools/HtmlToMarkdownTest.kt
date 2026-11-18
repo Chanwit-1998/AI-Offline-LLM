@@ -1,4 +1,4 @@
-package com.druk.lmplayground.tools
+package com.druk.ai_offline_llm.tools
 
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
@@ -111,10 +111,10 @@ class HtmlToMarkdownTest {
     fun `relative href is resolved against baseUri`() {
         val out = md(
             """<html><body><a href="/about">About</a></body></html>""",
-            baseUri = "https://lmplayground.app/"
+            baseUri = "https://ai_offline_llm.app/"
         )
         assertTrue("relative href should resolve, got:\n$out",
-            out.contains("[About](https://lmplayground.app/about)"))
+            out.contains("[About](https://ai_offline_llm.app/about)"))
     }
 
     @Test

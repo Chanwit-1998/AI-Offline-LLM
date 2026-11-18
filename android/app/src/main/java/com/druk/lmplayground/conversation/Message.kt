@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -53,7 +53,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 private val UserBubbleShape = RoundedCornerShape(20.dp, 20.dp, 4.dp, 20.dp)
 

@@ -1,13 +1,13 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import com.druk.llamacpp.DirectGenerationSession
 import com.druk.llamacpp.LlamaGenerationCallback
 import com.druk.llamacpp.chat.ToolCallLoop
 import com.druk.llamacpp.jni.NativeLlamaSession
-import com.druk.lmplayground.harness.Engine.generateToEnd
-import com.druk.lmplayground.harness.EngineFixture.countingPrompt
-import com.druk.lmplayground.harness.EngineFixture.session
-import com.druk.lmplayground.harness.EngineFixture.turn
+import com.druk.ai_offline_llm.harness.Engine.generateToEnd
+import com.druk.ai_offline_llm.harness.EngineFixture.countingPrompt
+import com.druk.ai_offline_llm.harness.EngineFixture.session
+import com.druk.ai_offline_llm.harness.EngineFixture.turn
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

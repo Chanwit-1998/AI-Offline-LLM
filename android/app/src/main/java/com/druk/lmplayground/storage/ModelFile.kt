@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.net.Uri
 

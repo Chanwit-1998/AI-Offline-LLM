@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -9,7 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.druk.lmplayground.storage.StorageDocuments
+import com.druk.ai_offline_llm.storage.StorageDocuments
 
 class MainActivity : AppCompatActivity() {
 

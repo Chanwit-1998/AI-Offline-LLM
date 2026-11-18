@@ -1,4 +1,4 @@
-package com.druk.lmplayground.theme
+package com.druk.ai_offline_llm.theme
 
 import android.annotation.SuppressLint
 import android.os.Build

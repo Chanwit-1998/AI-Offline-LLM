@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 import com.druk.llamacpp.tools.Tool
 
 /**

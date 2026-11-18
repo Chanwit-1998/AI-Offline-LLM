@@ -1,8 +1,8 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.util.Log
-import com.druk.lmplayground.conversation.ConversationUiState
-import com.druk.lmplayground.conversation.Message
+import com.druk.ai_offline_llm.conversation.ConversationUiState
+import com.druk.ai_offline_llm.conversation.Message
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

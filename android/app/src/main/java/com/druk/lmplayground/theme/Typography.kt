@@ -1,4 +1,4 @@
-package com.druk.lmplayground.theme
+package com.druk.ai_offline_llm.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 val MontserratFontFamily = FontFamily(
     Font(resId = R.font.montserrat_regular),

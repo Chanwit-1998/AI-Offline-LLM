@@ -1,4 +1,4 @@
-package com.druk.lmplayground.data
+package com.druk.ai_offline_llm.data
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals

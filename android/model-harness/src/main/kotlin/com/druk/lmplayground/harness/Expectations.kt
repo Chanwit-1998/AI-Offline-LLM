@@ -1,4 +1,4 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 /** A capability a probe can assert. */
 enum class Cap {

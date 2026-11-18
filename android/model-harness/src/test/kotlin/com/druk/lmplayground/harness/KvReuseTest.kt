@@ -1,9 +1,9 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import com.druk.llamacpp.jni.NativeLlamaSession
-import com.druk.lmplayground.harness.EngineFixture.countingPrompt
-import com.druk.lmplayground.harness.EngineFixture.session
-import com.druk.lmplayground.harness.EngineFixture.turn
+import com.druk.ai_offline_llm.harness.EngineFixture.countingPrompt
+import com.druk.ai_offline_llm.harness.EngineFixture.session
+import com.druk.ai_offline_llm.harness.EngineFixture.turn
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue

@@ -1,10 +1,10 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import com.druk.llamacpp.LlamaCpp
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.storage.StorageRepository
 import java.io.File
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -19,7 +19,7 @@ import kotlinx.coroutines.withTimeout
  * service after an idle period (or under memory pressure), so this class only
  * has to notice when the service dropped it and load again.
  *
- * Handle management mirrors [com.druk.lmplayground.rag.EmbeddingModelManager]:
+ * Handle management mirrors [com.druk.ai_offline_llm.rag.EmbeddingModelManager]:
  * the [StorageRepository.ModelFileHandle] stays open while the model is loaded
  * and is closed on unload. All entry points are suspend and hop through
  * [mutex]; call them off the main thread (binder round-trips block).

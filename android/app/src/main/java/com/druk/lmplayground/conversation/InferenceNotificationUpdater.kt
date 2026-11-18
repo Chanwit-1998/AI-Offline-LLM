@@ -1,8 +1,8 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.app.Application
 import com.druk.llamacpp.LlamaCpp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 /**
  * Updates the foreground-service notification to reflect the current

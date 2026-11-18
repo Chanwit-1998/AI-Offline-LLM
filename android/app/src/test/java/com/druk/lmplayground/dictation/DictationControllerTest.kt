@@ -1,10 +1,10 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
 import android.app.Application
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
-import com.druk.lmplayground.storage.StoragePreferences
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StorageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

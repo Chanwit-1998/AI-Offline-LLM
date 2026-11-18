@@ -1,4 +1,4 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import java.io.File
 
@@ -70,7 +70,7 @@ object Catalog {
     /** Default location, relative to the repo root. */
     fun defaultProviderFile(repoRoot: File) = File(
         repoRoot,
-        "app/src/main/java/com/druk/lmplayground/models/ModelInfoProvider.kt",
+        "app/src/main/java/com/druk/ai_offline_llm/models/ModelInfoProvider.kt",
     )
 
     private fun field(block: String, key: String): String? =

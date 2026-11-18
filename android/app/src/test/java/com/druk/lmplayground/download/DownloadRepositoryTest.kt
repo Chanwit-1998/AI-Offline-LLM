@@ -1,4 +1,4 @@
-package com.druk.lmplayground.download
+package com.druk.ai_offline_llm.download
 
 import android.app.Application
 import android.net.Uri
@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.druk.lmplayground.models.ModelInfo
+import com.druk.ai_offline_llm.models.ModelInfo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -120,7 +120,7 @@ class DownloadRepositoryTest {
 
     @Test
     fun embeddingModelDownloadEnqueuesSingleJob() {
-        val embedding = com.druk.lmplayground.models.ModelInfoProvider.embeddingModel
+        val embedding = com.druk.ai_offline_llm.models.ModelInfoProvider.embeddingModel
 
         repository.startDownload(embedding, storageUri)
 

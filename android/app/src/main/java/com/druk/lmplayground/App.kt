@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.app.Activity
 import android.app.Application
@@ -6,18 +6,18 @@ import android.content.ComponentName
 import android.os.Bundle
 import com.druk.llamacpp.InferenceClient
 import com.druk.llamacpp.LlamaCpp
-import com.druk.lmplayground.data.AppDatabase
-import com.druk.lmplayground.data.ChatRepository
-import com.druk.lmplayground.data.SystemPromptRepository
-import com.druk.lmplayground.download.DownloadNotificationManager
-import com.druk.lmplayground.inference.LlamaService
-import com.druk.lmplayground.inference.ProcessUtils
-import com.druk.lmplayground.rag.EmbeddingModelManager
-import com.druk.lmplayground.rag.RagRepository
-import com.druk.lmplayground.storage.LegacyDownloadCleanup
-import com.druk.lmplayground.storage.SupersededFileCleanup
-import com.druk.lmplayground.storage.StoragePreferences
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.data.AppDatabase
+import com.druk.ai_offline_llm.data.ChatRepository
+import com.druk.ai_offline_llm.data.SystemPromptRepository
+import com.druk.ai_offline_llm.download.DownloadNotificationManager
+import com.druk.ai_offline_llm.inference.LlamaService
+import com.druk.ai_offline_llm.inference.ProcessUtils
+import com.druk.ai_offline_llm.rag.EmbeddingModelManager
+import com.druk.ai_offline_llm.rag.RagRepository
+import com.druk.ai_offline_llm.storage.LegacyDownloadCleanup
+import com.druk.ai_offline_llm.storage.SupersededFileCleanup
+import com.druk.ai_offline_llm.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StorageRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -1,9 +1,9 @@
-package com.druk.lmplayground.harness.probes
+package com.druk.ai_offline_llm.harness.probes
 
 import com.druk.llamacpp.asr.DictationTranscript
 import com.druk.llamacpp.asr.WordErrorRate
 import com.druk.llamacpp.jni.NativeAsr
-import com.druk.lmplayground.harness.*
+import com.druk.ai_offline_llm.harness.*
 import java.io.File
 
 /**

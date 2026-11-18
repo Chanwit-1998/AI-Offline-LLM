@@ -1,4 +1,4 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import java.util.Locale

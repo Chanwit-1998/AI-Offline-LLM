@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.os.Build
 import android.view.HapticFeedbackConstants
@@ -41,8 +41,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.dictation.DictationEarcon
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.dictation.DictationEarcon
 import kotlinx.coroutines.flow.StateFlow
 
 /** The listening ring: a closed loop of hues, so the sweep has no seam. */

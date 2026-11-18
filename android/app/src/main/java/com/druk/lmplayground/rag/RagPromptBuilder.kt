@@ -1,4 +1,4 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 /**
  * Wraps retrieved document excerpts around the user's message. The result

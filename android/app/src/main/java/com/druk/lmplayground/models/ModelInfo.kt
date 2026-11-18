@@ -1,8 +1,8 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale

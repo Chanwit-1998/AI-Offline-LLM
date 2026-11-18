@@ -1,4 +1,4 @@
-package com.druk.lmplayground.tools
+package com.druk.ai_offline_llm.tools
 
 import android.content.Context
 import com.druk.llamacpp.tools.ToolRegistry

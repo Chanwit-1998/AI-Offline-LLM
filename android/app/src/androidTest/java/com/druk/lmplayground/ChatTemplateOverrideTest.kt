@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -7,7 +7,7 @@ import com.druk.llamacpp.LlamaGenerationCallback
 import com.druk.llamacpp.jni.NativeLlamaCpp
 import com.druk.llamacpp.jni.NativeLlamaModel
 import com.druk.llamacpp.jni.NativeLlamaSession
-import com.druk.lmplayground.models.ChatTemplateOverrides
+import com.druk.ai_offline_llm.models.ChatTemplateOverrides
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

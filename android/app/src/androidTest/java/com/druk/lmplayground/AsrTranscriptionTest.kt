@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.content.ComponentName
 import android.content.Context
@@ -13,7 +13,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.druk.llamacpp.ILlamaService
 import com.druk.llamacpp.ITranscriptionCallback
 import com.druk.llamacpp.asr.WordErrorRate
-import com.druk.lmplayground.inference.LlamaService
+import com.druk.ai_offline_llm.inference.LlamaService
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

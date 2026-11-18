@@ -1,15 +1,15 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Backs Settings → Advanced. Currently a single toggle: "Enable repack",
  * ON by default. The value is read by
- * [com.druk.lmplayground.conversation.ConversationViewModel] at model-load
+ * [com.druk.ai_offline_llm.conversation.ConversationViewModel] at model-load
  * time straight from [StoragePreferences], so a change takes effect on the
  * next load.
  */

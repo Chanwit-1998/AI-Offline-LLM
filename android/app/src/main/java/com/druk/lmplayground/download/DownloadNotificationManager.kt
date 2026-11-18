@@ -1,4 +1,4 @@
-package com.druk.lmplayground.download
+package com.druk.ai_offline_llm.download
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -13,7 +13,7 @@ import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 import kotlin.math.absoluteValue
 
 class DownloadNotificationManager(private val context: Context) {
@@ -21,7 +21,7 @@ class DownloadNotificationManager(private val context: Context) {
     companion object {
         const val CHANNEL_ID = "model_downloads"
         private const val NOTIFICATION_ID_BASE = 100_000
-        const val ACTION_CANCEL_DOWNLOAD = "com.druk.lmplayground.CANCEL_DOWNLOAD"
+        const val ACTION_CANCEL_DOWNLOAD = "com.druk.ai_offline_llm.CANCEL_DOWNLOAD"
         const val EXTRA_WORK_NAME = "work_name"
         const val EXTRA_NOTIFICATION_ID = "notification_id"
 

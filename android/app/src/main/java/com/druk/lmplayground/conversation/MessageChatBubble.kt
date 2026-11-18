@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.content.Intent
 import android.os.Bundle
@@ -75,7 +75,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 import java.util.Locale
 import java.util.UUID
 import kotlinx.coroutines.delay

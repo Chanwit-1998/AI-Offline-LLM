@@ -49,7 +49,7 @@ tasks.register<JavaExec>("capabilityReport") {
     group = "verification"
     description = "Run model capability probes against local GGUFs"
     harnessDefaults()
-    mainClass.set("com.druk.lmplayground.harness.MainKt")
+    mainClass.set("com.druk.ai_offline_llm.harness.MainKt")
 }
 
 // Prints the runtime classpath so the harness can be launched directly with

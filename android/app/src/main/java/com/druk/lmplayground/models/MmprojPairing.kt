@@ -1,4 +1,4 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 /**
  * Pairs a base model GGUF with its multimodal projector (mmproj) GGUF by

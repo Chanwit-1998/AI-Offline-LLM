@@ -1,13 +1,13 @@
-package com.druk.lmplayground.rag
+package com.druk.ai_offline_llm.rag
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.druk.lmplayground.data.EmbeddingCodec
-import com.druk.lmplayground.data.RagChunkEntity
-import com.druk.lmplayground.data.RagDao
-import com.druk.lmplayground.data.RagDocumentEntity
+import com.druk.ai_offline_llm.data.EmbeddingCodec
+import com.druk.ai_offline_llm.data.RagChunkEntity
+import com.druk.ai_offline_llm.data.RagDao
+import com.druk.ai_offline_llm.data.RagDocumentEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

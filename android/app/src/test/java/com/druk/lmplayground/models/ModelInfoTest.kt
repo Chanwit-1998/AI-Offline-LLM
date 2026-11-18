@@ -1,4 +1,4 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 import android.net.Uri
 import org.junit.Assert.assertEquals

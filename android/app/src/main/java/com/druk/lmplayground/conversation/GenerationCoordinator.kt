@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import com.druk.llamacpp.chat.ResponseProcessor
 import com.druk.llamacpp.chat.ToolCallRecord
@@ -7,10 +7,10 @@ import android.app.Application
 import android.util.Log
 import com.druk.llamacpp.InferenceUnavailableException
 import com.druk.llamacpp.LlamaGenerationCallback
-import com.druk.lmplayground.App
-import com.druk.lmplayground.R
-import com.druk.lmplayground.inference.ModelRuntime
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.App
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.inference.ModelRuntime
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import com.druk.llamacpp.tools.ToolRegistry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

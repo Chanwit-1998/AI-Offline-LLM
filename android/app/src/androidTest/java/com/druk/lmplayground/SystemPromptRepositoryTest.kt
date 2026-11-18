@@ -1,11 +1,11 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.druk.lmplayground.data.AppDatabase
-import com.druk.lmplayground.data.SystemPromptEntity
-import com.druk.lmplayground.data.SystemPromptRepository
+import com.druk.ai_offline_llm.data.AppDatabase
+import com.druk.ai_offline_llm.data.SystemPromptEntity
+import com.druk.ai_offline_llm.data.SystemPromptRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals

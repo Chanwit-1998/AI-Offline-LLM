@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -22,8 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.druk.lmplayground.R
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 class ModelsFragment : Fragment() {
 

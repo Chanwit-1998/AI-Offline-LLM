@@ -10,7 +10,7 @@ Run the speech probes on a Mac — no device, no emulator:
 ```
 
 It needs `tdt-0.6b-v3-q4_k.gguf` in the models cache
-(`~/.cache/lmplayground/models`, or `$LMP_MODELS_DIR`); the probe reports
+(`~/.cache/ai_offline_llm/models`, or `$LMP_MODELS_DIR`); the probe reports
 "not downloaded" and moves on if it is absent.
 
 Parakeet picks its backend from `PARAKEET_DEVICE` (CPU unless set) and its
@@ -35,7 +35,7 @@ Reference transcript (see `transcripts.json`):
 ## Generated clips
 
 The multilingual clips are **not** committed: they are synthesized on demand by
-`say` into `~/.cache/lmplayground/audio` (override with `$LMP_AUDIO_DIR`), which
+`say` into `~/.cache/ai_offline_llm/audio` (override with `$LMP_AUDIO_DIR`), which
 keeps third-party recordings of uncertain licence out of the repo. A probe run
 skips any language whose macOS voice is not installed.
 

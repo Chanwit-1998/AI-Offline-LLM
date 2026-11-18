@@ -1,4 +1,4 @@
-package com.druk.lmplayground.inference
+package com.druk.ai_offline_llm.inference
 
 import android.app.Activity
 import android.content.ClipData
@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 /**
  * Invisible, no-history activity launched by the "Copy" / "Share" actions
@@ -53,8 +53,8 @@ class ResponseActionActivity : Activity() {
     }
 
     companion object {
-        const val ACTION_COPY = "com.druk.lmplayground.action.COPY_RESPONSE"
-        const val ACTION_SHARE = "com.druk.lmplayground.action.SHARE_RESPONSE"
-        const val EXTRA_TEXT = "com.druk.lmplayground.extra.RESPONSE_TEXT"
+        const val ACTION_COPY = "com.druk.ai_offline_llm.action.COPY_RESPONSE"
+        const val ACTION_SHARE = "com.druk.ai_offline_llm.action.SHARE_RESPONSE"
+        const val EXTRA_TEXT = "com.druk.ai_offline_llm.extra.RESPONSE_TEXT"
     }
 }

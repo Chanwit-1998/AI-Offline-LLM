@@ -1,10 +1,10 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import com.druk.llamacpp.DirectGenerationSession
 import com.druk.llamacpp.LlamaGenerationCallback
 import com.druk.llamacpp.chat.ToolCallLoop
 import com.druk.llamacpp.chat.ToolCallRecord
-import com.druk.lmplayground.harness.Engine.newProductionSession
+import com.druk.ai_offline_llm.harness.Engine.newProductionSession
 import com.druk.llamacpp.jni.NativeLlamaModel
 import kotlinx.coroutines.runBlocking
 

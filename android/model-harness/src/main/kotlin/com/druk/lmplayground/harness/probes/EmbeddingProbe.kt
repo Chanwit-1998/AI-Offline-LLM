@@ -1,6 +1,6 @@
-package com.druk.lmplayground.harness.probes
+package com.druk.ai_offline_llm.harness.probes
 
-import com.druk.lmplayground.harness.*
+import com.druk.ai_offline_llm.harness.*
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.sqrt

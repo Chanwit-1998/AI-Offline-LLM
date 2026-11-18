@@ -1,4 +1,4 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
 import android.app.Application
 import android.os.Handler
@@ -8,9 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.druk.llamacpp.asr.DictationTranscript
-import com.druk.lmplayground.R
-import com.druk.lmplayground.download.DownloadRepository
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.download.DownloadRepository
+import com.druk.ai_offline_llm.storage.StorageRepository
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.log10
 import kotlinx.coroutines.CoroutineScope

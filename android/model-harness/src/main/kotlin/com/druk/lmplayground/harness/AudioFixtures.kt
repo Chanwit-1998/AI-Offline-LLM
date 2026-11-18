@@ -1,4 +1,4 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import java.io.File
 import java.nio.ByteBuffer
@@ -35,7 +35,7 @@ object AudioFixtures {
 
     private val cacheDir: File = File(
         System.getenv("LMP_AUDIO_DIR")
-            ?: File(System.getProperty("user.home"), ".cache/lmplayground/audio").path
+            ?: File(System.getProperty("user.home"), ".cache/ai_offline_llm/audio").path
     ).apply { mkdirs() }
 
     /**

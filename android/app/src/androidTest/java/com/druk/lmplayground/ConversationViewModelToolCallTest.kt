@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.app.Application
 import android.util.Log
@@ -11,8 +11,8 @@ import com.druk.llamacpp.InferenceState
 import com.druk.llamacpp.LlamaGenerationSession
 import com.druk.llamacpp.LlamaModel
 import com.druk.llamacpp.LlamaProgressCallback
-import com.druk.lmplayground.conversation.ConversationViewModel
-import com.druk.lmplayground.conversation.Message
+import com.druk.ai_offline_llm.conversation.ConversationViewModel
+import com.druk.ai_offline_llm.conversation.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

@@ -1,7 +1,7 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 import android.net.Uri
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 import java.time.LocalDate
 
 object ModelInfoProvider {

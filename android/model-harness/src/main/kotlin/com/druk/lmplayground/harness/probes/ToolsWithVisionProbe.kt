@@ -1,9 +1,9 @@
-package com.druk.lmplayground.harness.probes
+package com.druk.ai_offline_llm.harness.probes
 
 import com.druk.llamacpp.LlamaGenerationCallback
-import com.druk.lmplayground.harness.*
-import com.druk.lmplayground.harness.Engine.generateToEnd
-import com.druk.lmplayground.harness.Engine.newProductionSession
+import com.druk.ai_offline_llm.harness.*
+import com.druk.ai_offline_llm.harness.Engine.generateToEnd
+import com.druk.ai_offline_llm.harness.Engine.newProductionSession
 
 /**
  * Tools and an image in the same turn.

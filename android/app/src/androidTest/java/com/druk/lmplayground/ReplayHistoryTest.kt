@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider

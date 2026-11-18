@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
@@ -91,8 +91,8 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
-import com.druk.lmplayground.R
-import com.druk.lmplayground.dictation.DictationState
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.dictation.DictationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

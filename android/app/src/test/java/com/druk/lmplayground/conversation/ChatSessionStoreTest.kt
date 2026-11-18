@@ -1,13 +1,13 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.app.Application
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.druk.lmplayground.data.AppDatabase
-import com.druk.lmplayground.data.ChatRepository
-import com.druk.lmplayground.data.ConversationMetadata
-import com.druk.lmplayground.data.SystemPromptRepository
-import com.druk.lmplayground.models.ModelInfo
+import com.druk.ai_offline_llm.data.AppDatabase
+import com.druk.ai_offline_llm.data.ChatRepository
+import com.druk.ai_offline_llm.data.ConversationMetadata
+import com.druk.ai_offline_llm.data.SystemPromptRepository
+import com.druk.ai_offline_llm.models.ModelInfo
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.dictation
+package com.druk.ai_offline_llm.dictation
 
 import android.media.AudioAttributes
 import android.media.AudioFormat

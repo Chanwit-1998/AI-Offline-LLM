@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.app.Application
 import android.content.Context
@@ -7,13 +7,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.druk.lmplayground.App
-import com.druk.lmplayground.download.DownloadRepository
-import com.druk.lmplayground.models.MmprojPairing
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.models.ModelWithStatus
-import com.druk.lmplayground.models.resolveCapabilities
+import com.druk.ai_offline_llm.App
+import com.druk.ai_offline_llm.download.DownloadRepository
+import com.druk.ai_offline_llm.models.MmprojPairing
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.ModelWithStatus
+import com.druk.ai_offline_llm.models.resolveCapabilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

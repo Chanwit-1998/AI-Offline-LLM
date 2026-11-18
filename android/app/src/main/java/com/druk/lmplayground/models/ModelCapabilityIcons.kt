@@ -1,4 +1,4 @@
-package com.druk.lmplayground.models
+package com.druk.ai_offline_llm.models
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
+import com.druk.ai_offline_llm.R
 
 /**
  * Trailing capability icons for a model row: an image glyph for vision (image

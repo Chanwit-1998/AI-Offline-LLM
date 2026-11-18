@@ -1,4 +1,4 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import java.io.File
 

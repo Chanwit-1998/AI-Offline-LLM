@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import android.app.Application
 import android.text.format.Formatter
@@ -11,29 +11,29 @@ import androidx.lifecycle.viewModelScope
 import com.druk.llamacpp.InferenceLimits
 import com.druk.llamacpp.InferenceState
 import com.druk.llamacpp.LlamaCpp
-import com.druk.lmplayground.App
-import com.druk.lmplayground.inference.ModelRuntime
-import com.druk.lmplayground.data.ChatSessionEntity
-import com.druk.lmplayground.data.ConversationMetadata
-import com.druk.lmplayground.data.SystemPromptEntity
-import com.druk.lmplayground.models.DeviceCapability
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.models.ThinkingMode
-import com.druk.lmplayground.models.ModelInfoProvider
-import com.druk.lmplayground.models.ModelWithStatus
-import com.druk.lmplayground.models.resolveCapabilities
-import com.druk.lmplayground.data.RagDocumentEntity
-import com.druk.lmplayground.dictation.DictationController
-import com.druk.lmplayground.dictation.DictationManager
-import com.druk.lmplayground.download.DownloadRepository
-import com.druk.lmplayground.rag.DocumentTextExtractor
-import com.druk.lmplayground.rag.DocumentTextExtractors
-import com.druk.lmplayground.rag.RagPromptBuilder
-import com.druk.lmplayground.rag.RagRepository
-import com.druk.lmplayground.storage.StoragePreferences
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.App
+import com.druk.ai_offline_llm.inference.ModelRuntime
+import com.druk.ai_offline_llm.data.ChatSessionEntity
+import com.druk.ai_offline_llm.data.ConversationMetadata
+import com.druk.ai_offline_llm.data.SystemPromptEntity
+import com.druk.ai_offline_llm.models.DeviceCapability
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.models.ThinkingMode
+import com.druk.ai_offline_llm.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.ModelWithStatus
+import com.druk.ai_offline_llm.models.resolveCapabilities
+import com.druk.ai_offline_llm.data.RagDocumentEntity
+import com.druk.ai_offline_llm.dictation.DictationController
+import com.druk.ai_offline_llm.dictation.DictationManager
+import com.druk.ai_offline_llm.download.DownloadRepository
+import com.druk.ai_offline_llm.rag.DocumentTextExtractor
+import com.druk.ai_offline_llm.rag.DocumentTextExtractors
+import com.druk.ai_offline_llm.rag.RagPromptBuilder
+import com.druk.ai_offline_llm.rag.RagRepository
+import com.druk.ai_offline_llm.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StorageRepository
 import com.druk.llamacpp.tools.ToolRegistry
-import com.druk.lmplayground.tools.createDefault
+import com.druk.ai_offline_llm.tools.createDefault
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
@@ -204,7 +204,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         override fun onModelLoadFailed(modelName: String) {
             _modelLoadError.postValue(
                 app.getString(
-                    com.druk.lmplayground.R.string.model_load_failed_message,
+                    com.druk.ai_offline_llm.R.string.model_load_failed_message,
                     modelName,
                 )
             )
@@ -333,7 +333,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 ?.let { stripThinkTags(it) })
                 ?.takeIf { it.isNotBlank() }
             notifications.update(
-                com.druk.lmplayground.R.string.inference_notification_ready_title,
+                com.druk.ai_offline_llm.R.string.inference_notification_ready_title,
                 notifications.tokensLine(totalTokens),
                 actionBody = readyBody,
             )
@@ -347,7 +347,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 readyBody != null &&
                 (app as? App)?.isAppInForeground == false
             ) {
-                com.druk.lmplayground.inference.ResponseSound.playIfAudible(app)
+                com.druk.ai_offline_llm.inference.ResponseSound.playIfAudible(app)
             }
 
             // Persist whatever the assistant produced — including
@@ -480,7 +480,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 stopObservingEmbeddingDownload()
                 pendingDocument = null
                 _userError.value =
-                    app.getString(com.druk.lmplayground.R.string.document_embedding_download_failed)
+                    app.getString(com.druk.ai_offline_llm.R.string.document_embedding_download_failed)
             }
             else -> {}
         }
@@ -512,12 +512,12 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     private fun documentErrorRes(reasonCode: String): Int = when (reasonCode) {
-        "ENCRYPTED" -> com.druk.lmplayground.R.string.document_error_encrypted
-        "NO_TEXT" -> com.druk.lmplayground.R.string.document_error_no_text
-        "TOO_LARGE" -> com.druk.lmplayground.R.string.document_too_large
-        "UNSUPPORTED" -> com.druk.lmplayground.R.string.document_unsupported_format
-        "PARSE_FAILED" -> com.druk.lmplayground.R.string.document_error_parse_failed
-        else -> com.druk.lmplayground.R.string.document_error_embedding
+        "ENCRYPTED" -> com.druk.ai_offline_llm.R.string.document_error_encrypted
+        "NO_TEXT" -> com.druk.ai_offline_llm.R.string.document_error_no_text
+        "TOO_LARGE" -> com.druk.ai_offline_llm.R.string.document_too_large
+        "UNSUPPORTED" -> com.druk.ai_offline_llm.R.string.document_unsupported_format
+        "PARSE_FAILED" -> com.druk.ai_offline_llm.R.string.document_error_parse_failed
+        else -> com.druk.ai_offline_llm.R.string.document_error_embedding
     }
 
     private fun onInferenceCrashed() {
@@ -545,7 +545,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             }
 
             _loadedModelStatus.value = app.getString(
-                com.druk.lmplayground.R.string.inference_engine_crashed,
+                com.druk.ai_offline_llm.R.string.inference_engine_crashed,
             )
             Snapshot.withMutableSnapshot {
                 // If the assistant was mid-response when the engine died,
@@ -554,7 +554,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 // model finished.
                 val last = uiState.messages.lastOrNull()
                 if (last != null && last.author == "Assistant" && last.responseStartTimeMs > 0) {
-                    val suffix = "\n\n_${app.getString(com.druk.lmplayground.R.string.inference_engine_crashed)}_"
+                    val suffix = "\n\n_${app.getString(com.druk.ai_offline_llm.R.string.inference_engine_crashed)}_"
                     uiState.updateLastMessage(
                         last.content + suffix,
                         thinkingTokens = last.thinkingTokens,
@@ -658,7 +658,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             is HistoryReplay.ValidationResult.SystemPromptTooLarge -> {
                 _userError.postValue(
                     app.getString(
-                        com.druk.lmplayground.R.string.system_prompt_too_large,
+                        com.druk.ai_offline_llm.R.string.system_prompt_too_large,
                         result.promptBytes / 1024,
                         result.maxBytes / 1024,
                     )
@@ -667,7 +667,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             }
             HistoryReplay.ValidationResult.MessageTooLarge -> {
                 _userError.postValue(
-                    app.getString(com.druk.lmplayground.R.string.history_message_too_large)
+                    app.getString(com.druk.ai_offline_llm.R.string.history_message_too_large)
                 )
                 false
             }
@@ -772,7 +772,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         if (sizeBytes > InferenceLimits.MAX_PAYLOAD_BYTES) {
             _userError.postValue(
                 app.getString(
-                    com.druk.lmplayground.R.string.message_too_large,
+                    com.druk.ai_offline_llm.R.string.message_too_large,
                     sizeBytes / 1024,
                     InferenceLimits.MAX_PAYLOAD_BYTES / 1024,
                 )
@@ -861,7 +861,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         if (sizeBytes > InferenceLimits.MAX_PAYLOAD_BYTES) {
             _userError.postValue(
                 app.getString(
-                    com.druk.lmplayground.R.string.message_too_large,
+                    com.druk.ai_offline_llm.R.string.message_too_large,
                     sizeBytes / 1024,
                     InferenceLimits.MAX_PAYLOAD_BYTES / 1024,
                 )
@@ -911,9 +911,9 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             try {
                 val (branchId, kept) = sessionStore.branchSession(sourceId, plan.kept) { rootTitle, number ->
                     if (number == 1) {
-                        app.getString(com.druk.lmplayground.R.string.branch_title, rootTitle)
+                        app.getString(com.druk.ai_offline_llm.R.string.branch_title, rootTitle)
                     } else {
-                        app.getString(com.druk.lmplayground.R.string.branch_title_numbered, rootTitle, number)
+                        app.getString(com.druk.ai_offline_llm.R.string.branch_title_numbered, rootTitle, number)
                     }
                 } ?: return@launch
                 val rewind = plan.rewind
@@ -922,7 +922,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 }
                 _currentSessionId.value = branchId
                 uiState.setMessages(kept)
-                _notice.value = app.getString(com.druk.lmplayground.R.string.branch_created)
+                _notice.value = app.getString(com.druk.ai_offline_llm.R.string.branch_created)
             } finally {
                 _isGenerating.value = false
             }
@@ -1237,7 +1237,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             android.util.Log.w("ConversationViewModel", "downloadVisionModule: storage not configured")
             return
         }
-        com.druk.lmplayground.download.DownloadRepository(app)
+        com.druk.ai_offline_llm.download.DownloadRepository(app)
             .startMmprojDownload(model, storageUri)
     }
 
@@ -1264,17 +1264,17 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             }
             if (doc == null) {
                 _userError.value =
-                    app.getString(com.druk.lmplayground.R.string.document_open_failed)
+                    app.getString(com.druk.ai_offline_llm.R.string.document_open_failed)
                 return@launch
             }
             if (DocumentTextExtractors.forDocument(doc.mimeType, doc.displayName) == null) {
                 _userError.value =
-                    app.getString(com.druk.lmplayground.R.string.document_unsupported_format)
+                    app.getString(com.druk.ai_offline_llm.R.string.document_unsupported_format)
                 return@launch
             }
             if (doc.sizeBytes > DocumentTextExtractor.MAX_FILE_BYTES) {
                 _userError.value =
-                    app.getString(com.druk.lmplayground.R.string.document_too_large)
+                    app.getString(com.druk.ai_offline_llm.R.string.document_too_large)
                 return@launch
             }
             val modelOnDisk = withContext(Dispatchers.IO) { rag.isEmbeddingModelAvailable() }
@@ -1294,7 +1294,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         val storageUri = storageRepository.getStorageUri()
         if (storageUri == null) {
             _userError.value =
-                app.getString(com.druk.lmplayground.R.string.document_storage_missing)
+                app.getString(com.druk.ai_offline_llm.R.string.document_storage_missing)
             return
         }
         pendingDocument = pending

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 /**
  * Pure planning for edit, regenerate and branch: which messages survive,

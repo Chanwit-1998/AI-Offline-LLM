@@ -1,9 +1,9 @@
-package com.druk.lmplayground.harness
+package com.druk.ai_offline_llm.harness
 
 import com.druk.llamacpp.jni.NativeLlamaModel
 import com.druk.llamacpp.jni.NativeLlamaSession
-import com.druk.lmplayground.harness.Engine.generateToEnd
-import com.druk.lmplayground.harness.Engine.newGreedySession
+import com.druk.ai_offline_llm.harness.Engine.generateToEnd
+import com.druk.ai_offline_llm.harness.Engine.newGreedySession
 import java.io.File
 
 /**
@@ -12,7 +12,7 @@ import java.io.File
  * These tests run the actual llama.cpp build against GGUFs on disk, so they
  * catch what a llama.cpp bump can silently break (KV-cache APIs, memory
  * types, template rendering). Models come from `$LMP_MODELS_DIR` (default
- * `~/.cache/lmplayground/models`); `-Dlmp.testModels=a.gguf,b.gguf` narrows
+ * `~/.cache/ai_offline_llm/models`); `-Dlmp.testModels=a.gguf,b.gguf` narrows
  * the set. With no chat model on disk the suites are skipped, not failed.
  */
 object EngineFixture {
@@ -21,7 +21,7 @@ object EngineFixture {
 
     fun modelsDir(): File = File(
         System.getenv("LMP_MODELS_DIR")
-            ?: File(System.getProperty("user.home"), ".cache/lmplayground/models").path
+            ?: File(System.getProperty("user.home"), ".cache/ai_offline_llm/models").path
     )
 
     /** Chat GGUFs to run against, smallest first so failures surface fast. */

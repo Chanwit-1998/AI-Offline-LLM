@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,8 +45,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.data.SystemPromptEntity
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.data.SystemPromptEntity
 
 /**
  * Full-screen System Prompts page used by [SystemPromptsFragment] when reached

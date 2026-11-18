@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import com.druk.llamacpp.chat.ResponseProcessor
 import android.util.Log

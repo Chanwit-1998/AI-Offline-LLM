@@ -1,4 +1,4 @@
-package com.druk.lmplayground.inference
+package com.druk.ai_offline_llm.inference
 
 import android.app.Application
 import android.text.format.Formatter
@@ -11,15 +11,15 @@ import com.druk.llamacpp.LlamaGenerationSession
 import com.druk.llamacpp.LlamaModel
 import com.druk.llamacpp.LlamaProgressCallback
 import com.druk.llamacpp.PayloadTooLargeException
-import com.druk.lmplayground.R
-import com.druk.lmplayground.conversation.GenerationParams
-import com.druk.lmplayground.conversation.HistoryReplay
-import com.druk.lmplayground.conversation.InferenceNotificationUpdater
-import com.druk.lmplayground.conversation.Message
-import com.druk.lmplayground.models.ChatTemplateOverrides
-import com.druk.lmplayground.models.ModelInfo
-import com.druk.lmplayground.storage.StoragePreferences
-import com.druk.lmplayground.storage.StorageRepository
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.conversation.GenerationParams
+import com.druk.ai_offline_llm.conversation.HistoryReplay
+import com.druk.ai_offline_llm.conversation.InferenceNotificationUpdater
+import com.druk.ai_offline_llm.conversation.Message
+import com.druk.ai_offline_llm.models.ChatTemplateOverrides
+import com.druk.ai_offline_llm.models.ModelInfo
+import com.druk.ai_offline_llm.storage.StoragePreferences
+import com.druk.ai_offline_llm.storage.StorageRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

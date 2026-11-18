@@ -1,4 +1,4 @@
-package com.druk.lmplayground.data
+package com.druk.ai_offline_llm.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

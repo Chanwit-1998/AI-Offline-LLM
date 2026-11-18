@@ -1,4 +1,4 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -47,7 +47,7 @@ class SupersededFileCleanupTest {
 
     @Test
     fun everySupersededEntryPointsAtACatalogFile() {
-        val known = com.druk.lmplayground.models.ModelInfoProvider.knownFilenames
+        val known = com.druk.ai_offline_llm.models.ModelInfoProvider.knownFilenames
         SupersededFileCleanup.supersededFilenames().forEach { retired ->
             assertTrue(
                 "$retired is retired but still referenced by the catalog",

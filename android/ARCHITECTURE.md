@@ -1,6 +1,6 @@
 # Architecture
 
-LM Playground runs GGUF models on-device through [llama.cpp](https://github.com/andriydruk/llama.cpp-android)
+AI-OFFLINE-LLM runs GGUF models on-device through [llama.cpp](https://github.com/Chanwit-1998/llama.cpp-android)
 (a fork carrying one patch — see [fd:N paths](#fdn-file-descriptor-paths)).
 This document maps the moving parts and the contracts between them.
 
@@ -56,7 +56,7 @@ prepends them to the *wire copy* of the message (UI and Room keep the
 original; history replay resends originals since retrieval re-runs per
 turn — see `ConversationViewModel.buildWireContent`).
 
-- `com.druk.lmplayground.rag` — `DocumentTextExtractors` (PDF via
+- `com.druk.ai_offline_llm.rag` — `DocumentTextExtractors` (PDF via
   pdfbox-android, DOCX via ZIP+XmlPullParser, EPUB/HTML via jsoup, plain
   text), `TextChunker` (paragraph/sentence-aware, ~1000 chars + overlap),
   `RagRepository` (indexing job on an application-scoped coroutine so it

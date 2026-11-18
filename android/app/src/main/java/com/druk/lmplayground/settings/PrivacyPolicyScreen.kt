@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 private data class PolicySection(
     @StringRes val titleRes: Int,

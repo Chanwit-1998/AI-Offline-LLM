@@ -1,9 +1,9 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.druk.lmplayground.conversation.GenerationParams
-import com.druk.lmplayground.storage.StoragePreferences
+import com.druk.ai_offline_llm.conversation.GenerationParams
+import com.druk.ai_offline_llm.storage.StoragePreferences
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

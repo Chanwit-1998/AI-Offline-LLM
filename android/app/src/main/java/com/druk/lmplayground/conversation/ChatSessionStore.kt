@@ -1,14 +1,14 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.druk.lmplayground.data.ChatMessageEntity
-import com.druk.lmplayground.data.ChatRepository
-import com.druk.lmplayground.data.ChatSessionEntity
-import com.druk.lmplayground.data.ConversationMetadata
-import com.druk.lmplayground.data.SystemPromptEntity
-import com.druk.lmplayground.data.SystemPromptRepository
-import com.druk.lmplayground.models.ModelInfo
+import com.druk.ai_offline_llm.data.ChatMessageEntity
+import com.druk.ai_offline_llm.data.ChatRepository
+import com.druk.ai_offline_llm.data.ChatSessionEntity
+import com.druk.ai_offline_llm.data.ConversationMetadata
+import com.druk.ai_offline_llm.data.SystemPromptEntity
+import com.druk.ai_offline_llm.data.SystemPromptRepository
+import com.druk.ai_offline_llm.models.ModelInfo
 import java.io.File
 import java.util.UUID
 

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.assistant
+package com.druk.ai_offline_llm.assistant
 
 import android.content.Context
 import android.os.Bundle

@@ -1,11 +1,11 @@
-package com.druk.lmplayground.storage
+package com.druk.ai_offline_llm.storage
 
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.StatFs
 import android.util.Log
-import com.druk.lmplayground.models.ModelInfoProvider
+import com.druk.ai_offline_llm.models.ModelInfoProvider
 import java.net.URLDecoder
 
 class StorageRepository(

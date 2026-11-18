@@ -1,8 +1,8 @@
-package com.druk.lmplayground.harness.probes
+package com.druk.ai_offline_llm.harness.probes
 
-import com.druk.lmplayground.harness.*
-import com.druk.lmplayground.harness.Engine.generateToEnd
-import com.druk.lmplayground.harness.Engine.newGreedySession
+import com.druk.ai_offline_llm.harness.*
+import com.druk.ai_offline_llm.harness.Engine.generateToEnd
+import com.druk.ai_offline_llm.harness.Engine.newGreedySession
 
 /**
  * Image input: load the projector, attach a picture, describe it.

@@ -1,4 +1,4 @@
-package com.druk.lmplayground.settings
+package com.druk.ai_offline_llm.settings
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -34,14 +34,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.druk.llamacpp.InferenceState
-import com.druk.lmplayground.App
-import com.druk.lmplayground.BuildConfig
-import com.druk.lmplayground.R
-import com.druk.lmplayground.storage.ModelsContent
-import com.druk.lmplayground.storage.StorageDocuments
-import com.druk.lmplayground.storage.StorageViewModel
-import com.druk.lmplayground.util.rememberHingeWidthDp
-import com.druk.lmplayground.theme.PlaygroundTheme
+import com.druk.ai_offline_llm.App
+import com.druk.ai_offline_llm.BuildConfig
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.storage.ModelsContent
+import com.druk.ai_offline_llm.storage.StorageDocuments
+import com.druk.ai_offline_llm.storage.StorageViewModel
+import com.druk.ai_offline_llm.util.rememberHingeWidthDp
+import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

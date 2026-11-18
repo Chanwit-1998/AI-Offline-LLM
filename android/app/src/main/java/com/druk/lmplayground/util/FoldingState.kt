@@ -1,4 +1,4 @@
-package com.druk.lmplayground.util
+package com.druk.ai_offline_llm.util
 
 import android.app.Activity
 import androidx.compose.runtime.Composable

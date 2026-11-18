@@ -1,4 +1,4 @@
-package com.druk.lmplayground.conversation
+package com.druk.ai_offline_llm.conversation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -53,10 +53,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.druk.lmplayground.R
-import com.druk.lmplayground.data.SystemPromptEntity
-import com.druk.lmplayground.settings.SystemPromptEditorSheet
-import com.druk.lmplayground.settings.ToolsContent
+import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.data.SystemPromptEntity
+import com.druk.ai_offline_llm.settings.SystemPromptEditorSheet
+import com.druk.ai_offline_llm.settings.ToolsContent
 import com.druk.llamacpp.tools.Tool
 import kotlin.math.roundToInt
 

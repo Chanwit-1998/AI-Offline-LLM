@@ -1,4 +1,4 @@
-package com.druk.lmplayground
+package com.druk.ai_offline_llm
 
 import android.content.ComponentName
 import android.content.Context
@@ -13,7 +13,7 @@ import com.druk.llamacpp.InferenceState
 import com.druk.llamacpp.LlamaCpp
 import com.druk.llamacpp.LlamaGenerationCallback
 import com.druk.llamacpp.LlamaProgressCallback
-import com.druk.lmplayground.inference.LlamaService
+import com.druk.ai_offline_llm.inference.LlamaService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
