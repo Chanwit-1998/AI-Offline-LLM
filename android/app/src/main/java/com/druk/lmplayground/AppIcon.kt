@@ -25,7 +25,7 @@ fun AppIcon(
     }
     Box(modifier = modifier.then(semantics)) {
         Image(
-            painter = painterResource(id = R.drawable.penrose_triangle),
+            painter = painterResource(id = R.drawable.ic_project_logo),
             contentDescription = null
         )
     }

@@ -7,7 +7,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/penrose_triangle_monochrome"
+            android:icon="@drawable/ic_project_logo_monochrome"
             android:title="@string/conversations" />
     </group>
 </menu>

@@ -755,7 +755,7 @@ object ModelInfoProvider {
             remoteUri = null,
             releaseDate = null,
             description = "Custom model \u00B7 $sizeLabel",
-            logoRes = R.drawable.penrose_triangle
+            logoRes = R.drawable.ic_project_logo
         )
     }
 

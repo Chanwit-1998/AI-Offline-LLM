@@ -53,7 +53,7 @@ internal object InferenceNotification {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_project_logo)
             .setContentTitle(title ?: context.getString(R.string.inference_notification_title))
             .setContentText(text ?: context.getString(R.string.inference_notification_text))
             .setContentIntent(pi)
