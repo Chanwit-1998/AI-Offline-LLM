@@ -2,22 +2,25 @@
 
 package com.druk.lmplayground.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -32,6 +35,7 @@ import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VolumeUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,10 +50,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.druk.lmplayground.R
@@ -127,15 +133,8 @@ fun SettingsScreen(
     onCrashEngineClick: (() -> Unit)? = null,
 ) {
     val configuration = LocalConfiguration.current
-    // Use the current window width (not smallestScreenWidthDp) so 7" tablet
-    // portrait (600dp) stays single-pane while landscape (1024dp) goes
-    // two-pane. 840dp matches the M3 "Expanded" breakpoint where a 360dp
-    // master + detail combo actually has room to breathe.
     val twoPane = configuration.screenWidthDp >= 840
 
-    // Default to Models on tablet (when the detail slot is provided) so the
-    // user lands on a useful pane instead of an empty placeholder. On phone
-    // the detail pane doesn't render at all so the initial value is moot.
     var detail by remember {
         mutableStateOf<SettingsDetail?>(
             when (initialDetailKey) {
@@ -146,14 +145,7 @@ fun SettingsScreen(
     }
 
     if (twoPane) {
-        // Two-pane layout: each pane owns its own TopAppBar (Scaffold) so the
-        // "Settings" bar lives only over the master card on the left and the
-        // detail pane gets a title bar matching whatever is selected. The
-        // outer Box just stretches across the window and lets each pane's
-        // Scaffold consume status-bar insets independently.
         Row(modifier = Modifier.fillMaxSize()) {
-            // Master pane — Scaffold gives us a TopAppBar with the right
-            // status-bar inset, and the floating card hangs below.
             Scaffold(
                 modifier = Modifier.width(masterWidth),
                 topBar = {
@@ -174,10 +166,6 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(masterPadding)
-                        // 12dp left inset only — the top edge meets the
-                        // TopAppBar's bottom so the card visually extends up
-                        // to the bar. Content scrolls inside the card; the
-                        // rounded top corners stay visible against the bar.
                         .padding(start = 12.dp),
                     shape = RoundedCornerShape(24.dp),
                     color = MaterialTheme.colorScheme.surfaceContainer,
@@ -186,10 +174,6 @@ fun SettingsScreen(
                     SettingsList(
                         appVersion = appVersion,
                         selectedDetail = detail,
-                        // On tablet, Models/Prompts taps swap the detail pane
-                        // instead of navigating. If the caller didn't supply a
-                        // detail content (e.g. embedded environment without
-                        // ViewModels), fall back to the navigation callback.
                         onModelsClick = {
                             if (modelsDetailContent != null) {
                                 detail = SettingsDetail.Models
@@ -238,10 +222,7 @@ fun SettingsScreen(
                     )
                 }
             }
-            // Detail pane — its own Scaffold + TopAppBar reflects the selected
-            // detail's title. When nothing is selected we still render a bar
-            // (without a title) so the master/detail headers stay vertically
-            // aligned.
+
             val detailTitle = when (detail) {
                 SettingsDetail.Models -> stringResource(R.string.models)
                 SettingsDetail.Prompts -> stringResource(R.string.system_prompts)
@@ -274,17 +255,12 @@ fun SettingsScreen(
                         SettingsDetail.PrivacyPolicy ->
                             PrivacyPolicyContent(onSendFeedbackClick = onSendFeedbackClick)
                         SettingsDetail.Faq -> FaqContent()
-                        // detail defaults to Models on tablet, so null only
-                        // happens transiently / on degenerate configs — render
-                        // nothing instead of a placeholder hint.
                         null -> Unit
                     }
                 }
             }
         }
     } else {
-        // Phone path — single Scaffold + single-column SettingsList. Same as
-        // before the two-pane split.
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -318,13 +294,7 @@ fun SettingsScreen(
             )
         }
     }
-
-    // (Language picker no longer renders here — it's a Fragment on phone and
-    // a detail-pane slot on tablet, mirroring Models / Prompts.)
 }
-
-// DetailHeader removed — the detail pane now uses its own TopAppBar via a
-// dedicated Scaffold, so the title bar style matches the rest of the app.
 
 @Composable
 private fun SettingsList(
@@ -341,119 +311,214 @@ private fun SettingsList(
     onCrashEngineClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    // verticalScroll so the master list scrolls when the rows overflow the
-    // available height — e.g. landscape phone, short tablet windows, or when
-    // debug build adds the Crash row.
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        // Models row
-        SettingsRow(
-            icon = Icons.Outlined.Storage,
-            title = stringResource(R.string.models),
-            subtitle = stringResource(R.string.models_subtitle),
-            selected = selectedDetail == SettingsDetail.Models,
-            onClick = onModelsClick
-        )
+    val isDark = isSystemInDarkTheme()
 
-        // System Prompts row
-        SettingsRow(
-            icon = Icons.AutoMirrored.Outlined.Article,
-            title = stringResource(R.string.system_prompts),
-            subtitle = stringResource(R.string.system_prompts_subtitle),
-            selected = selectedDetail == SettingsDetail.Prompts,
-            onClick = onSystemPromptsClick
-        )
+    // Badge colors per category
+    val aiGreenTint = if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
+    val aiGreenBg = aiGreenTint.copy(alpha = 0.14f)
 
-        // Tools row
-        SettingsRow(
-            icon = Icons.Outlined.Build,
-            title = stringResource(R.string.tools),
-            subtitle = stringResource(R.string.tools_subtitle),
-            selected = selectedDetail == SettingsDetail.Tools,
-            onClick = onToolsClick
-        )
+    val usageBlueTint = if (isDark) Color(0xFF60A5FA) else Color(0xFF2563EB)
+    val usageBlueBg = usageBlueTint.copy(alpha = 0.14f)
 
-        // Sound and Haptic row
-        SettingsRow(
-            icon = Icons.Outlined.VolumeUp,
-            title = stringResource(R.string.sound_and_haptic),
-            subtitle = stringResource(R.string.sound_and_haptic_subtitle),
-            selected = selectedDetail == SettingsDetail.SoundHaptic,
-            onClick = onSoundHapticClick
-        )
+    val infoNeutralTint = MaterialTheme.colorScheme.onSurfaceVariant
+    val infoNeutralBg = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
 
-        // Advanced row
-        SettingsRow(
-            icon = Icons.Outlined.Tune,
-            title = stringResource(R.string.advanced),
-            subtitle = stringResource(R.string.advanced_subtitle),
-            selected = selectedDetail == SettingsDetail.Advanced,
-            onClick = onAdvancedClick
-        )
+    val debugOrangeTint = if (isDark) Color(0xFFFB923C) else Color(0xFFEA580C)
+    val debugOrangeBg = debugOrangeTint.copy(alpha = 0.14f)
 
-        // Language row
-        val currentTag = currentLanguageTag()
-        val languageSubtitle = if (currentTag == null) {
-            stringResource(R.string.language_system_default)
-        } else {
-            Locale.forLanguageTag(currentTag).let { locale ->
-                locale.getDisplayName(locale)
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
-            }
-        }
-        SettingsRow(
-            icon = Icons.Outlined.Language,
-            title = stringResource(R.string.language),
-            subtitle = languageSubtitle,
-            selected = selectedDetail == SettingsDetail.Language,
-            onClick = onLanguageClick
-        )
+    val currentTag = currentLanguageTag()
+    val isThai = remember(currentTag) {
+        val lang = currentTag ?: Locale.getDefault().language
+        lang.startsWith("th", ignoreCase = true)
+    }
 
-        // Privacy Policy row
-        SettingsRow(
-            icon = Icons.Outlined.Policy,
-            title = stringResource(R.string.privacy_policy),
-            selected = selectedDetail == SettingsDetail.PrivacyPolicy,
-            onClick = onPrivacyPolicyClick
-        )
-
-        // FAQ row
-        SettingsRow(
-            icon = Icons.Outlined.HelpOutline,
-            title = stringResource(R.string.faq),
-            subtitle = stringResource(R.string.faq_subtitle),
-            selected = selectedDetail == SettingsDetail.Faq,
-            onClick = onFaqClick
-        )
-
-        // Debug-only: crash the inference engine to verify isolation.
-        if (onCrashEngineClick != null) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
+        // 1. ปัญญาประดิษฐ์และโมเดล (AI & Models)
+        SettingsGroupCard(
+            title = if (isThai) "ปัญญาประดิษฐ์และโมเดล" else "AI & Models"
+        ) {
             SettingsRow(
-                icon = Icons.Outlined.BugReport,
-                title = stringResource(R.string.debug_crash_engine_title),
-                subtitle = stringResource(R.string.debug_crash_engine_subtitle),
-                onClick = onCrashEngineClick,
+                icon = Icons.Outlined.Storage,
+                title = stringResource(R.string.models),
+                subtitle = stringResource(R.string.models_subtitle),
+                selected = selectedDetail == SettingsDetail.Models,
+                iconTint = aiGreenTint,
+                iconBgColor = aiGreenBg,
+                onClick = onModelsClick
+            )
+            CardItemDivider()
+            SettingsRow(
+                icon = Icons.AutoMirrored.Outlined.Article,
+                title = stringResource(R.string.system_prompts),
+                subtitle = stringResource(R.string.system_prompts_subtitle),
+                selected = selectedDetail == SettingsDetail.Prompts,
+                iconTint = aiGreenTint,
+                iconBgColor = aiGreenBg,
+                onClick = onSystemPromptsClick
+            )
+            CardItemDivider()
+            SettingsRow(
+                icon = Icons.Outlined.Build,
+                title = stringResource(R.string.tools),
+                subtitle = stringResource(R.string.tools_subtitle),
+                selected = selectedDetail == SettingsDetail.Tools,
+                iconTint = aiGreenTint,
+                iconBgColor = aiGreenBg,
+                onClick = onToolsClick
             )
         }
 
-        // Version row (static, not clickable)
+        // 2. การใช้งานและประสิทธิภาพ (Usage & Performance)
+        SettingsGroupCard(
+            title = if (isThai) "การใช้งานและประสิทธิภาพ" else "Usage & Performance"
+        ) {
+            SettingsRow(
+                icon = Icons.Outlined.VolumeUp,
+                title = stringResource(R.string.sound_and_haptic),
+                subtitle = stringResource(R.string.sound_and_haptic_subtitle),
+                selected = selectedDetail == SettingsDetail.SoundHaptic,
+                iconTint = usageBlueTint,
+                iconBgColor = usageBlueBg,
+                onClick = onSoundHapticClick
+            )
+            CardItemDivider()
+            SettingsRow(
+                icon = Icons.Outlined.Tune,
+                title = stringResource(R.string.advanced),
+                subtitle = stringResource(R.string.advanced_subtitle),
+                selected = selectedDetail == SettingsDetail.Advanced,
+                iconTint = usageBlueTint,
+                iconBgColor = usageBlueBg,
+                onClick = onAdvancedClick
+            )
+            CardItemDivider()
+            val languageSubtitle = if (currentTag == null) {
+                stringResource(R.string.language_system_default)
+            } else {
+                Locale.forLanguageTag(currentTag).let { locale ->
+                    locale.getDisplayName(locale)
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+                }
+            }
+            SettingsRow(
+                icon = Icons.Outlined.Language,
+                title = stringResource(R.string.language),
+                subtitle = languageSubtitle,
+                selected = selectedDetail == SettingsDetail.Language,
+                iconTint = usageBlueTint,
+                iconBgColor = usageBlueBg,
+                onClick = onLanguageClick
+            )
+        }
+
+        // 3. ข้อมูลและความช่วยเหลือ (Information & Help)
+        SettingsGroupCard(
+            title = if (isThai) "ข้อมูลและความช่วยเหลือ" else "Information & Help"
+        ) {
+            SettingsRow(
+                icon = Icons.Outlined.HelpOutline,
+                title = stringResource(R.string.faq),
+                subtitle = stringResource(R.string.faq_subtitle),
+                selected = selectedDetail == SettingsDetail.Faq,
+                iconTint = infoNeutralTint,
+                iconBgColor = infoNeutralBg,
+                onClick = onFaqClick
+            )
+            CardItemDivider()
+            SettingsRow(
+                icon = Icons.Outlined.Policy,
+                title = stringResource(R.string.privacy_policy),
+                selected = selectedDetail == SettingsDetail.PrivacyPolicy,
+                iconTint = infoNeutralTint,
+                iconBgColor = infoNeutralBg,
+                onClick = onPrivacyPolicyClick
+            )
+        }
+
+        // 4. สำหรับนักพัฒนา (Debug)
+        if (onCrashEngineClick != null) {
+            SettingsGroupCard(
+                title = if (isThai) "สำหรับนักพัฒนา (Debug)" else "Developer (Debug)"
+            ) {
+                SettingsRow(
+                    icon = Icons.Outlined.BugReport,
+                    title = stringResource(R.string.debug_crash_engine_title),
+                    subtitle = stringResource(R.string.debug_crash_engine_subtitle),
+                    iconTint = debugOrangeTint,
+                    iconBgColor = debugOrangeBg,
+                    onClick = onCrashEngineClick
+                )
+            }
+        }
+
+        // 5. Footer Version
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(top = 4.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Outlined.Info,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.outline
             )
-            Spacer(Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = stringResource(R.string.version, appVersion),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
             )
         }
     }
+}
+
+@Composable
+private fun SettingsGroupCard(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val isDark = isSystemInDarkTheme()
+    val cardColor = if (isDark) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerLow
+    }
+    val borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 6.dp, bottom = 8.dp)
+        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            color = cardColor,
+            border = BorderStroke(1.dp, borderColor)
+        ) {
+            Column(content = content)
+        }
+    }
+}
+
+@Composable
+private fun CardItemDivider() {
+    HorizontalDivider(
+        modifier = Modifier.padding(start = 68.dp, end = 16.dp),
+        thickness = 0.5.dp,
+        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+    )
 }
 
 @Composable
@@ -462,11 +527,10 @@ fun SettingsRow(
     title: String,
     subtitle: String? = null,
     selected: Boolean = false,
+    iconTint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    iconBgColor: Color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f),
     onClick: () -> Unit
 ) {
-    // Unselected rows are transparent so the row picks up whatever surface
-    // the parent provides — surface for phone, surfaceContainer for the
-    // tablet floating card.
     val background = if (selected) {
         MaterialTheme.colorScheme.secondaryContainer
     } else {
@@ -477,21 +541,32 @@ fun SettingsRow(
             .fillMaxWidth()
             .background(background)
             .clickable(onClick = onClick)
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.width(16.dp))
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(iconBgColor),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurface
             )
             if (subtitle != null) {
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
@@ -499,10 +574,11 @@ fun SettingsRow(
                 )
             }
         }
+        Spacer(modifier = Modifier.width(8.dp))
         Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.outline
         )
     }
 }
@@ -522,7 +598,7 @@ private fun SettingsScreenPreview() {
             onPrivacyPolicyClick = {},
             onFaqClick = {},
             onSendFeedbackClick = {},
-            appVersion = "1.0.0"
+            appVersion = "1.10.2-debug"
         )
     }
 }
