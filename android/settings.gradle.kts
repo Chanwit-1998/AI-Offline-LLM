@@ -7,14 +7,11 @@ pluginManagement {
         mavenCentral()
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
-}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         snapshotVersion?.let {
-            println("https://androidx.dev/snapshots/builds/$it/artifacts/repository/") 
+            println("https://androidx.dev/snapshots/builds/$it/artifacts/repository/")
             maven { url = uri("https://androidx.dev/snapshots/builds/$it/artifacts/repository/") }
         }
 
@@ -26,4 +23,3 @@ rootProject.name = "LMPlayground"
 include(":app")
 include(":llamacpp")
 include(":model-harness")
-
