@@ -56,3 +56,5 @@ ios/build-screenshots/
 ios/fastlane/screenshots/
 ios/fastlane/report.xml
 ios/fastlane/README.md
+__pycache__/
+.backup_ui/
