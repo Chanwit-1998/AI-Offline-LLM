@@ -86,7 +86,7 @@ android {
     namespace = "com.druk.ai_offline_llm"
 
     defaultConfig {
-        applicationId = "com.druk.ai_offline_llm"
+        applicationId = "com.chanwit.chatllm"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         val versionProps = Properties().apply {
