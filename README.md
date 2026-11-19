@@ -1,25 +1,232 @@
-# AI-OFFLINE-LLM
+<div align="center">
 
-**AI-OFFLINE-LLM** is an Android application for running Large Language Models locally on-device. Download models, load them in one tap, and chat - all offline, all private. Powered by llama.cpp with GGUF-format models from Hugging Face[span_5](start_span)[span_5](end_span).
+<img src="android/app/src/main/ic_launcher-playstore.png" alt="ChatLLM Logo" width="120" height="120" />
+
+# ChatLLM
+
+**ประมวลผล AI บนอุปกรณ์ Galaxy ของคุณโดยตรง ไม่ต้องใช้อินเทอร์เน็ต — 100% Offline, 100% Private**
+
+Exclusively available on **Samsung Galaxy Store** — Run Large Language Models locally on your Android device powered by [llama.cpp](https://github.com/ggerganov/llama.cpp) and GGUF models from [Hugging Face](https://huggingface.co/).
+
+[![Distribution](https://img.shields.io/badge/Galaxy%20Store-Exclusive-1428A0?style=for-the-badge&logo=samsung&logoColor=white)](https://galaxystore.samsung.com/)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+[Download](#-download) • [Screenshots](#-screenshots) • [Features](#-features) • [Supported Models](#-supported-models) • [Build Instructions](#-build-instructions) • [License](#-license)
+
+</div>
+
+---
+
+## 📖 Overview
+
+**ChatLLM** is a minimalist, native Android application built with Jetpack Compose for running Large Language Models (LLMs) directly on-device without cloud servers, subscriptions, or API keys. Distributed exclusively via **Samsung Galaxy Store**, ChatLLM lets you download curated models or import your own `.gguf` files, load them in one tap, and chat completely offline.
+
+---
+
+## 📲 Download
+
+This application is distributed **exclusively on the Samsung Galaxy Store**:
+* Search for **ChatLLM** (`com.chanwit.chatllm`) in the **Samsung Galaxy Store** on your Samsung Galaxy device.
+
+---
+
+## 📱 Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="docs/images/screenshot_home.jpg" alt="ChatLLM Home Screen" width="240" /><br />
+        <sub><b>Minimalist Chat Interface</b></sub>
+      </td>
+      <td align="center">
+        <img src="docs/images/screenshot_drawer.jpg" alt="ChatLLM Navigation Drawer" width="240" /><br />
+        <sub><b>Clean Navigation & AI Personas</b></sub>
+      </td>
+      <td align="center">
+        <img src="docs/images/screenshot_store.jpg" alt="ChatLLM Model Store" width="240" /><br />
+        <sub><b>Built-in Offline Model Store</b></sub>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## ✨ Features
+
+### 🧠 On-Device AI & Privacy
+* **100% Offline Inference** — Zero cloud dependencies, no API keys required, and complete data privacy.
+* **Reasoning Model Support** — Step-by-step thinking processes from reasoning models (such as DeepSeek, LFM2.5 Reasoning, and Spark-X2.5) are displayed in a dedicated collapsible block.
+* **Vision & OCR Capabilities** — Attach images from your gallery or camera to analyze photos and extract text using multimodal vision models (`mmproj`).
+* **Built-in Model Store & Custom GGUF** — Download curated models directly inside the app or import external `.gguf` files from local storage.
+
+### 📚 Knowledge, Skills & Productivity
+* **Document Q&A (Local RAG)** — Attach **PDF, Word, EPUB, HTML, Markdown, or plain-text** files. On-device semantic search powered by **EmbeddingGemma** retrieves relevant context automatically.
+* **AI Skills & Personas** — Create and reuse custom system prompts, roles, and output formats across any model.
+* **Agent Tools** — Optional web search, page fetching, and local JavaScript execution mid-conversation (disabled by default and configurable per model).
+* **Offline Voice Dictation** — Speak directly into the microphone using fast, on-device speech recognition.
+
+### 💬 Chat Experience & System
+* **Rich Markdown & Code Blocks** — Clean formatting for headers, lists, tables, and syntax-highlighted code.
+* **Edit, Regenerate & Branch** — Long-press messages to edit prompts, regenerate replies, or branch into a new chat session.
+* **Reliable Background Downloads** — Built on **OkHttp** and **WorkManager** with real-time download speed and ETA notifications.
+* **Flexible Storage Management** — Store multi-GB models on internal storage or external SD cards via Android's Storage Access Framework (SAF).
+
+---
+
+## 🤖 Supported Models
+
+ChatLLM includes a curated catalog optimized for mobile devices alongside full support for custom `.gguf` files:
+* **Google Gemma 4** (`Gemma 4 12B`, `Gemma 4 E2B`, `Gemma 4 E4B` Vision)
+* **Liquid AI LFM 2.5** (`LFM2.5 1.2B`, `LFM2.5 2.6B Reasoning`, `LFM2.5 VL 3B Vision & OCR`)
+* **XHToken Spark-X2.5** (`Spark-X2.5 4B Hybrid Reasoning`)
+* **DeepSeek, Qwen, Llama, Mistral, Phi & more**
+
+---
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+| :--- | :--- |
+| **Distribution** | Samsung Galaxy Store Exclusive (`com.chanwit.chatllm`) |
+| **UI Framework** | Kotlin & Jetpack Compose (Material 3) |
+| **Inference Engine** | `llama.cpp` (Native C++ / JNI / AIDL Service) |
+| **Local Embeddings** | EmbeddingGemma (On-Device Vector RAG) |
+| **Background Tasks** | Android WorkManager & OkHttp |
+| **Multi-language** | 30+ Languages Supported (including Thai & English) |
+
+---
+
+## 🚀 Build Instructions
+
+### Prerequisites
+* **Android Studio** (Ladybug or newer)
+* **JDK 17**
+* **Android NDK** & **CMake**
+
+### Build Steps
+
+1. **Clone the repository with submodules:**
+   ```bash
+   git clone --recurse-submodules [https://github.com/Chanwit-1998/AI-Offline-LLM.git](https://github.com/Chanwit-1998/AI-Offline-LLM.git)
+   cd AI-Offline-LLM
+cd android
+./gradlew assembleRelease -x lintVitalRelease
+cat << 'EOF' > README.md
+<div align="center">
+
+<img src="android/app/src/main/ic_launcher-playstore.png" alt="ChatLLM Logo" width="120" height="120" />
+
+# ChatLLM
+
+**ประมวลผล AI บนอุปกรณ์ Galaxy ของคุณโดยตรง ไม่ต้องใช้อินเทอร์เน็ต — 100% Offline, 100% Private**
+
+Exclusively available on Samsung Galaxy Store — Run Large Language Models locally on your Android device powered by llama.cpp and GGUF models from Hugging Face.
+
+[Screenshots](#-screenshots) • [Features](#-features) • [Supported Models](#-supported-models) • [Build Instructions](#-build-instructions) • [License](#-license)
+
+</div>
+
+---
+
+## Overview
+
+ChatLLM is a minimalist, native Android application built with Jetpack Compose for running Large Language Models directly on-device without cloud servers, subscriptions, or API keys. Distributed exclusively via Samsung Galaxy Store, ChatLLM lets you download curated models or import your own .gguf files, load them in one tap, and chat completely offline.
+
+---
+
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="docs/images/screenshot_home.jpg" alt="ChatLLM Home Screen" width="240" /><br />
+        <sub><b>Minimalist Chat Interface</b></sub>
+      </td>
+      <td align="center">
+        <img src="docs/images/screenshot_drawer.jpg" alt="ChatLLM Navigation Drawer" width="240" /><br />
+        <sub><b>Clean Navigation & AI Personas</b></sub>
+      </td>
+      <td align="center">
+        <img src="docs/images/screenshot_store.jpg" alt="ChatLLM Model Store" width="240" /><br />
+        <sub><b>Built-in Offline Model Store</b></sub>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
 
 ## Features
 
-- **On-device inference** - no cloud, no API keys, fully offline[span_6](start_span)[span_6](end_span)
-- **Document Q&A (RAG)** - attach PDF, Word, EPUB, HTML, Markdown, or plain-text files and ask about them; on-device semantic search with EmbeddingGemma feeds the most relevant passages to any chat model[span_7](start_span)[span_7](end_span)
-- **Vision/image input** - attach a photo from your gallery or camera and ask vision-capable models about it[span_8](start_span)[span_8](end_span)
-- **Rich markdown** in chat responses - headers, code blocks, lists, and more[span_9](start_span)[span_9](end_span)
-- **Reasoning model support** - thinking steps from models like DeepSeek are displayed in a styled section[span_10](start_span)[span_10](end_span)
-- **Tools** - capable models can search the web, fetch a page, and run JavaScript mid-reply, each tool is off by default and enabled per model[span_11](start_span)[span_11](end_span)
-- **Reusable system prompts** - save a persona, tone, or output format once and apply it to any model[span_12](start_span)[span_12](end_span)
-- **Edit, regenerate & branch** - long-press a message to edit and resend it, regenerate a reply, or continue from any reply in a new chat[span_13](start_span)[span_13](end_span)
-- **Voice dictation** - tap the mic and speak; on-device speech recognition, fully offline[span_14](start_span)[span_14](end_span)
-- **Chat history** - conversations are saved and organized; pin, rename, delete, and resume sessions from the sidebar[span_15](start_span)[span_15](end_span)
-- **Custom GGUF models** - load your own model files from any source alongside the built-in catalog[span_16](start_span)[span_16](end_span)
-- **Reliable background downloads** - custom download engine with OkHttp and WorkManager, progress notifications with speed and ETA[span_17](start_span)[span_17](end_span)
-- **Storage management** - choose where to keep multi-GB model files with Android's Storage Access Framework[span_18](start_span)[span_18](end_span)
+### On-Device AI & Privacy
+* **100% Offline Inference** — Zero cloud dependencies, no API keys required, and complete data privacy.
+* **Reasoning Model Support** — Step-by-step thinking processes from reasoning models (such as DeepSeek, LFM2.5 Reasoning, and Spark-X2.5) are displayed in a dedicated collapsible block.
+* **Vision & OCR Capabilities** — Attach images from your gallery or camera to analyze photos and extract text using multimodal vision models (mmproj).
+* **Built-in Model Store & Custom GGUF** — Download curated models directly inside the app or import external .gguf files from local storage.
+
+### Knowledge, Skills & Productivity
+* **Document Q&A (Local RAG)** — Attach PDF, Word, EPUB, HTML, Markdown, or plain-text files. On-device semantic search powered by EmbeddingGemma retrieves relevant context automatically.
+* **AI Skills & Personas** — Create and reuse custom system prompts, roles, and output formats across any model.
+* **Agent Tools** — Optional web search, page fetching, and local JavaScript execution mid-conversation (disabled by default and configurable per model).
+* **Offline Voice Dictation** — Speak directly into the microphone using fast, on-device speech recognition.
+
+### Chat Experience & System
+* **Rich Markdown & Code Blocks** — Clean formatting for headers, lists, tables, and syntax-highlighted code.
+* **Edit, Regenerate & Branch** — Long-press messages to edit prompts, regenerate replies, or branch into a new chat session.
+* **Reliable Background Downloads** — Built on OkHttp and WorkManager with real-time download speed and ETA notifications.
+* **Flexible Storage Management** — Store multi-GB models on internal storage or external SD cards via Android's Storage Access Framework (SAF).
+
+---
+
+## Supported Models
+
+ChatLLM includes a curated catalog optimized for mobile devices alongside full support for custom .gguf files:
+* **Google Gemma 4** (Gemma 4 12B, Gemma 4 E2B, Gemma 4 E4B Vision)
+* **Liquid AI LFM 2.5** (LFM2.5 1.2B, LFM2.5 2.6B Reasoning, LFM2.5 VL 3B Vision & OCR)
+* **XHToken Spark-X2.5** (Spark-X2.5 4B Hybrid Reasoning)
+* **DeepSeek, Qwen, Llama, Mistral, Phi & more**
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+| :--- | :--- |
+| **Distribution** | Samsung Galaxy Store Exclusive (com.chanwit.chatllm) |
+| **UI Framework** | Kotlin & Jetpack Compose (Material 3) |
+| **Inference Engine** | llama.cpp (Native C++ / JNI / AIDL Service) |
+| **Local Embeddings** | EmbeddingGemma (On-Device Vector RAG) |
+| **Background Tasks** | Android WorkManager & OkHttp |
+| **Multi-language** | 30+ Languages Supported (including Thai & English) |
+
+---
 
 ## Build Instructions
 
+### Prerequisites
+* **Android Studio** (Ladybug or newer)
+* **JDK 17**
+* **Android NDK** & **CMake**
+
+### Build Steps
+
 1. Clone the repository with submodules:
-   ```bash
-   git clone --recurse-submodules [https://github.com/Chanwit-1998/AI-Offline-LLM.git](https://github.com/Chanwit-1998/AI-Offline-LLM.git)
+   git clone --recurse-submodules https://github.com/Chanwit-1998/AI-Offline-LLM.git
+   cd AI-Offline-LLM
+
+2. Build Release APK for Samsung Galaxy Store:
+   cd android
+   ./gradlew assembleRelease -x lintVitalRelease
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the LICENSE file for details.
+
+Copyright (c) 2026 Chanwit
