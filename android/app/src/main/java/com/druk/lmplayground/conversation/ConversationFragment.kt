@@ -17,7 +17,9 @@ import androidx.core.content.FileProvider
 import java.io.File
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -523,18 +525,36 @@ class ConversationFragment : Fragment() {
                             Text(stringResource(R.string.choose_storage_folder_message))
                         },
                         confirmButton = {
-                            TextButton(onClick = { runCatching { findNavController().navigate(R.id.nav_models, android.os.Bundle().apply { putString("mode", "store") }) } }) { Text(stringResource(R.string.menu_model_store)) }
-                    TextButton(
-                                onClick = {
-                                    (activity as? MainActivity)?.launchFolderPicker { uri ->
-                                        if (uri != null) {
-                                            storageViewModel.requestStorageFolderChange(uri)
-                                            showStorageSetupDialog = false
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        showStorageSetupDialog = false
+                                        runCatching {
+                                            if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                                findNavController().navigate(
+                                                    R.id.action_home_to_models,
+                                                    androidx.core.os.bundleOf("mode" to "store")
+                                                )
+                                            }
                                         }
                                     }
+                                ) {
+                                    Text(stringResource(R.string.menu_model_store))
                                 }
-                            ) {
-                                Text(stringResource(R.string.choose_folder))
+                                TextButton(
+                                    onClick = {
+                                        (activity as? MainActivity)?.launchFolderPicker { uri ->
+                                            if (uri != null) {
+                                                storageViewModel.requestStorageFolderChange(uri)
+                                                showStorageSetupDialog = false
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.choose_folder))
+                                }
                             }
                         }
                     )
