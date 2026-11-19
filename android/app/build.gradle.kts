@@ -175,8 +175,8 @@ android {
         named("debug") {
             storeFile = if (hasKeyInfo) userKeystore else localKeystore
             storePassword = if (hasKeyInfo) System.getenv("STORE_PASSWORD") else "android"
-            keyAlias = if (hasKeyInfo) System.getenv("LM_PLAYGROUND_KEY_ALIAS") else "androiddebugkey"
-            keyPassword = if (hasKeyInfo) System.getenv("LM_PLAYGROUND_KEY_PASSWORD") else "android"
+            keyAlias = if (hasKeyInfo) (System.getenv("KEY_ALIAS") ?: System.getenv("LM_PLAYGROUND_KEY_ALIAS")) else "androiddebugkey"
+            keyPassword = if (hasKeyInfo) (System.getenv("KEY_PASSWORD") ?: System.getenv("LM_PLAYGROUND_KEY_PASSWORD")) else "android"
         }
     }
 

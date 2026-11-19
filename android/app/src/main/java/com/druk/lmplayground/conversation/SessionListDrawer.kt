@@ -421,7 +421,7 @@ private fun SessionListContent(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "ปิดแอป",
+                        text = stringResource(R.string.exit_app),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onErrorContainer,

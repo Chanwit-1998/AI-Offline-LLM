@@ -389,7 +389,7 @@ private fun SettingsList(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "เวอร์ชัน v1.0.0",
+                    text = stringResource(R.string.version, appVersion),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
