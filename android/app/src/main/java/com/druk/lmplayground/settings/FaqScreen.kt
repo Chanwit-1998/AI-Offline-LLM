@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
-private const val GITHUB_URL = "https://github.com/Chanwit-1998/LMPlayground"
+private const val GITHUB_URL = "https://github.com/Chanwit-1998/AI-Offline-LLM"
 
 private data class FaqItem(
     @StringRes val questionRes: Int,
