@@ -784,7 +784,7 @@ private fun cleanTextForSpeech(raw: String): String {
         .replace("`", "")
         .replace(Regex("[#*_~>|]+"), " ")
     return stripEmojisAndSymbolsForSpeech(withoutThink)
-        .replace(Regex("\s+"), " ")
+        .replace(Regex("\\s+"), " ")
         .trim()
 }
 
