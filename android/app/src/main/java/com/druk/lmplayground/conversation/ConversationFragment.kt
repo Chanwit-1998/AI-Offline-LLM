@@ -535,7 +535,7 @@ class ConversationFragment : Fragment() {
                                             if (findNavController().currentDestination?.id == R.id.nav_home) {
                                                 findNavController().navigate(
                                                     R.id.action_home_to_models,
-                                                    androidx.core.os.bundleOf("mode" to "store")
+                                                    bundleOf("mode" to "store")
                                                 )
                                             }
                                         }
