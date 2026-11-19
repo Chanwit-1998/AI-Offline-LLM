@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android Release
 
 on:
   push:
@@ -23,16 +23,31 @@ jobs:
       with:
         cmake-version: '3.31.6'
 
+    - name: Decode Release Keystore
+      run: |
+        mkdir -p ~/.android
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '[:space:]' | base64 -d > ~/.android/keystore.jks
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       working-directory: android
 
-    - name: Build APK with Gradle
-      run: ./gradlew assembleDebug
+    - name: Build Release APK and AAB
+      env:
+        STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        LM_PLAYGROUND_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        LM_PLAYGROUND_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: ./gradlew assembleRelease bundleRelease
       working-directory: android
 
-    - name: Upload APK artifact
+    - name: Upload Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug-apk
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+        name: app-release-apk
+        path: android/app/build/outputs/apk/release/app-release.apk
+
+    - name: Upload Release AAB
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release-aab
+        path: android/app/build/outputs/bundle/release/app-release.aab
