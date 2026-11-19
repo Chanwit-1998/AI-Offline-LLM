@@ -742,7 +742,7 @@ private fun stripEmojisAndSymbolsForSpeech(input: String): String {
 
 private fun splitSpeechChunks(text: String, maxLength: Int = 220): List<String> {
     if (text.length <= maxLength) return listOf(text)
-    val sentences = text.split(Regex("(?<=[.!?\n])\s+"))
+    val sentences = text.split(Regex("(?<=[.!?\\n])\\s+"))
     val chunks = mutableListOf<String>()
     val current = StringBuilder()
 
