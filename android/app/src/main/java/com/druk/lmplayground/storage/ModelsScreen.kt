@@ -35,8 +35,11 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Memory
+import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,6 +56,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -112,6 +116,7 @@ fun ModelsScreen(
     mode: ModelsScreenMode = ModelsScreenMode.ALL,
     activeModelFilename: String? = null,
     onSelectModel: ((ModelInfo) -> Unit)? = null,
+    onUnloadModel: (() -> Unit)? = null,
     onOpenStoreClick: (() -> Unit)? = null,
     embeddingModel: ModelWithStatus? = null,
     dictationModel: ModelWithStatus? = null,
@@ -151,6 +156,7 @@ fun ModelsScreen(
             mode = mode,
             activeModelFilename = activeModelFilename,
             onSelectModel = onSelectModel,
+            onUnloadModel = onUnloadModel,
             onOpenStoreClick = onOpenStoreClick,
             onChangeFolderClick = onChangeFolderClick,
             onDeleteModel = onDeleteModel,
@@ -193,6 +199,7 @@ fun ModelsContent(
     mode: ModelsScreenMode = ModelsScreenMode.ALL,
     activeModelFilename: String? = null,
     onSelectModel: ((ModelInfo) -> Unit)? = null,
+    onUnloadModel: (() -> Unit)? = null,
     onOpenStoreClick: (() -> Unit)? = null,
     maxContentWidth: Dp = 960.dp,
     embeddingModel: ModelWithStatus? = null,
@@ -336,6 +343,7 @@ fun ModelsContent(
                                 vision = modelWithStatus.isMmprojDownloaded,
                                 isActive = isCurrent,
                                 onSelectClick = onSelectModel?.let { { it(modelWithStatus.model) } },
+                                onUnloadClick = onUnloadModel,
                                 onDeleteClick = { modelToDelete = modelWithStatus.model }
                             )
                         }
@@ -707,11 +715,42 @@ private fun StorageInfoCard(
 }
 
 @Composable
+private fun ModelLogoAvatar(logoRes: Int) {
+    if (logoRes != 0) {
+        Image(
+            painter = painterResource(id = logoRes),
+            contentDescription = null,
+            modifier = Modifier
+                .size(42.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+    } else {
+        Surface(
+            modifier = Modifier.size(42.dp),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.tertiaryContainer
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Outlined.Memory,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
+    }
+    Spacer(modifier = Modifier.width(12.dp))
+}
+
+@Composable
 private fun DownloadedModelItem(
     model: ModelInfo,
     vision: Boolean,
     isActive: Boolean = false,
     onSelectClick: (() -> Unit)? = null,
+    onUnloadClick: (() -> Unit)? = null,
     onDeleteClick: () -> Unit
 ) {
     val dateLabel = remember(model.releaseDate) { model.releaseDateLabel() }
@@ -734,7 +773,7 @@ private fun DownloadedModelItem(
         modifier = Modifier
             .fillMaxWidth()
             .then(
-                if (onSelectClick != null) Modifier.clickable(onClick = onSelectClick)
+                if (onSelectClick != null && !isActive) Modifier.clickable(onClick = onSelectClick)
                 else Modifier
             )
     ) {
@@ -744,17 +783,7 @@ private fun DownloadedModelItem(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (model.logoRes != 0) {
-                Image(
-                    painter = painterResource(id = model.logoRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-            }
+            ModelLogoAvatar(logoRes = model.logoRes)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = model.name,
@@ -791,7 +820,29 @@ private fun DownloadedModelItem(
             }
             Spacer(modifier = Modifier.width(8.dp))
             if (onSelectClick != null) {
-                if (isActive) {
+                if (isActive && onUnloadClick != null) {
+                    OutlinedButton(
+                        onClick = onUnloadClick,
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.7f)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.StopCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.stop_using_model),
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    }
+                } else if (isActive) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 6.dp)
@@ -817,7 +868,9 @@ private fun DownloadedModelItem(
                     ) {
                         Text(
                             text = stringResource(R.string.use_model),
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            softWrap = false
                         )
                     }
                 }
@@ -866,17 +919,7 @@ private fun AvailableModelItem(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (model.logoRes != 0) {
-                Image(
-                    painter = painterResource(id = model.logoRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-            }
+            ModelLogoAvatar(logoRes = model.logoRes)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = model.name,

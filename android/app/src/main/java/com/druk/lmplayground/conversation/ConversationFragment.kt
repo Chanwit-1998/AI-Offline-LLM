@@ -472,6 +472,18 @@ class ConversationFragment : Fragment() {
                     navBackStackEntry?.savedStateHandle?.remove<String>("selected_model_filename")
                     viewModel.loadModelByFilename(filename)
                 }
+                val unloadModelRequested by (
+                    navBackStackEntry?.savedStateHandle
+                        ?.getLiveData<Boolean>("unload_model_requested")
+                        ?.observeAsState()
+                        ?: remember { mutableStateOf(null) }
+                )
+                LaunchedEffect(unloadModelRequested) {
+                    if (unloadModelRequested == true) {
+                        navBackStackEntry?.savedStateHandle?.remove<Boolean>("unload_model_requested")
+                        viewModel.unloadModel()
+                    }
+                }
 
                 val appliedPromptId by (
                     navBackStackEntry?.savedStateHandle

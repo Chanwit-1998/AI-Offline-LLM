@@ -442,6 +442,7 @@
     <string name="chat_history_label">Chat History</string>
     <string name="use_model">Use</string>
     <string name="model_in_use">Active</string>
+    <string name="stop_using_model">Stop</string>
     <string name="go_to_model_store">Browse Model Store</string>
     <string name="tab_ai_persona">Personas &amp; Prompts</string>
     <string name="tab_ai_tools">Skills &amp; Tools</string>

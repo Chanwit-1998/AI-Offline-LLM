@@ -747,6 +747,26 @@ object ModelInfoProvider {
     /**
      * Create a ModelInfo for a custom (user-provided) GGUF file.
      */
+    private fun resolveCustomModelLogo(filename: String, name: String): Int {
+        val key = "$filename $name".lowercase()
+        return when {
+            "qwen" in key -> R.drawable.logo_qwen
+            "deepseek" in key -> R.drawable.logo_deepseek
+            "llama" in key -> R.drawable.logo_meta
+            "gemma" in key -> R.drawable.logo_google
+            "mistral" in key || "ministral" in key || "mixtral" in key -> R.drawable.logo_mistral
+            "phi" in key -> R.drawable.logo_microsoft
+            "nemotron" in key || "nvidia" in key -> R.drawable.logo_nvidia
+            "granite" in key || "ibm" in key -> R.drawable.logo_ibm
+            "lfm" in key || "liquid" in key -> R.drawable.logo_liquid
+            "gpt" in key || "openai" in key -> R.drawable.logo_openai
+            "smollm" in key || "huggingface" in key -> R.drawable.logo_huggingface
+            "minicpm" in key || "openbmb" in key -> R.drawable.logo_openbmb
+            "spark" in key || "xhtoken" in key -> R.drawable.logo_xhtoken
+            else -> 0
+        }
+    }
+
     fun createCustomModelInfo(filename: String, name: String, sizeBytes: Long): ModelInfo {
         val sizeLabel = formatFileSize(sizeBytes)
         return ModelInfo(
@@ -755,7 +775,7 @@ object ModelInfoProvider {
             remoteUri = null,
             releaseDate = null,
             description = "Custom model \u00B7 $sizeLabel",
-            logoRes = R.drawable.ic_project_logo
+            logoRes = resolveCustomModelLogo(filename, name)
         )
     }
 

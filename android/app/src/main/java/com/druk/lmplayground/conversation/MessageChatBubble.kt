@@ -353,9 +353,16 @@ fun ChatItemBubble(
                                 )
                                 if (textToRead.isNotBlank()) {
                                     isSpeaking = true
+                                    val hasThai = textToRead.any { ch -> ch in '\u0E00'..'\u0E7F' }
+                                    val targetLocale = if (hasThai) Locale("th", "TH") else Locale.getDefault()
+                                    configureNaturalSpeech(tts, targetLocale)
+                                    val chunks = splitSpeechChunks(textToRead)
                                     val params = Bundle()
-                                    val utteranceId = UUID.randomUUID().toString()
-                                    tts.speak(textToRead, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
+                                    chunks.forEachIndexed { index, chunk ->
+                                        val queueMode = if (index == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+                                        val utteranceId = UUID.randomUUID().toString()
+                                        tts.speak(chunk, queueMode, params, utteranceId)
+                                    }
                                 }
                             }
                         },
@@ -446,240 +453,114 @@ fun ChatItemBubble(
     }
 }
 
-/**
- * Represents either a normal prose block or a fenced code block inside an AI response.
- */
-private sealed interface MessageBlock {
-    data class TextBlock(val text: String) : MessageBlock
-    data class CodeBlock(val language: String, val code: String) : MessageBlock
+private fun configureNaturalSpeech(tts: TextToSpeech, locale: Locale) {
+    val chosenLocale = if (locale.language == "th") Locale("th", "TH") else locale
+    val availability = tts.isLanguageAvailable(chosenLocale)
+    if (availability >= TextToSpeech.LANG_AVAILABLE) {
+        tts.language = chosenLocale
+    } else if (chosenLocale.language == "th") {
+        val fallbackTh = Locale.forLanguageTag("th")
+        if (tts.isLanguageAvailable(fallbackTh) >= TextToSpeech.LANG_AVAILABLE) {
+            tts.language = fallbackTh
+        }
+    }
+
+    val voices = runCatching { tts.voices }.getOrNull().orEmpty()
+    val matchingVoices = voices.filter { voice ->
+        voice.locale.language.equals(chosenLocale.language, ignoreCase = true) &&
+            !voice.isNetworkConnectionRequired
+    }.ifEmpty {
+        voices.filter { voice ->
+            voice.locale.language.equals(chosenLocale.language, ignoreCase = true)
+        }
+    }
+    val preferredVoice = matchingVoices.firstOrNull { voice ->
+        val name = voice.name.lowercase()
+        "th-th" in name || "neural" in name || "wavenet" in name || "high" in name || "default" in name
+    } ?: matchingVoices.firstOrNull()
+    if (preferredVoice != null) {
+        runCatching { tts.voice = preferredVoice }
+    }
+
+    tts.setPitch(if (chosenLocale.language == "th") 1.02f else 1.0f)
+    tts.setSpeechRate(if (chosenLocale.language == "th") 1.04f else 1.0f)
 }
 
-/**
- * Parses Markdown content into alternating [MessageBlock.TextBlock] and [MessageBlock.CodeBlock].
- * Also supports unclosed code blocks while streaming responses.
- */
-private fun parseMarkdownBlocks(markdown: String): List<MessageBlock> {
-    val result = mutableListOf<MessageBlock>()
-    val lines = markdown.lines()
-    val textBuffer = StringBuilder()
-    val codeBuffer = StringBuilder()
-    var inCodeBlock = false
-    var currentLang = ""
-    var fenceMarker = "```"
+private fun stripEmojisAndSymbolsForSpeech(input: String): String {
+    val sb = StringBuilder(input.length)
+    var i = 0
+    while (i < input.length) {
+        val codePoint = Character.codePointAt(input, i)
+        val charCount = Character.charCount(codePoint)
+        val isVariationOrZwj = codePoint == 0xFE0E || codePoint == 0xFE0F || codePoint == 0x200D || codePoint == 0x20E3
+        val isRegionalIndicator = codePoint in 0x1F1E6..0x1F1FF
+        val isEmojiRange = codePoint in 0x1F300..0x1FAFF ||
+            codePoint in 0x1F000..0x1F2FF ||
+            codePoint in 0x2600..0x27BF ||
+            codePoint in 0x2300..0x23FF ||
+            codePoint in 0x2B00..0x2BFF ||
+            codePoint in 0xE000..0xF8FF ||
+            codePoint in 0xE0020..0xE007F
+        val type = Character.getType(codePoint)
+        val isSymbol = type == Character.OTHER_SYMBOL.toInt() ||
+            type == Character.SURROGATE.toInt() ||
+            type == Character.PRIVATE_USE.toInt()
 
-    for (line in lines) {
-        val trimmedStart = line.trimStart()
-        if (!inCodeBlock) {
-            if (trimmedStart.startsWith("```") || trimmedStart.startsWith("~~~")) {
-                if (textBuffer.isNotEmpty()) {
-                    result.add(MessageBlock.TextBlock(textBuffer.toString().trimEnd()))
-                    textBuffer.clear()
-                }
-                fenceMarker = if (trimmedStart.startsWith("~~~")) "~~~" else "```"
-                currentLang = trimmedStart.removePrefix(fenceMarker).trim().substringBefore(" ")
-                inCodeBlock = true
+        if (!isVariationOrZwj && !isRegionalIndicator && !isEmojiRange && !isSymbol) {
+            sb.appendCodePoint(codePoint)
+        } else if (isEmojiRange || isSymbol) {
+            sb.append(' ')
+        }
+        i += charCount
+    }
+    return sb.toString()
+}
+
+private fun splitSpeechChunks(text: String, maxLength: Int = 220): List<String> {
+    if (text.length <= maxLength) return listOf(text)
+    val sentences = text.split(Regex("(?<=[.!?\n])\s+"))
+    val chunks = mutableListOf<String>()
+    val current = StringBuilder()
+
+    for (part in sentences) {
+        val cleanPart = part.trim()
+        if (cleanPart.isEmpty()) continue
+        if (current.isEmpty()) {
+            if (cleanPart.length <= maxLength) {
+                current.append(cleanPart)
             } else {
-                if (textBuffer.isNotEmpty()) textBuffer.append('\n')
-                textBuffer.append(line)
+                var start = 0
+                while (start < cleanPart.length) {
+                    val end = minOf(start + maxLength, cleanPart.length)
+                    chunks.add(cleanPart.substring(start, end).trim())
+                    start = end
+                }
             }
+        } else if (current.length + 1 + cleanPart.length <= maxLength) {
+            current.append(' ').append(cleanPart)
         } else {
-            if (trimmedStart.startsWith(fenceMarker)) {
-                result.add(
-                    MessageBlock.CodeBlock(
-                        language = currentLang.ifBlank { "code" },
-                        code = codeBuffer.toString()
-                    )
-                )
-                codeBuffer.clear()
-                currentLang = ""
-                inCodeBlock = false
-            } else {
-                if (codeBuffer.isNotEmpty()) codeBuffer.append('\n')
-                codeBuffer.append(line)
-            }
+            chunks.add(current.toString())
+            current.clear()
+            current.append(cleanPart)
         }
     }
-
-    if (inCodeBlock) {
-        result.add(
-            MessageBlock.CodeBlock(
-                language = currentLang.ifBlank { "code" },
-                code = codeBuffer.toString()
-            )
-        )
-    } else if (textBuffer.isNotEmpty()) {
-        result.add(MessageBlock.TextBlock(textBuffer.toString().trimEnd()))
+    if (current.isNotEmpty()) {
+        chunks.add(current.toString())
     }
-
-    return result
+    return chunks.ifEmpty { listOf(text) }
 }
 
 /**
- * Styled code block card with rounded border, language label header,
- * "คัดลอก" (Copy code only) button, and multi-language syntax highlighting.
- */
-@Composable
-private fun CodeBlockCard(
-    language: String,
-    code: String
-) {
-    val clipboardManager = LocalClipboardManager.current
-    val isDark = isSystemInDarkTheme()
-    var copied by remember { mutableStateOf(false) }
-
-    LaunchedEffect(copied) {
-        if (copied) {
-            delay(1500)
-            copied = false
-        }
-    }
-
-    val cardBackground = if (isDark) Color(0xFF1E1F22) else Color(0xFFF7F8FA)
-    val headerBackground = if (isDark) Color(0xFF26282C) else Color(0xFFF1F3F5)
-    val borderColor = if (isDark) Color(0xFF383A40) else Color(0xFFE2E5E9)
-
-    val highlightedCode = remember(code, language, isDark) {
-        highlightCodeSyntax(code = code, isDark = isDark)
-    }
-
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = cardBackground,
-        border = BorderStroke(1.dp, borderColor)
-    ) {
-        Column {
-            // Header bar: language name on left, "คัดลอก" button on right
-            Surface(
-                color = headerBackground,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = language.lowercase(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .clickable {
-                                clipboardManager.setText(AnnotatedString(code))
-                                copied = true
-                            }
-                            .padding(horizontal = 6.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = if (copied) Icons.Outlined.Check else Icons.Outlined.ContentCopy,
-                            contentDescription = "คัดลอกโค้ด",
-                            modifier = Modifier.size(15.dp),
-                            tint = if (copied) Color(0xFF16A34A) else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (copied) "คัดลอกแล้ว" else "คัดลอก",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (copied) Color(0xFF16A34A) else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            HorizontalDivider(thickness = 0.5.dp, color = borderColor)
-
-            // Syntax-highlighted scrollable code body
-            SelectionContainer {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(14.dp)
-                ) {
-                    Text(
-                        text = highlightedCode,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 13.5.sp,
-                            lineHeight = 20.sp,
-                            color = if (isDark) Color(0xFFE5E7EB) else Color(0xFF1F2937)
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Lightweight multi-language syntax highlighter for Python, Bash/Shell, Kotlin, Java,
- * JavaScript/TypeScript, C/C++, JSON, SQL, etc.
- */
-private fun highlightCodeSyntax(code: String, isDark: Boolean): AnnotatedString {
-    val keywordColor = if (isDark) Color(0xFFC084FC) else Color(0xFF7C3AED)
-    val stringColor = if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
-    val commentColor = if (isDark) Color(0xFF9CA3AF) else Color(0xFF6B7280)
-    val functionColor = if (isDark) Color(0xFFFBBF24) else Color(0xFFB45309)
-    val numberColor = if (isDark) Color(0xFF60A5FA) else Color(0xFF2563EB)
-    val decoratorColor = if (isDark) Color(0xFF2DD4BF) else Color(0xFF0D9488)
-
-    val tripleDouble = "\"\"\"[\\s\\S]*?\"\"\""
-    val tripleSingle = "\'\'\'[\\s\\S]*?\'\'\'"
-    val singleOrDouble = "\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`"
-    val comments = "#[^\\n]*|//[^\\n]*|/\\*[\\s\\S]*?\\*/"
-    val decorators = "@[A-Za-z_][A-Za-z0-9_]*"
-    val keywords = "\\b(def|class|if|elif|else|for|while|return|import|from|try|except|finally|with|as|pass|break|continue|in|is|not|and|or|lambda|yield|raise|global|nonlocal|assert|del|True|False|None|self|cls|fun|val|var|when|object|interface|enum|sealed|data|package|public|private|protected|internal|override|suspend|companion|init|this|super|null|true|false|function|const|let|export|default|async|await|new|typeof|instanceof|void|int|float|double|boolean|char|String|echo|sudo|pkg|pip|pip3|apt|npm|npx|yarn|git|cd|ls|mkdir|rm|cp|mv|chmod|chown|cat|grep|curl|wget|python|python3|node|java|javac|kotlin|gradle)\\b"
-    val funcCalls = "\\b([A-Za-z_][A-Za-z0-9_]*)(?=\\s*\\()"
-    val numbers = "\\b(\\d+(?:\\.\\d+)?)\\b"
-
-    val tokenRegex = Regex(
-        "($tripleDouble|$tripleSingle)|($singleOrDouble)|($comments)|($decorators)|$keywords|$funcCalls|$numbers"
-    )
-
-    return buildAnnotatedString {
-        append(code)
-        for (match in tokenRegex.findAll(code)) {
-            val style = when {
-                match.groups[1] != null || match.groups[2] != null ->
-                    SpanStyle(color = stringColor)
-                match.groups[3] != null ->
-                    SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)
-                match.groups[4] != null ->
-                    SpanStyle(color = decoratorColor)
-                match.groups[5] != null ->
-                    SpanStyle(color = keywordColor, fontWeight = FontWeight.Medium)
-                match.groups[6] != null ->
-                    SpanStyle(color = functionColor)
-                match.groups[7] != null ->
-                    SpanStyle(color = numberColor)
-                else -> null
-            }
-            if (style != null) {
-                addStyle(style = style, start = match.range.first, end = match.range.last + 1)
-            }
-        }
-    }
-}
-
-/**
- * Strips Markdown symbols and code fences so Text-to-Speech reads naturally.
+ * Strips emojis, Markdown symbols, and code fences so Text-to-Speech reads naturally.
  */
 private fun cleanTextForSpeech(raw: String): String {
-    return stripThinkTags(raw)
+    val withoutThink = stripThinkTags(raw)
         .replace(Regex("```[a-zA-Z0-9_-]*"), " ")
         .replace("```", " ")
         .replace("`", "")
         .replace(Regex("[#*_~>|]+"), " ")
-        .replace(Regex("\\s+"), " ")
+    return stripEmojisAndSymbolsForSpeech(withoutThink)
+        .replace(Regex("\s+"), " ")
         .trim()
 }
 

@@ -414,6 +414,7 @@
     <string name="chat_history_label">ประวัติการสนทนา</string>
     <string name="use_model">ใช้งาน</string>
     <string name="model_in_use">กำลังใช้งาน</string>
+    <string name="stop_using_model">หยุดใช้งาน</string>
     <string name="go_to_model_store">ไปที่ร้านค้าโมเดล</string>
     <string name="tab_ai_persona">บุคลิกและคำสั่ง AI</string>
     <string name="tab_ai_tools">ทักษะเสริม (Tools)</string>

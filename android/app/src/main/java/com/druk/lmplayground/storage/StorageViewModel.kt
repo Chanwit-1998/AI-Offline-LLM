@@ -455,4 +455,8 @@ class StorageViewModel(application: Application) : AndroidViewModel(application)
             downloadRepo.cancelDownload(model)
         }
     }
+
+    fun unloadModel() {
+        // Handled via navigation SavedStateHandle back to ConversationFragment
+    }
 }

@@ -16,7 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -110,6 +112,7 @@ class ModelsFragment : Fragment() {
             val snackbarMessage by viewModel.snackbarMessage.observeAsState()
             val pendingMigration by viewModel.pendingMigration.observeAsState()
             val migrationProgress by viewModel.migrationProgress.observeAsState()
+            var currentActiveFilename by remember { mutableStateOf(activeModelFilename) }
 
             val prevDownloadCount = remember { androidx.compose.runtime.mutableIntStateOf(downloadingProgress.size) }
             LaunchedEffect(downloadingProgress.size) {
@@ -129,7 +132,7 @@ class ModelsFragment : Fragment() {
                     migrationProgress = migrationProgress,
                     deviceLanguage = viewModel.deviceLanguage,
                     mode = mode,
-                    activeModelFilename = activeModelFilename,
+                    activeModelFilename = currentActiveFilename,
                     onSelectModel = { model ->
                         val nav = findNavController()
                         nav.previousBackStackEntry?.savedStateHandle?.set(
@@ -137,6 +140,21 @@ class ModelsFragment : Fragment() {
                             model.filename
                         )
                         nav.popBackStack()
+                    },
+                    onUnloadModel = {
+                        currentActiveFilename = null
+                        viewModel.unloadModel()
+                        val nav = findNavController()
+                        nav.previousBackStackEntry?.savedStateHandle?.set(
+                            "unload_model_requested",
+                            true
+                        )
+                        runCatching {
+                            nav.getBackStackEntry(R.id.nav_home).savedStateHandle.set(
+                                "unload_model_requested",
+                                true
+                            )
+                        }
                     },
                     onOpenStoreClick = {
                         val nav = findNavController()
