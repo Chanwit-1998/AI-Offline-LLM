@@ -1,1 +1,0 @@
-- Améliorations des performances et de la stabilité

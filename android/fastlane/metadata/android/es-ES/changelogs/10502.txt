@@ -1,2 +1,0 @@
-- Mejoras de rendimiento y estabilidad
-- Aviso para modelos demasiado grandes para tu dispositivo

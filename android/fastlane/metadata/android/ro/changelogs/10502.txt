@@ -1,2 +1,0 @@
-- Îmbunătățiri de performanță și stabilitate
-- Avertizare pentru modelele prea mari pentru dispozitivul tău

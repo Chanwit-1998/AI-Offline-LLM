@@ -1,2 +1,0 @@
-- Forbedringer af ydeevne og stabilitet
-- Advarsel ved modeller, der er for store til din enhed

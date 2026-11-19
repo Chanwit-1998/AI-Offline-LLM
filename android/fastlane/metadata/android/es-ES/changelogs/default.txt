@@ -1,1 +1,0 @@
-- Mejoras de rendimiento y estabilidad

@@ -1,1 +1,0 @@
-- Fixed token speed not showing for all messages in a session

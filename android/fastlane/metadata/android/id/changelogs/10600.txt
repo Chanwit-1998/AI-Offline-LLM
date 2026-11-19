@@ -1,3 +1,0 @@
-- Dukungan Tablet dan Chromebook — tata letak adaptif untuk layar besar dan foldable
-- Generasi di perangkat hingga 2× lebih cepat dengan optimisasi CPU baru
-- Memperbaiki freeze langka saat membuka pemilih model

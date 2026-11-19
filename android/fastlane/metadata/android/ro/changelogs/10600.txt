@@ -1,3 +1,0 @@
-- Suport pentru Tablet și Chromebook — interfețe adaptive pentru ecrane mari și dispozitive pliabile
-- Generare pe dispozitiv de până la 2× mai rapidă cu noile optimizări CPU
-- Am rezolvat o blocare rară la deschiderea selectorului de modele
