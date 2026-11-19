@@ -1,6 +1,11 @@
 package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -93,6 +98,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 enum class UserInputStatus {
@@ -143,6 +149,26 @@ fun UserInput(
 ) {
     var textState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
+    }
+    var showThinkingBadge by remember { mutableStateOf(false) }
+    var prevThinkingEnabled by remember { mutableStateOf(thinkingEnabled) }
+    var thinkingBadgeTrigger by remember { androidx.compose.runtime.mutableIntStateOf(0) }
+
+    LaunchedEffect(thinkingEnabled, supportsThinking) {
+        if (supportsThinking && thinkingEnabled && !prevThinkingEnabled) {
+            thinkingBadgeTrigger += 1
+            showThinkingBadge = true
+        } else if (!thinkingEnabled || !supportsThinking) {
+            showThinkingBadge = false
+        }
+        prevThinkingEnabled = thinkingEnabled
+    }
+
+    LaunchedEffect(thinkingBadgeTrigger, showThinkingBadge) {
+        if (showThinkingBadge && thinkingBadgeTrigger > 0) {
+            delay(2000L)
+            showThinkingBadge = false
+        }
     }
 
     var dictationBase by remember { mutableStateOf<TextFieldValue?>(null) }
@@ -238,6 +264,45 @@ fun UserInput(
                             contentDescription = "Remove image",
                             tint = MaterialTheme.colorScheme.inverseOnSurface,
                             modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
+
+            AnimatedVisibility(
+                visible = showThinkingBadge && thinkingEnabled && supportsThinking,
+                enter = fadeIn() + slideInVertically { it / 2 },
+                exit = fadeOut() + slideOutVertically { it / 2 },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 6.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                    ),
+                    shadowElevation = 2.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Lightbulb,
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(id = R.string.thinking_mode_enabled),
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            softWrap = false
                         )
                     }
                 }

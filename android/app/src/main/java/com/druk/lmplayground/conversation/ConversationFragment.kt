@@ -523,7 +523,8 @@ class ConversationFragment : Fragment() {
                             Text(stringResource(R.string.choose_storage_folder_message))
                         },
                         confirmButton = {
-                            TextButton(
+                            TextButton(onClick = { runCatching { findNavController().navigate(R.id.nav_models, android.os.Bundle().apply { putString("mode", "store") }) } }) { Text(stringResource(R.string.menu_model_store)) }
+                    TextButton(
                                 onClick = {
                                     (activity as? MainActivity)?.launchFolderPicker { uri ->
                                         if (uri != null) {

@@ -194,7 +194,7 @@
     <!-- Storage -->
     <string name="choose_storage_folder">เลือกโฟลเดอร์จัดเก็บ</string>
     <string name="choose_storage_folder_message">โปรดเลือกโฟลเดอร์ที่จะใช้เก็บโมเดล จำเป็นต้องเลือกเพื่อใช้แอปนี้</string>
-    <string name="choose_folder">เลือกโฟลเดอร์</string>
+    <string name="choose_folder">นำเข้าโมเดล</string>
 
     <!-- Session -->
     <string name="session_info">ข้อมูลเซสชัน</string>
@@ -423,4 +423,5 @@
     <string name="use_in_chat">ใช้ในแชทนี้</string>
     <string name="persona_applied_toast">นำบุคลิก AI มาใช้กับแชทแล้ว</string>
     
+    <string name="thinking_mode_enabled">เปิดโหมดคิดวิเคราะห์</string>
 </resources>
