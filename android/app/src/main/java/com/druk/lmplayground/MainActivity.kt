@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.druk.ai_offline_llm.assistant.AssistantBridge
 import com.druk.ai_offline_llm.storage.StorageDocuments
 
 class MainActivity : AppCompatActivity() {
@@ -64,5 +65,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.content_main)
+        handleAssistantIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleAssistantIntent(intent)
+    }
+
+    private fun handleAssistantIntent(intent: Intent?) {
+        val prompt = intent?.getStringExtra("assistant_prompt") ?: return
+        intent.removeExtra("assistant_prompt")
+        AssistantBridge.submitPrompt(prompt)
     }
 }

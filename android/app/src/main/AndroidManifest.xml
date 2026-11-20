@@ -60,6 +60,11 @@
              default Digital assistant app in Android Settings. The service
              itself is a no-op stub (see .assistant package). -->
         <service
+            android:name=".assistant.AssistantVoiceInteractionSessionService"
+            android:permission="android.permission.BIND_VOICE_INTERACTION"
+            android:exported="true" />
+
+        <service
             android:name=".assistant.AssistantVoiceInteractionService"
             android:permission="android.permission.BIND_VOICE_INTERACTION"
             android:exported="true">

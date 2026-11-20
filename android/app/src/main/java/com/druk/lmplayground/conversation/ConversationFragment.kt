@@ -73,6 +73,7 @@ import androidx.navigation.fragment.findNavController
 import com.druk.ai_offline_llm.settings.SettingsFragment
 import com.druk.ai_offline_llm.MainActivity
 import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.assistant.AssistantBridge
 import com.druk.ai_offline_llm.models.ModelInfoProvider
 import com.druk.ai_offline_llm.models.SelectModelDialog
 import com.druk.ai_offline_llm.storage.StorageViewModel
@@ -535,6 +536,17 @@ class ConversationFragment : Fragment() {
                         navBackStackEntry?.savedStateHandle?.remove<Boolean>("eject_cartridge_requested")
                         activeCartridge = null
                         viewModel.clearSystemPrompt()
+                    }
+                }
+
+                val assistantPrompt by AssistantBridge.pendingPrompt.collectAsState()
+                LaunchedEffect(assistantPrompt, isModelReady) {
+                    val pending = assistantPrompt ?: return@LaunchedEffect
+                    if (isModelReady) {
+                        AssistantBridge.consumePrompt()
+                        viewModel.addMessage(pending)
+                    } else {
+                        Toast.makeText(cartridgeContext, "คำสั่งจากผู้ช่วย: "$pending" (โปรดเลือกโมเดลก่อน)", Toast.LENGTH_LONG).show()
                     }
                 }
 
