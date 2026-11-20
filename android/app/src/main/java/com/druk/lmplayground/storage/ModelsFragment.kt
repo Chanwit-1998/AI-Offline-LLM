@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.cartridge.CartridgeManager
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 
 class ModelsFragment : Fragment() {
@@ -44,6 +45,26 @@ class ModelsFragment : Fragment() {
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             )
             viewModel.requestStorageFolderChange(uri)
+        }
+    }
+
+    private var onCartridgeFolderChangedCallback: (() -> Unit)? = null
+    private val cartridgeFolderPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        uri?.let {
+            requireContext().contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            val count = CartridgeManager.setCustomCartridgeFolderUri(requireContext(), uri)
+            Toast.makeText(
+                requireContext(),
+                if (count > 0) "เปลี่ยนโฟลเดอร์ตลับและนำเข้า $count ตลับแล้ว" else "เปลี่ยนโฟลเดอร์เก็บตลับแล้ว",
+                Toast.LENGTH_SHORT
+            ).show()
+            onCartridgeFolderChangedCallback?.invoke()
         }
     }
 
@@ -113,6 +134,13 @@ class ModelsFragment : Fragment() {
             val pendingMigration by viewModel.pendingMigration.observeAsState()
             val migrationProgress by viewModel.migrationProgress.observeAsState()
             var currentActiveFilename by remember { mutableStateOf(activeModelFilename) }
+            var installedCartridges by remember { mutableStateOf(CartridgeManager.getInstalledCartridges(requireContext())) }
+            var activeCartridgeId by remember { mutableStateOf(CartridgeManager.getActiveCartridgeId(requireContext())) }
+            var cartridgeFolderPath by remember { mutableStateOf(CartridgeManager.getCartridgeFolderPath(requireContext())) }
+            onCartridgeFolderChangedCallback = {
+                cartridgeFolderPath = CartridgeManager.getCartridgeFolderPath(requireContext())
+                installedCartridges = CartridgeManager.getInstalledCartridges(requireContext())
+            }
 
             val prevDownloadCount = remember { androidx.compose.runtime.mutableIntStateOf(downloadingProgress.size) }
             LaunchedEffect(downloadingProgress.size) {
@@ -133,6 +161,43 @@ class ModelsFragment : Fragment() {
                     deviceLanguage = viewModel.deviceLanguage,
                     mode = mode,
                     activeModelFilename = currentActiveFilename,
+                    installedCartridges = installedCartridges,
+                    activeCartridgeId = activeCartridgeId,
+                    cartridgeFolderPath = cartridgeFolderPath,
+                    onChangeCartridgeFolderClick = {
+                        runCatching { cartridgeFolderPickerLauncher.launch(null) }
+                            .onFailure { Toast.makeText(requireContext(), R.string.folder_picker_unavailable, Toast.LENGTH_SHORT).show() }
+                    },
+                    onInsertCartridge = { cart ->
+                        CartridgeManager.setActiveCartridgeId(requireContext(), cart.id)
+                        activeCartridgeId = cart.id
+                        val nav = findNavController()
+                        nav.previousBackStackEntry?.savedStateHandle?.set("insert_cartridge_id", cart.id)
+                        nav.popBackStack()
+                    },
+                    onEjectCartridge = {
+                        CartridgeManager.setActiveCartridgeId(requireContext(), null)
+                        activeCartridgeId = null
+                        val nav = findNavController()
+                        nav.previousBackStackEntry?.savedStateHandle?.set("eject_cartridge_requested", true)
+                        Toast.makeText(requireContext(), "ถอดตลับออกแล้ว", Toast.LENGTH_SHORT).show()
+                    },
+                    onInstallCustomCartridge = { newCart ->
+                        installedCartridges = CartridgeManager.installCartridge(requireContext(), newCart)
+                    },
+                    onRemoveCartridge = { cartId ->
+                        installedCartridges = CartridgeManager.removeInstalledCartridge(requireContext(), cartId)
+                        if (activeCartridgeId == cartId) {
+                            activeCartridgeId = null
+                            findNavController().previousBackStackEntry?.savedStateHandle?.set("eject_cartridge_requested", true)
+                        }
+                    },
+                    onOpenCartridgeStoreClick = {
+                        val nav = findNavController()
+                        if (nav.currentDestination?.id == R.id.nav_models) {
+                            nav.navigate(R.id.action_models_to_cartridge_store)
+                        }
+                    },
                     onSelectModel = { model ->
                         val nav = findNavController()
                         nav.previousBackStackEntry?.savedStateHandle?.set(

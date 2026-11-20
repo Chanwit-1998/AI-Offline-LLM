@@ -79,7 +79,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Extension
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.graphics.Color
 import com.druk.ai_offline_llm.R
+import com.druk.ai_offline_llm.cartridge.AiCartridge
+import com.druk.ai_offline_llm.cartridge.CartridgeManager
 import com.druk.ai_offline_llm.models.ModelCapabilityIcons
 import com.druk.ai_offline_llm.models.ModelInfo
 import com.druk.ai_offline_llm.models.ModelInfoProvider
@@ -115,6 +127,15 @@ fun ModelsScreen(
     onCancelMigration: () -> Unit,
     mode: ModelsScreenMode = ModelsScreenMode.ALL,
     activeModelFilename: String? = null,
+    installedCartridges: List<AiCartridge> = emptyList(),
+    activeCartridgeId: String? = null,
+    cartridgeFolderPath: String = "",
+    onChangeCartridgeFolderClick: () -> Unit = {},
+    onInsertCartridge: (AiCartridge) -> Unit = {},
+    onEjectCartridge: () -> Unit = {},
+    onInstallCustomCartridge: (AiCartridge) -> Unit = {},
+    onRemoveCartridge: (String) -> Unit = {},
+    onOpenCartridgeStoreClick: () -> Unit = {},
     onSelectModel: ((ModelInfo) -> Unit)? = null,
     onUnloadModel: (() -> Unit)? = null,
     onOpenStoreClick: (() -> Unit)? = null,
@@ -123,7 +144,7 @@ fun ModelsScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val screenTitle = when (mode) {
-        ModelsScreenMode.DOWNLOADED_ONLY -> stringResource(R.string.menu_my_models)
+        ModelsScreenMode.DOWNLOADED_ONLY -> "กระเป๋าของฉัน"
         ModelsScreenMode.STORE_ONLY -> stringResource(R.string.menu_model_store)
         ModelsScreenMode.ALL -> stringResource(R.string.models)
     }
@@ -155,6 +176,15 @@ fun ModelsScreen(
             snackbarHostState = snackbarHostState,
             mode = mode,
             activeModelFilename = activeModelFilename,
+            installedCartridges = installedCartridges,
+            activeCartridgeId = activeCartridgeId,
+            cartridgeFolderPath = cartridgeFolderPath,
+            onChangeCartridgeFolderClick = onChangeCartridgeFolderClick,
+            onInsertCartridge = onInsertCartridge,
+            onEjectCartridge = onEjectCartridge,
+            onInstallCustomCartridge = onInstallCustomCartridge,
+            onRemoveCartridge = onRemoveCartridge,
+            onOpenCartridgeStoreClick = onOpenCartridgeStoreClick,
             onSelectModel = onSelectModel,
             onUnloadModel = onUnloadModel,
             onOpenStoreClick = onOpenStoreClick,
@@ -198,6 +228,15 @@ fun ModelsContent(
     modifier: Modifier = Modifier,
     mode: ModelsScreenMode = ModelsScreenMode.ALL,
     activeModelFilename: String? = null,
+    installedCartridges: List<AiCartridge> = emptyList(),
+    activeCartridgeId: String? = null,
+    cartridgeFolderPath: String = "",
+    onChangeCartridgeFolderClick: () -> Unit = {},
+    onInsertCartridge: (AiCartridge) -> Unit = {},
+    onEjectCartridge: () -> Unit = {},
+    onInstallCustomCartridge: (AiCartridge) -> Unit = {},
+    onRemoveCartridge: (String) -> Unit = {},
+    onOpenCartridgeStoreClick: () -> Unit = {},
     onSelectModel: ((ModelInfo) -> Unit)? = null,
     onUnloadModel: (() -> Unit)? = null,
     onOpenStoreClick: (() -> Unit)? = null,
@@ -207,6 +246,19 @@ fun ModelsContent(
 ) {
     var modelToDelete by remember { mutableStateOf<ModelInfo?>(null) }
     var downloadChoiceModel by remember { mutableStateOf<ModelInfo?>(null) }
+    var bagTab by remember { mutableIntStateOf(0) }
+    var showCreateCartridgeDialog by remember { mutableStateOf(false) }
+    val bagContext = LocalContext.current
+    val importCartridgeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            CartridgeManager.importFromUri(bagContext, uri)
+                .onSuccess { imported ->
+                    onInstallCustomCartridge(imported)
+                    Toast.makeText(bagContext, "นำเข้าตลับ "${imported.name}" สำเร็จ!", Toast.LENGTH_SHORT).show()
+                }
+                .onFailure { Toast.makeText(bagContext, "ไฟล์ตลับไม่ถูกต้อง: ${it.message}", Toast.LENGTH_LONG).show() }
+        }
+    }
 
     LaunchedEffect(snackbarMessage) {
         if (snackbarMessage != null) {
@@ -282,7 +334,82 @@ fun ModelsContent(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if (storageInfo != null) {
+                if (mode == ModelsScreenMode.DOWNLOADED_ONLY) {
+                    item(key = "dual_storage_cards", span = { GridItemSpan(maxLineSpan) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CompactFolderCard(
+                                title = "โฟลเดอร์โมเดล AI",
+                                path = storageInfo?.path ?: "ค่าเริ่มต้น",
+                                subtitle = storageInfo?.let { "โมเดล: ${Formatter.formatFileSize(bagContext, it.usedBytes)}" } ?: "",
+                                icon = Icons.Outlined.Folder,
+                                onChangeClick = onChangeFolderClick,
+                                modifier = Modifier.weight(1f)
+                            )
+                            CompactFolderCard(
+                                title = "โฟลเดอร์ตลับข้อมูล",
+                                path = cartridgeFolderPath.ifBlank { "โฟลเดอร์แอป/cartridges" },
+                                subtitle = "ตลับ: ${installedCartridges.size} ตลับ",
+                                icon = Icons.Outlined.Extension,
+                                onChangeClick = onChangeCartridgeFolderClick,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+
+                    item(key = "bag_category_tabs", span = { GridItemSpan(maxLineSpan) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            if (bagTab == 0) {
+                                Button(
+                                    onClick = { bagTab = 0 },
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Outlined.Memory, null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("โมเดล (${downloadedModels.size})", fontWeight = FontWeight.Bold)
+                                }
+                            } else {
+                                OutlinedButton(
+                                    onClick = { bagTab = 0 },
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Outlined.Memory, null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("โมเดล (${downloadedModels.size})")
+                                }
+                            }
+
+                            if (bagTab == 1) {
+                                Button(
+                                    onClick = { bagTab = 1 },
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Outlined.Extension, null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("ตลับข้อมูล (${installedCartridges.size})", fontWeight = FontWeight.Bold)
+                                }
+                            } else {
+                                OutlinedButton(
+                                    onClick = { bagTab = 1 },
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Outlined.Extension, null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("ตลับข้อมูล (${installedCartridges.size})")
+                                }
+                            }
+                        }
+                    }
+                } else if (storageInfo != null) {
                     item(key = "storage_card", span = { GridItemSpan(maxLineSpan) }) {
                         StorageInfoCard(
                             storageInfo = storageInfo,
@@ -292,8 +419,112 @@ fun ModelsContent(
                     }
                 }
 
+                if (mode == ModelsScreenMode.DOWNLOADED_ONLY && bagTab == 1) {
+                    item(key = "cartridge_bag_actions", span = { GridItemSpan(maxLineSpan) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilledTonalButton(
+                                onClick = { showCreateCartridgeDialog = true },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.Add, null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("สร้างตลับใหม่")
+                            }
+                            OutlinedButton(
+                                onClick = { importCartridgeLauncher.launch(arrayOf("application/json", "text/plain", "*/*")) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Outlined.Download, null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("นำเข้า .json")
+                            }
+                        }
+                    }
+
+                    items(
+                        items = installedCartridges,
+                        key = { "bag_cart_" + it.id },
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) { cart ->
+                        val isInserted = activeCartridgeId == cart.id
+                        val accent = Color(cart.colorHex)
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isInserted) accent.copy(alpha = 0.16f) else MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            border = BorderStroke(
+                                width = if (isInserted) 1.5.dp else 1.dp,
+                                color = if (isInserted) accent else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(accent.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Outlined.Extension, null, tint = accent)
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text("${cart.name} (${cart.version})", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                        Text("${cart.category} • Temp ${cart.temperature} | Top-P ${cart.topP}", style = MaterialTheme.typography.labelSmall, color = accent)
+                                    }
+                                    FilledTonalIconButton(
+                                        onClick = { onRemoveCartridge(cart.id) },
+                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                        )
+                                    ) {
+                                        Icon(Icons.Outlined.Delete, "ลบตลับ", modifier = Modifier.size(18.dp))
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(cart.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                    if (isInserted) {
+                                        OutlinedButton(
+                                            onClick = onEjectCartridge,
+                                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.7f)),
+                                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                                        ) {
+                                            Icon(Icons.Outlined.StopCircle, null, modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text("ถอดตลับออก")
+                                        }
+                                    } else {
+                                        FilledTonalButton(onClick = { onInsertCartridge(cart) }) {
+                                            Icon(Icons.Outlined.Extension, null, modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text("เสียบตลับใช้งาน")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    item(key = "go_cartridge_store", span = { GridItemSpan(maxLineSpan) }) {
+                        OutlinedButton(
+                            onClick = onOpenCartridgeStoreClick,
+                            modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+                        ) {
+                            Icon(Icons.Outlined.Download, null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("ไปที่ร้านค้าตลับข้อมูล")
+                        }
+                    }
+                }
+
                 // ส่วนโมเดลที่ดาวน์โหลดแล้ว (เมนู 1: โมเดล AI)
-                if (showDownloadedSection) {
+                if (showDownloadedSection && !(mode == ModelsScreenMode.DOWNLOADED_ONLY && bagTab == 1)) {
                     item(key = "header_downloaded", span = { GridItemSpan(maxLineSpan) }) {
                         Text(
                             text = stringResource(R.string.downloaded_models),
@@ -626,6 +857,80 @@ fun ModelsContent(
             },
             confirmButton = { }
         )
+    }
+
+    if (showCreateCartridgeDialog) {
+        var cName by remember { mutableStateOf("") }
+        var cDesc by remember { mutableStateOf("") }
+        var cPrompt by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showCreateCartridgeDialog = false },
+            title = { Text("สร้างตลับข้อมูลใหม่") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedTextField(value = cName, onValueChange = { cName = it }, label = { Text("ชื่อตลับ") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(value = cDesc, onValueChange = { cDesc = it }, label = { Text("คำอธิบายความสามารถ") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(value = cPrompt, onValueChange = { cPrompt = it }, label = { Text("ชุดคำสั่ง System Prompt") }, minLines = 3, modifier = Modifier.fillMaxWidth())
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onInstallCustomCartridge(
+                            AiCartridge(
+                                id = "custom_${System.currentTimeMillis()}",
+                                name = cName.trim(),
+                                description = cDesc.trim().ifBlank { "ตลับกำหนดเอง" },
+                                systemPrompt = cPrompt.trim(),
+                                colorHex = 0xFF00E5FF,
+                                isCustom = true
+                            )
+                        )
+                        showCreateCartridgeDialog = false
+                        Toast.makeText(bagContext, "สร้างตลับเรียบร้อย!", Toast.LENGTH_SHORT).show()
+                    },
+                    enabled = cName.isNotBlank() && cPrompt.isNotBlank()
+                ) { Text("บันทึกตลับ") }
+            },
+            dismissButton = { TextButton(onClick = { showCreateCartridgeDialog = false }) { Text("ยกเลิก") } }
+        )
+    }
+}
+
+@Composable
+private fun CompactFolderCard(
+    title: String,
+    path: String,
+    subtitle: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onChangeClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(title, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(path, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (subtitle.isNotBlank()) {
+                Text(subtitle, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            TextButton(
+                onClick = onChangeClick,
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
+                modifier = Modifier.height(30.dp)
+            ) {
+                Text("เปลี่ยนโฟลเดอร์", style = MaterialTheme.typography.labelSmall)
+            }
+        }
     }
 }
 

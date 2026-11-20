@@ -38,6 +38,7 @@ import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -216,8 +217,8 @@ private fun SessionListContent(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             DrawerNavMenuItem(
-                icon = Icons.Outlined.Storage,
-                title = stringResource(R.string.menu_my_models),
+                icon = Icons.Outlined.WorkOutline,
+                title = "กระเป๋าของฉัน",
                 onClick = onModelsClicked
             )
             DrawerNavMenuItem(
@@ -227,7 +228,7 @@ private fun SessionListContent(
             )
             DrawerNavMenuItem(
                 icon = Icons.Outlined.Extension,
-                title = "ร้านค้าตลับ",
+                title = "ร้านค้าตลับข้อมูล",
                 onClick = onCartridgeStoreClicked
             )
             DrawerNavMenuItem(

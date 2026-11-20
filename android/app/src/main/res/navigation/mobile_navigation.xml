@@ -81,6 +81,9 @@
         android:id="@+id/nav_models"
         android:name="com.druk.ai_offline_llm.storage.ModelsFragment"
         android:label="@string/models">
+        <action
+            android:id="@+id/action_models_to_cartridge_store"
+            app:destination="@id/nav_cartridge_store" />
         <argument
             android:name="mode"
             android:defaultValue="all"

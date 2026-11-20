@@ -3,16 +3,23 @@
 package com.druk.ai_offline_llm.conversation
 
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.druk.ai_offline_llm.AppBar
+import com.druk.ai_offline_llm.cartridge.AiCartridge
 import com.druk.ai_offline_llm.models.ModelInfo
 import com.druk.ai_offline_llm.theme.PlaygroundTheme
 import java.time.LocalDate
@@ -31,13 +39,15 @@ const val ConversationBarTestTag = "ConversationBarTestTag"
 fun ConversationBar(
     modelInfo: ModelInfo?,
     modelStatus: String? = null,
+    activeCartridge: AiCartridge? = null,
     modifier: Modifier = Modifier,
     colors: TopAppBarColors? = null,
     showNavIcon: Boolean = true,
     compact: Boolean = false,
     onModelNamePressed: () -> Unit = { },
     onNavIconPressed: () -> Unit = { },
-    onNewSessionPressed: () -> Unit = { }
+    onNewSessionPressed: () -> Unit = { },
+    onBagClicked: () -> Unit = { }
 ) {
     AppBar(
         modifier = modifier.testTag(ConversationBarTestTag),
@@ -50,7 +60,9 @@ fun ConversationBar(
                 if (compact) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        modifier = Modifier
+                            .clickable(onClick = onModelNamePressed)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = modelInfo.name,
@@ -60,12 +72,13 @@ fun ConversationBar(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        val status = modelStatus ?: modelInfo.description
-                        if (status.isNotBlank()) {
+                        val cartText = activeCartridge?.let { "ตลับ: ${it.name}" } ?: (modelStatus ?: modelInfo.description)
+                        if (cartText.isNotBlank()) {
                             Text(
-                                text = "  ·  $status",
+                                text = "  ·  $cartText",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = activeCartridge?.let { Color(it.colorHex) } ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = if (activeCartridge != null) FontWeight.SemiBold else FontWeight.Normal,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -74,7 +87,9 @@ fun ConversationBar(
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        modifier = Modifier
+                            .clickable(onClick = onModelNamePressed)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = modelInfo.name,
@@ -85,32 +100,59 @@ fun ConversationBar(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        val sub = modelStatus ?: modelInfo.description
-                        if (sub.isNotBlank()) {
-                            Text(
-                                text = sub,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                        val sub = when {
+                            activeCartridge != null -> "ตลับ: ${activeCartridge.name}"
+                            !modelStatus.isNullOrBlank() -> modelStatus
+                            else -> "ตลับ: ยังไม่เสียบตลับ"
                         }
+                        Text(
+                            text = sub,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (activeCartridge != null) FontWeight.SemiBold else FontWeight.Normal,
+                            color = activeCartridge?.let { Color(it.colorHex) } ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             } else {
-                Text(
-                    text = "โปรดเลือกโมเดล เพื่อสนทนา",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable(onClick = onModelNamePressed)
+                ) {
+                    Text(
+                        text = "โปรดเลือกโมเดล เพื่อสนทนา",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (activeCartridge != null) {
+                        Text(
+                            text = "ตลับ: ${activeCartridge.name}",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(activeCartridge.colorHex),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
             }
         },
-        actions = {}
+        actions = {
+            IconButton(onClick = onBagClicked) {
+                Icon(
+                    imageVector = Icons.Outlined.WorkOutline,
+                    contentDescription = "กระเป๋าของฉัน",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
     )
 }
 

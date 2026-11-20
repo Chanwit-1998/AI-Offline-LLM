@@ -525,6 +525,14 @@ class ConversationFragment : Fragment() {
                     navBackStackEntry?.savedStateHandle?.remove<String>("insert_cartridge_id")
                     CartridgeManager.getAllAvailableCartridges(cartridgeContext).find { it.id == cId }?.let { insertCartridgeAction(it) }
                 }
+                val ejectCartridgeRequested by (navBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("eject_cartridge_requested")?.observeAsState() ?: remember { mutableStateOf(null) })
+                LaunchedEffect(ejectCartridgeRequested) {
+                    if (ejectCartridgeRequested == true) {
+                        navBackStackEntry?.savedStateHandle?.remove<Boolean>("eject_cartridge_requested")
+                        activeCartridge = null
+                        viewModel.clearSystemPrompt()
+                    }
+                }
 
                 // Check if storage is configured on first launch
                 LaunchedEffect(Unit) {
@@ -886,6 +894,18 @@ class ConversationFragment : Fragment() {
                         ConversationBar(
                             modelInfo = modelInfo,
                             modelStatus = modelStatus,
+                            activeCartridge = activeCartridge,
+                            onBagClicked = {
+                                if (findNavController().currentDestination?.id == R.id.nav_home) {
+                                    findNavController().navigate(
+                                        R.id.action_home_to_models,
+                                        bundleOf(
+                                            "mode" to "downloaded",
+                                            "active_model_filename" to modelInfo?.filename
+                                        )
+                                    )
+                                }
+                            },
                             showNavIcon = !showPermanent,
                             compact = showPermanent,
                             onNavIconPressed = {
@@ -947,7 +967,6 @@ class ConversationFragment : Fragment() {
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
                             }
-                            CartridgeSlotBar(activeCartridge = activeCartridge, onInsertCartridge = insertCartridgeAction, onEjectCartridge = ejectCartridgeAction, onOpenCartridgeStore = { val nav = findNavController(); if (nav.currentDestination?.id == R.id.nav_home) nav.navigate(R.id.action_home_to_cartridge_store) }, modifier = Modifier.padding(bottom = 6.dp))
                             if (sessionDocuments.isNotEmpty()) {
                                 DocumentChipsRow(
                                     documents = sessionDocuments,

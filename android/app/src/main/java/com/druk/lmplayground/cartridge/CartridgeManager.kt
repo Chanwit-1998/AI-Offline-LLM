@@ -2,12 +2,14 @@ package com.druk.ai_offline_llm.cartridge
 
 import android.content.Context
 import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import org.json.JSONObject
 import java.io.File
 
 object CartridgeManager {
     private const val PREFS_NAME = "ai_cartridge_prefs"
     private const val KEY_ACTIVE_ID = "active_cartridge_id"
+    private const val KEY_FOLDER_URI = "custom_cartridge_folder_uri"
     private const val DIR_NAME = "cartridges"
     private const val FILE_INSTALLED = "installed_cartridges.json"
 
@@ -68,6 +70,26 @@ object CartridgeManager {
 
     private fun getInstalledFile(context: Context): File =
         File(File(context.filesDir, DIR_NAME).apply { mkdirs() }, FILE_INSTALLED)
+
+    fun getCartridgeFolderPath(context: Context): String {
+        val rawUri = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(KEY_FOLDER_URI, null)
+        if (rawUri.isNullOrBlank()) return "โฟลเดอร์แอป/cartridges"
+        val decoded = Uri.decode(rawUri)
+        val segment = decoded.substringAfterLast("primary:", decoded.substringAfterLast("/"))
+        return if (segment.isNotBlank()) "Internal Storage/$segment" else decoded
+    }
+
+    fun setCustomCartridgeFolderUri(context: Context, uri: Uri): Int {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_FOLDER_URI, uri.toString()).apply()
+        val tree = DocumentFile.fromTreeUri(context, uri) ?: return 0
+        var importedCount = 0
+        tree.listFiles().forEach { doc ->
+            if (doc.isFile && (doc.name?.endsWith(".json", ignoreCase = true) == true)) {
+                if (importFromUri(context, doc.uri).isSuccess) importedCount++
+            }
+        }
+        return importedCount
+    }
 
     fun getInstalledCartridges(context: Context): List<AiCartridge> {
         val file = getInstalledFile(context)
