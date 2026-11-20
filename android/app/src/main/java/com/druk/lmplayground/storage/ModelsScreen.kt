@@ -476,7 +476,7 @@ fun ModelsContent(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text("${cart.name} (${cart.version})", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                                        Text("${cart.category} • Temp ${cart.temperature} | Top-P ${cart.topP}", style = MaterialTheme.typography.labelSmall, color = accent)
+                                        Text("${cart.category} • คลังความรู้ ${cart.knowledge.size} หัวข้อ", style = MaterialTheme.typography.labelSmall, color = accent)
                                     }
                                     FilledTonalIconButton(
                                         onClick = { onRemoveCartridge(cart.id) },
@@ -887,7 +887,7 @@ fun ModelsContent(
     if (showCreateCartridgeDialog) {
         var cName by remember { mutableStateOf("") }
         var cDesc by remember { mutableStateOf("") }
-        var cPrompt by remember { mutableStateOf("") }
+        var cKnowledge by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showCreateCartridgeDialog = false },
             title = { Text("สร้างตลับข้อมูลใหม่") },
@@ -895,7 +895,7 @@ fun ModelsContent(
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedTextField(value = cName, onValueChange = { cName = it }, label = { Text("ชื่อตลับ") }, singleLine = true, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(value = cDesc, onValueChange = { cDesc = it }, label = { Text("คำอธิบายความสามารถ") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = cPrompt, onValueChange = { cPrompt = it }, label = { Text("ชุดคำสั่ง System Prompt") }, minLines = 3, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(value = cKnowledge, onValueChange = { cKnowledge = it }, label = { Text("เนื้อหาคลังความรู้ (เว้นบรรทัดแยกหัวข้อ)") }, minLines = 4, modifier = Modifier.fillMaxWidth())
                 }
             },
             confirmButton = {
@@ -906,7 +906,7 @@ fun ModelsContent(
                                 id = "custom_${System.currentTimeMillis()}",
                                 name = cName.trim(),
                                 description = cDesc.trim().ifBlank { "ตลับกำหนดเอง" },
-                                systemPrompt = cPrompt.trim(),
+                                knowledge = AiCartridge.parseRawKnowledgeText(cKnowledge.trim()),
                                 colorHex = 0xFF00E5FF,
                                 isCustom = true
                             )
@@ -914,7 +914,7 @@ fun ModelsContent(
                         showCreateCartridgeDialog = false
                         Toast.makeText(bagContext, "สร้างตลับเรียบร้อย!", Toast.LENGTH_SHORT).show()
                     },
-                    enabled = cName.isNotBlank() && cPrompt.isNotBlank()
+                    enabled = cName.isNotBlank() && cKnowledge.isNotBlank()
                 ) { Text("บันทึกตลับ") }
             },
             dismissButton = { TextButton(onClick = { showCreateCartridgeDialog = false }) { Text("ยกเลิก") } }

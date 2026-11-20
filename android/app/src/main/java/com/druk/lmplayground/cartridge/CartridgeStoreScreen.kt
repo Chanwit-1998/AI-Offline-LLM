@@ -36,12 +36,8 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ร้านค้าตลับข้อมูล (${CartridgeManager.storeCatalog.size})") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "กลับ")
-                    }
-                }
+                title = { Text("ร้านค้าตลับข้อมูล RAG (${CartridgeManager.storeCatalog.size})") },
+                navigationIcon = { IconButton(onClick = onBackClick) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "กลับ") } }
             )
         }
     ) { padding ->
@@ -62,10 +58,7 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(accent.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(accent.copy(alpha = 0.2f)), contentAlignment = Alignment.Center) {
                                 Icon(Icons.Outlined.Extension, null, tint = accent, modifier = Modifier.size(24.dp))
                             }
                             Spacer(modifier = Modifier.width(12.dp))
@@ -77,13 +70,7 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(item.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            "ค่าจูนตลับ: Temp ${item.temperature} | Top-P ${item.topP}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Text("คลังความรู้ RAG: บรรจุ ${item.knowledge.size} หัวข้ออ้างอิงเฉพาะทาง", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),

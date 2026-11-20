@@ -11,148 +11,171 @@ object CartridgeManager {
     private const val KEY_ACTIVE_ID = "active_cartridge_id"
     private const val KEY_FOLDER_URI = "custom_cartridge_folder_uri"
     private const val DIR_NAME = "cartridges"
-    private const val FILE_INSTALLED = "installed_cartridges.json"
+    private const val FILE_INSTALLED = "installed_cartridges_rag_v1.json"
 
     val storeCatalog: List<AiCartridge> = listOf(
         AiCartridge(
-            id = "cart_termux_dev",
-            name = "ตลับวิศวกรโค้ด & Termux Pro",
-            version = "v2.0",
-            category = "เขียนโค้ด",
+            id = "rag_termux_linux",
+            name = "ตลับฐานข้อมูล Termux & Linux Commands",
+            version = "v2.0 RAG",
+            category = "เขียนโค้ด & ระบบ",
             colorHex = 0xFF00BFA5,
-            description = "จูนค่าแม่นยำสูง (Temp 0.15) พร้อมชุดคำสั่งลัด Termux, Git, Python และ Android Kotlin แก้บั๊กตรงจุดไม่เยิ่นเย้อ",
-            systemPrompt = "คุณคือวิศวกรซอฟต์แวร์ระดับอาวุโสและผู้เชี่ยวชาญ Linux/Termux, Bash, Python และ Android Kotlin/Jetpack Compose\nกฎเหล็ก:\n1. ตอบกระชับ ส่งโค้ดหรือคำสั่งที่พร้อมคัดลอกรันได้ทันทีโดยไม่เกริ่นนำยาว\n2. หากเป็นคำสั่ง Termux ให้รวมคำสั่งต่อเนื่องด้วย && เพื่อให้รันจบในครั้งเดียว\n3. หากข้อมูลไม่พอให้ถามกลับสั้นๆ ห้ามเดาชื่อไฟล์หรือแพ็กเกจเอง",
-            temperature = 0.15f,
-            topP = 0.85f,
-            bestFor = "• เขียนสคริปต์ Bash (.sh), Python, คำสั่ง Git และจัดการไฟล์ใน Termux\n• เขียนและแก้บั๊กโค้ดแอป Android (Kotlin / Jetpack Compose)\n• อ่าน Error Log เพื่อหาจุดแก้ไขแบบตรงบรรทัด",
-            usageTips = "• ระบุภาษาโปรแกรมหรือชื่อเครื่องมือให้ชัด เช่น 'เขียนสคริปต์ bash ใน Termux สำหรับ...'\n• ถ้าติด Error ให้คัดลอกข้อความ Error 3-5 บรรทัดสุดท้ายมาวางตรงๆ จะแก้ได้แม่นยำที่สุด",
-            samplePrompt = "เขียนคำสั่ง Termux บรรทัดเดียวสำหรับค้นหาไฟล์ .gguf ทั้งหมดในโฟลเดอร์ Download พร้อมแสดงขนาดไฟล์"
+            description = "คลังคำสั่งลัด Termux, Git, Python, SSH และวิธีแก้ Error พื้นฐานบน Android แบบออฟไลน์",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("อัปเดตแพ็กเกจและสิทธิ์พื้นที่เก็บข้อมูล Termux", "ใช้คำสั่ง pkg update && pkg upgrade -y เพื่ออัปเดตคลังโปรแกรม และใช้ termux-setup-storage เพื่อขอสิทธิ์เข้าถึงโฟลเดอร์ /sdcard"),
+                CartridgeKnowledgeEntry("คำสั่ง Git พื้นฐานสำหรับอัปโหลดโค้ดขึ้น GitHub", "ตรวจสอบสถานะด้วย git status เพิ่มไฟล์ทั้งหมดด้วย git add . บันทึกด้วย git commit -m \"ข้อความ\" และส่งขึ้นเซิร์ฟเวอร์ด้วย git push origin main"),
+                CartridgeKnowledgeEntry("ค้นหาไฟล์ขนาดใหญ่และเช็กพื้นที่ว่าง", "เช็กพื้นที่ดิสก์ด้วย df -h เช็กขนาดโฟลเดอร์ด้วย du -sh * และค้นหาไฟล์ .gguf ทั้งหมดในเครื่องด้วย find /sdcard -name \"*.gguf\" 2>/dev/null"),
+                CartridgeKnowledgeEntry("รัน Python HTTP Server แชร์ไฟล์ในวง Wi-Fi", "ใช้คำสั่ง python3 -m http.server 8080 เพื่อเปิดเว็บแชร์ไฟล์ในโฟลเดอร์ปัจจุบันผ่านพอร์ต 8080")
+            ),
+            bestFor = "• ค้นหาคำสั่ง Termux / Linux / Git โดยไม่ต้องต่อเน็ตเปิดเว็บหา\n• ใช้ร่วมกับบุคลิก 'นักเขียนโค้ด' เพื่อให้ AI ตอบคำสั่งที่ตรงไวยากรณ์เป๊ะ",
+            usageTips = "• ถามเจาะจงชื่อคำสั่งหรือสิ่งที่ต้องการทำ เช่น 'คำสั่ง termux แชร์ไฟล์ผ่าน wifi'",
+            samplePrompt = "ขอคำสั่ง Termux สำหรับค้นหาไฟล์ .gguf ในเครื่องและเช็กขนาดพื้นที่ว่าง"
         ),
         AiCartridge(
-            id = "cart_translator_pro",
-            name = "ตลับล่ามแปลภาษา ไทย-อังกฤษ-ญี่ปุ่น",
-            version = "v2.0",
-            category = "ภาษา",
-            colorHex = 0xFFFF9100,
-            description = "แปลภาษาเป็นธรรมชาติระดับเจ้าของภาษา พร้อมแยกศัพท์สำคัญ คำอ่าน และอธิบายบริบทเกมหรือแชท",
-            systemPrompt = "คุณคือล่ามและนักแปลภาษามืออาชีพ (ไทย - อังกฤษ - ญี่ปุ่น)\nรูปแบบการตอบ:\n1. แปลประโยคหลักให้สละสลวยตรงตามบริบท (ไม่แปลทื่อตรงตัว)\n2. แยก 'คำศัพท์/แสลงน่าสนใจ' 2-4 คำ พร้อมคำอ่านและคำแปลสั้นๆ\n3. หากเป็นชื่อสกิล ไอเทม หรือชื่อเฉพาะในเกม ให้คงชื่อต้นฉบับวงเล็บไว้ด้วย",
-            temperature = 0.30f,
-            topP = 0.90f,
-            bestFor = "• แปลบทสนทนาในเกม เมนูแอปต่างประเทศ และมังงะ/อนิเมะ\n• แปลข้อความแชทหรืออีเมลภาษาอังกฤษ-ญี่ปุ่นให้ดูเป็นธรรมชาติ\n• เรียนรู้คำศัพท์และสำนวนที่ใช้จริงในชีวิตประจำวัน",
-            usageTips = "• บอกบริบทสั้นๆ หน้าข้อความ เช่น 'แปลข้อความในเกม RPG:' หรือ 'แปลแชทคุยกับเพื่อนต่างชาติ:'\n• ถ้าต้องการให้แปลเป็นภาษาไหน ให้ระบุกำกับ เช่น 'แปลเป็นอังกฤษแบบสุภาพ:'",
-            samplePrompt = "แปลข้อความในเกมนี้เป็นภาษาไทยแบบเข้าใจง่าย: 'Equipping this relic boosts critical rate by 15%, but drains HP over time.'"
-        ),
-        AiCartridge(
-            id = "cart_fast_assistant",
-            name = "ตลับผู้ช่วยสรุปไว & ตอบตรงประเด็น",
-            version = "v2.0",
-            category = "เครื่องมือ",
-            colorHex = 0xFF2979FF,
-            description = "ตัดน้ำออก 100% ย่อยข้อความยาวหรือเอกสารให้เหลือแค่ 3-5 ประเด็นหลัก อ่านจบใน 5 วินาที ประหยัดเวลาและแบต",
-            systemPrompt = "คุณคือผู้ช่วยสรุปข้อมูลความเร็วสูง\nกฎเหล็ก:\n1. ห้ามเกริ่นนำและห้ามสรุปปิดท้าย\n2. สรุปใจความสำคัญเป็นข้อย่อย (Bullet points) ไม่เกิน 5 ข้อ ข้อละไม่เกิน 1-2 บรรทัด\n3. ใช้ **ตัวหนา** เน้นตัวเลข วันที่ ชื่อคน และข้อสรุปสำคัญ\n4. อ้างอิงจากข้อความที่ผู้ใช้ส่งมาเท่านั้น ห้ามแต่งเติมเอง",
-            temperature = 0.25f,
-            topP = 0.85f,
-            bestFor = "• สรุปบทความยาวๆ ข่าว หรือข้อความแชทกลุ่มที่อ่านไม่ทัน\n• ดึงใจความสำคัญจากเอกสารที่แนบผ่านระบบ RAG\n• ถามคำถามทั่วไปที่ต้องการคำตอบสั้น ไว ไม่เยิ่นเย้อ",
-            usageTips = "• วางข้อความยาวๆ ต่อท้ายคำว่า 'สรุปประเด็นสำคัญ:' ได้ทันที\n• เหมาะมากเมื่อใช้กับโมเดลขนาดเล็ก (0.8B - 1.5B) เพราะช่วยให้ตอบไวและไม่หลุดประเด็น",
-            samplePrompt = "สรุปใจความสำคัญและสิ่งที่ต้องทำจากข้อความนี้ให้หน่อย:"
-        ),
-        AiCartridge(
-            id = "cart_game_guide",
-            name = "ตลับคัมภีร์สูตรเกม & Emulator",
-            version = "v2.0",
-            category = "เกม & นิยาย",
+            id = "rag_emulator_bible",
+            name = "ตลับคัมภีร์ตั้งค่า Emulator (PSP / PS2 / GC)",
+            version = "v2.0 RAG",
+            category = "เกม & Emulator",
             colorHex = 0xFFFF1744,
-            description = "ผู้เชี่ยวชาญบทสรุปเกมคลาสสิก PSP, PS2, GameCube พร้อมค่าตั้งต้น PPSSPP, AetherSX2 และ Dolphin ให้ลื่นบนมือถือ",
-            systemPrompt = "คุณคือผู้เชี่ยวชาญเกมคอนโซลคลาสสิก (PSP, PS2, GameCube) และโปรแกรม Emulator บน Android\nคลังข้อมูลอ้างอิงในตลับ:\n- PPSSPP (PSP): ใช้ Backend = Vulkan, Rendering Resolution = 2x-3x PSP สำหรับชิประดับกลาง, เปิด Lazy Texture Caching เพื่อลดกระตุก\n- AetherSX2/NetherSX2 (PS2): ใช้ Vulkan, EE Cycle Rate = 75%-100%, เปิด Multi-Threaded VU1\n- Dolphin (GameCube/Wii): ใช้ Vulkan, เปิด Compile Shaders Before Starting และ Skip EFB Access from CPU เพื่อเพิ่ม FPS\nตอบเป็นข้อๆ ชัดเจน แนะนำวิธีผ่านด่าน จุดเก็บของลับ และการตั้งค่าให้ตรงรุ่น",
-            temperature = 0.40f,
-            topP = 0.90f,
-            bestFor = "• หาวิธีผ่านด่าน บอสแพ้ทางอะไร จุดเก็บอาวุธ/ไอเทมลับในเกม PSP, PS2, GameCube\n• แก้ปัญหาเกมกระตุก ภาพแตก หรือเสียงแตกใน PPSSPP, AetherSX2, Dolphin\n• แนะนำเกมสนุกๆ แนวที่ชอบ",
-            usageTips = "• ระบุชื่อเกมเต็มๆ และเครื่องเล่น เช่น 'เกม Monster Hunter Portable 3rd บน PPSSPP...'\n• ถ้าถามเรื่องตั้งค่าให้บอกสเปกหรือชื่อรุ่นมือถือด้วยจะแนะนำค่าได้แม่นขึ้น",
-            samplePrompt = "ตั้งค่า PPSSPP บนมือถือ Android ยังไงให้เล่นเกม God of War: Ghost of Sparta ได้ลื่นๆ ภาพชัดไม่กระตุก"
+            description = "ฐานข้อมูลค่าตั้งต้น PPSSPP, AetherSX2/NetherSX2 และ Dolphin สำหรับชิป Exynos/Snapdragon บนมือถือ",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("การตั้งค่า PPSSPP (PSP) ให้ภาพชัดและลื่น 60FPS", "ตั้งค่า Backend = Vulkan, Rendering Resolution = 2x–3x PSP, เปิด Lazy Texture Caching (speedup), ตั้ง Spline/Bezier curves quality = Low"),
+                CartridgeKnowledgeEntry("การตั้งค่า AetherSX2 / NetherSX2 (PS2) ลดอาการหน่วง", "ใช้ GPU Renderer = Vulkan, Upscale Multiplier = 1.5x–2x Native, ตั้ง EE Cycle Rate = 75%, EE Cycle Skip = Normal (0) และเปิด Multi-Threaded VU1"),
+                CartridgeKnowledgeEntry("การตั้งค่า Dolphin Emulator (GameCube / Wii)", "เลือก Video Backend = Vulkan, เปิด Compile Shaders Before Starting และ Skip EFB Access from CPU เพื่อเพิ่มเฟรมเรต"),
+                CartridgeKnowledgeEntry("ตำแหน่งโฟลเดอร์เซฟเกมและไฟล์ BIOS", "PPSSPP เก็บเซฟไว้ที่ PSP/SAVEDATA และสูตรโกงไว้ที่ PSP/Cheats (เปิด Enable Cheats ก่อน) ส่วน AetherSX2 ต้องนำเข้าไฟล์ BIOS PS2 ก่อนบูตเกม")
+            ),
+            bestFor = "• ปรับจูนภาพและเฟรมเรตเกม PSP, PS2 และ GameCube บนมือถือ Android\n• แก้ปัญหาภาพแตก เสียงกระตุก และหาตำแหน่งวางไฟล์เซฟ",
+            usageTips = "• ระบุชื่อโปรแกรม Emulator (PPSSPP, AetherSX2, Dolphin) ในคำถาม ระบบจะดึงตารางตั้งค่ามาตอบทันที",
+            samplePrompt = "ตั้งค่า PPSSPP ยังไงให้เล่นเกมลื่นไม่กระตุกและภาพคมชัด"
         ),
         AiCartridge(
-            id = "cart_rpg_story",
-            name = "ตลับเกมสวมบทบาท RPG แฟนตาซี",
-            version = "v2.0",
-            category = "เกม & นิยาย",
-            colorHex = 0xFF7C4DFF,
-            description = "เปิดโหมดจินตนาการสูง (Temp 0.85) สร้างโลกผจญภัย ระบบ HP/ไอเทม และจบด้วยตัวเลือก 3 ทางให้ตัดสินใจทีละฉาก",
-            systemPrompt = "คุณคือ Game Master เกม RPG แฟนตาซีแบบโต้ตอบ\nกติกา:\n1. บรรยายฉาก เหตุการณ์ และตัวละครอย่างตื่นเต้นกระชับ (2-3 ย่อหน้า)\n2. แสดงแถบสถานะสั้นๆ ด้านบน เช่น [HP: 100/100 | เหรียญทอง: 50G | ไอเทม: ดาบเริ่มต้น]\n3. จบทุกข้อความด้วยตัวเลือก 3 ข้อ (1, 2, 3) ให้ผู้เล่นตัดสินใจ 1 อย่างต่อรอบ",
-            temperature = 0.85f,
-            topP = 0.95f,
-            bestFor = "• เล่นเกมผจญภัยสวมบทบาทแบบข้อความ (Text RPG) แก้เบื่อเวลาไม่มีเน็ต\n• ฝึกแต่งนิยายแฟนตาซี ไซไฟ หรือสร้างพล็อตเรื่องใหม่ๆ",
-            usageTips = "• พิมพ์คำว่า 'เริ่มเกม' พร้อมระบุแนวที่อยากเล่น เช่น 'แนวเอาชีวิตรอดในดันเจี้ยน' หรือ 'แนวไซเบอร์พังก์'\n• ตอบกลับแค่เลข 1, 2, 3 หรือพิมพ์การกระทำอิสระที่อยากทำได้เลย",
-            samplePrompt = "เริ่มเกม RPG แนวล่ามอนสเตอร์ในโลกแฟนตาซี ฉันรับบทเป็นนักล่ามือใหม่ที่เพิ่งเข้าเมืองหลวง"
-        ),
-        AiCartridge(
-            id = "cart_electrician_th",
-            name = "ตลับช่างไฟฟ้า & ซ่อมบำรุงประจำบ้าน",
-            version = "v1.0",
-            category = "งานช่าง",
+            id = "rag_electric_std",
+            name = "ตลับคู่มือมาตรฐานไฟฟ้ากำลัง (วสท.)",
+            version = "v2.0 RAG",
+            category = "งานช่าง & วิศวกรรม",
             colorHex = 0xFFFFB300,
-            description = "ฝังสูตรคำนวณกระแสไฟฟ้า ขนาดสายไฟมาตรฐาน THW/VAF พิกัดเบรกเกอร์/กันดูด และขั้นตอนเช็กความปลอดภัยก่อนซ่อม",
-            systemPrompt = "คุณคือผู้เชี่ยวชาญด้านไฟฟ้ากำลังและงานซ่อมบำรุงในบ้าน\nคลังข้อมูลอ้างอิงมาตรฐาน:\n- สูตรคำนวณกระแส 1 เฟส: I = P / (V x PF) โดย V = 220V, PF ≈ 0.85-1.0\n- ขนาดสายไฟทองแดงหุ้มฉนวน PVC (THW เดินในท่อ): 1.5 ตร.มม. รับได้ ~15A (เบรกเกอร์ 10A-16A), 2.5 ตร.มม. รับได้ ~21A (เบรกเกอร์ 16A-20A), 4.0 ตร.มม. รับได้ ~28A (เบรกเกอร์ 25A-32A), 6.0 ตร.มม. รับได้ ~36A (เบรกเกอร์ 32A-40A)\n- เครื่องทำน้ำอุ่น/แอร์ ต้องมีสายดินและเบรกเกอร์กันดูด (RCBO/ELCB) เสมอ\nกฎเหล็ก: เตือนให้ตัดเมนเบรกเกอร์และเช็กไฟด้วยไขควงลองไฟก่อนลงมือทุกครั้ง ตอบเป็นขั้นตอนชัดเจน",
-            temperature = 0.15f,
-            topP = 0.80f,
-            bestFor = "• คำนวณขนาดสายไฟและพิกัดเบรกเกอร์ให้เหมาะกับเครื่องใช้ไฟฟ้า\n• วิเคราะห์อาการเสียเบื้องต้น เช่น เบรกเกอร์ทริป ไฟตก ปลั๊กไม่ทำงาน\n• วางแผนเดินสายไฟและเช็กความปลอดภัยในบ้าน",
-            usageTips = "• ระบุกำลังวัตต์ (W) หรือแอมป์ (A) ของเครื่องใช้ไฟฟ้า และระยะทางเดินสายคร่าวๆ\n• หากเป็นงานซ่อม ให้บอกอาการที่พบ เช่น 'เปิดแอร์แล้วเบรกเกอร์ย่อยตัดทันที'",
-            samplePrompt = "เครื่องทำน้ำอุ่น 4,500 วัตต์ ไฟ 220V กินกระแสกี่แอมป์ ต้องใช้สายไฟขนาดกี่ ตร.มม. และเบรกเกอร์กันดูดกี่แอมป์"
+            description = "ฐานข้อมูลพิกัดกระแสสายไฟ THW ขนาดเบรกเกอร์ กันดูด RCBO และสูตรคำนวณโหลดไฟฟ้าในบ้าน",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("สูตรคำนวณกระแสไฟฟ้า 1 เฟส 220V", "กระแสไฟฟ้า I (แอมป์) = กำลังไฟฟ้า P (วัตต์) หารด้วย [แรงดัน V (220V) x PF (0.85–1.0)] เช่น เครื่องทำน้ำอุ่น 4,500W กินกระแสประมาณ 4500 / 220 = 20.45 แอมป์"),
+                CartridgeKnowledgeEntry("ตารางขนาดสายไฟทองแดง THW เดินในท่อร้อยสาย", "สาย 1.5 ตร.มม. รับได้ 15A (เบรกเกอร์ 10A–16A), สาย 2.5 ตร.มม. รับได้ 21A (เบรกเกอร์ 16A–20A), สาย 4.0 ตร.มม. รับได้ 28A (เบรกเกอร์ 25A–32A), สาย 6.0 ตร.มม. รับได้ 36A (เบรกเกอร์ 32A–40A)"),
+                CartridgeKnowledgeEntry("มาตรฐานเบรกเกอร์เครื่องทำน้ำอุ่น", "เครื่องทำน้ำอุ่น 3,500W ใช้สายไฟ 2.5 ตร.มม. คู่กับเบรกเกอร์กันดูด (RCBO) 20A ส่วน 4,500W ต้องใช้สายไฟ 4.0 ตร.มม. คู่กับ RCBO 32A และต่อสายดินเสมอ"),
+                CartridgeKnowledgeEntry("กฎความปลอดภัยก่อนซ่อมระบบไฟฟ้า", "ต้องตัดเมนเบรกเกอร์ลงตำแหน่ง OFF ใช้ไขควงลองไฟวัดยืนยันว่าไม่มีไฟค้าง และห้ามใช้เบรกเกอร์แอมป์สูงกว่าพิกัดสายไฟ")
+            ),
+            bestFor = "• คำนวณขนาดสายไฟและเลือกขนาดเบรกเกอร์ให้ปลอดภัยตามมาตรฐาน\n• ตรวจสอบโหลดเครื่องทำน้ำอุ่น แอร์ และวงจรปลั๊กไฟในบ้าน",
+            usageTips = "• พิมพ์กำลังวัตต์ (W) หรือขนาดสายไฟที่ต้องการทราบ",
+            samplePrompt = "เครื่องทำน้ำอุ่น 4,500 วัตต์ ต้องใช้สายไฟกี่ ตร.มม. และเบรกเกอร์กันดูดกี่แอมป์"
         ),
         AiCartridge(
-            id = "cart_finance_calc",
-            name = "ตลับผู้ช่วยการเงิน & คิดเลขบัญชีไว",
-            version = "v1.0",
-            category = "การเงิน",
+            id = "rag_finance_formula",
+            name = "ตลับสูตรคำนวณธุรกิจ การเงิน & ภาษี",
+            version = "v2.0 RAG",
+            category = "การเงิน & บัญชี",
             colorHex = 0xFF00C853,
-            description = "คำนวณกำไร-ขาดทุน ตั้งราคาขาย เปอร์เซ็นต์ส่วนลด หารค่าใช้จ่าย และสรุปตัวเลขเป็นตารางชัดเจนตรวจสอบได้",
-            systemPrompt = "คุณคือผู้ช่วยคำนวณการเงินและบัญชีส่วนบุคคลที่แม่นยำ\nกฎเหล็ก:\n1. แสดงวิธีคิดทีละบรรทัดให้ตรวจสอบตัวเลขได้ง่าย\n2. สรุปยอดสุทธิด้วย **ตัวหนา** เสมอ\n3. หากผู้ใช้ถามเรื่องตั้งราคาขาย ให้คำนวณทั้ง 'กำไรบาท' และ 'อัตรากำไร (%)' ให้ครบถ้วน\n4. ห้ามเดาตัวเลขที่ผู้ใช้ไม่ได้ระบุ",
-            temperature = 0.15f,
-            topP = 0.80f,
-            bestFor = "• คำนวณต้นทุน-กำไร ตั้งราคาขายสินค้า และคำนวณส่วนลดโปรโมชัน\n• วางแผนแบ่งเงินออม รายรับ-รายจ่ายรายเดือน\n• หารค่าอาหาร ค่าทริป หรือคำนวณดอกเบี้ย/ค่างวดคร่าวๆ",
-            usageTips = "• พิมพ์ตัวเลขและเงื่อนไขให้ครบ เช่น 'ต้นทุน 120 บาท ค่าส่ง 35 บาท อยากได้กำไร 30% ต้องตั้งราคาขายเท่าไหร่'",
-            samplePrompt = "ต้นทุนสินค้าชิ้นละ 85 บาท ค่าแพ็กของ 10 บาท ต้องการกำไรสุทธิ 35% ต้องตั้งราคาขายกี่บาท และได้กำไรชิ้นละกี่บาท"
+            description = "คลังสูตรคิด Margin, Markup, จุดคุ้มทุน (Break-Even), VAT 7% และดอกเบี้ยทบต้นสำหรับค้าขาย",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("ความแตกต่างระหว่าง Profit Margin กับ Markup", "Markup (%) = [(ราคาขาย - ต้นทุน) / ต้นทุน] x 100 ส่วน Profit Margin (%) = [(ราคาขาย - ต้นทุน) / ราคาขาย] x 100 หากต้องการกำไร Margin สุทธิ M% จากต้นทุน C ให้ตั้งราคาขาย = C / (1 - M)"),
+                CartridgeKnowledgeEntry("สูตรคำนวณจุดคุ้มทุน (Break-Even Point)", "จำนวนชิ้นที่ต้องขายให้คุ้มทุน = ต้นทุนคงที่ทั้งหมด หารด้วย [ราคาขายต่อหน่วย - ต้นทุนผันแปรต่อหน่วย]"),
+                CartridgeKnowledgeEntry("วิธีถอดและบวกภาษีมูลค่าเพิ่ม VAT 7%", "บวก VAT 7%: คูณ 1.07 (เช่น 1,000 x 1.07 = 1,070) | ถอด VAT ออกจากราคารวม VAT: หาร 1.07 เพื่อหามูลค่าสินค้า และคูณ 7 หาร 107 เพื่อหายอดภาษี"),
+                CartridgeKnowledgeEntry("สูตรดอกเบี้ยทบต้น (Compound Interest)", "เงินรวมในอนาคต A = P x (1 + r)^n โดย P คือเงินต้น, r คืออัตราดอกเบี้ยต่องวด และ n คือจำนวนงวดเวลา")
+            ),
+            bestFor = "• คำนวณราคาขายสินค้าให้ได้อัตรากำไรตามเป้าหมายจริง\n• ถอดยอด VAT 7% และคำนวณจุดคุ้มทุนของร้านค้า",
+            usageTips = "• ใส่ตัวเลขต้นทุนและคำถามต่อท้ายได้เลย",
+            samplePrompt = "ต้นทุนสินค้า 140 บาท อยากได้กำไร Margin 30% ต้องตั้งราคาขายกี่บาท และถ้ารวม VAT 7% จะเป็นกี่บาท"
         ),
         AiCartridge(
-            id = "cart_message_writer",
-            name = "ตลับนักเขียนแชท & อีเมลมืออาชีพ",
-            version = "v1.0",
-            category = "การสื่อสาร",
-            colorHex = 0xFFEC407A,
-            description = "ช่วยร่างข้อความทักแชทติดต่องาน ต่อรองราคา ขอโทษลูกค้า หรือเขียนแคปชันโพสต์ให้สุภาพและดูน่าเชื่อถือ",
-            systemPrompt = "คุณคือนักสื่อสารและผู้เชี่ยวชาญการเขียนข้อความภาษาไทยมืออาชีพ\nรูปแบบการตอบ:\n1. เสนอข้อความพร้อมส่งให้เลือก 2 แบบ: 'แบบสุภาพเป็นทางการ' และ 'แบบเป็นกันเองกระชับ'\n2. ใช้ภาษาไทยที่ถูกต้อง อ่านลื่นไหล ไม่แข็งทื่อ\n3. เว้นช่องว่าง [ ] ให้ผู้ใช้เติมชื่อหรือตัวเลขได้ทันที",
-            temperature = 0.55f,
-            topP = 0.90f,
-            bestFor = "• ร่างข้อความทักแชทติดต่องาน สอบถามข้อมูล หรือตามงานให้สุภาพ\n• เขียนข้อความตอบลูกค้า แจ้งเลื่อนส่งของ หรือต่อรองราคาอย่างนุ่มนวล\n• คิดแคปชันโพสต์ขายของหรืออัปเดตโปรเจกต์บนโซเชียล",
-            usageTips = "• บอกเป้าหมายและคนที่เราจะคุยด้วย เช่น 'ทักแชทขอเลื่อนนัดลูกค้า 1 วัน เพราะติดธุระด่วน'",
-            samplePrompt = "ช่วยร่างข้อความทักแชทสอบถามร้านค้าเรื่องสถานะการจัดส่งพัสดุ แบบสุภาพและกระชับ"
+            id = "rag_jp_en_vocab",
+            name = "ตลับคลังศัพท์ & สำนวนเกม/ชีวิตจริง (TH-EN-JP)",
+            version = "v2.0 RAG",
+            category = "ภาษา & การแปล",
+            colorHex = 0xFFFF9100,
+            description = "ฐานข้อมูลคำศัพท์เฉพาะทางในเกม RPG คำสุภาพภาษาญี่ปุ่น (Keigo) และสำนวนแชทภาษาอังกฤษ",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("คำศัพท์ค่าสถานะในเกม RPG (อังกฤษ - ญี่ปุ่น - ไทย)", "HP = พลังชีวิต, MP = พลังเวท, ATK (攻撃力 - โคเงคิเรียวคุ) = พลังโจมตี, DEF (防御力 - โบเกียวเรียวคุ) = พลังป้องกัน, CRIT (会心 - ไคชิน) = โจมตีติดคริติคอล"),
+                CartridgeKnowledgeEntry("ประโยคภาษาญี่ปุ่นที่ใช้บ่อยในชีวิตประจำวัน", "ありがとうございます (Arigatou gozaimasu) = ขอบคุณมาก, すみません (Sumimasen) = ขอโทษ / รบกวนสอบถาม, よろしくお願いします (Yoroshiku onegaishimasu) = ขอฝากตัว / รบกวนด้วย"),
+                CartridgeKnowledgeEntry("สำนวนแชทภาษาอังกฤษแบบมืออาชีพและเป็นกันเอง", "FYI = แจ้งเพื่อทราบ, ASAP = เร็วที่สุดเท่าที่เป็นไปได้, No worries = ไม่ต้องกังวล/ไม่เป็นไรเลย, Keep me posted = อัปเดตความคืบหน้าให้รู้ด้วยนะ")
+            ),
+            bestFor = "• แปลเมนูเกมภาษาญี่ปุ่น/อังกฤษและศัพท์สเตตัสตัวละคร\n• ค้นหาสำนวนตอบแชทภาษาอังกฤษและญี่ปุ่นให้ตรงบริบท",
+            usageTips = "• พิมพ์คำศัพท์หรือประโยคที่เจอในเกม/แชท แล้วถามความหมายหรือวิธีใช้",
+            samplePrompt = "คำว่า 攻撃力 และ 会心 ในเกมภาษาญี่ปุ่นแปลว่าอะไร และคำว่า Keep me posted ในแชทภาษาอังกฤษใช้ยังไง"
         ),
         AiCartridge(
-            id = "cart_chef_kitchen",
-            name = "ตลับเชฟตู้เย็น & โภชนาการ",
-            version = "v1.0",
-            category = "ชีวิตประจำวัน",
+            id = "rag_cooking_ratio",
+            name = "ตลับตารางสัดส่วนเครื่องปรุง & แคลอรีอาหารไทย",
+            version = "v2.0 RAG",
+            category = "อาหาร & โภชนาการ",
             colorHex = 0xFFFF7043,
-            description = "บอกวัตถุดิบที่มีในครัวแล้วคิดเมนูทำง่าย ระบุสัดส่วนเครื่องปรุง ขั้นตอนทำทีละข้อ และแคลอรีคร่าวๆ",
-            systemPrompt = "คุณคือเชฟอาหารไทยและนักโภชนาการประจำบ้าน\nรูปแบบการตอบ:\n1. แนะนำชื่อเมนู 2 เมนูที่ทำได้จริงจากวัตถุดิบที่ผู้ใช้มี\n2. ระบุส่วนผสมและสัดส่วนเครื่องปรุงชัดเจน (ช้อนโต๊ะ/ช้อนชา)\n3. อธิบายวิธีทำทีละขั้นตอนสั้นๆ ทำตามได้ง่ายภายใน 10-15 นาที พร้อมประเมินแคลอรีต่อจาน",
-            temperature = 0.60f,
-            topP = 0.92f,
-            bestFor = "• คิดเมนูอาหารจากของที่มีเหลือในตู้เย็น\n• ขอสูตรทำอาหารไทย-จานเดียวแบบง่ายๆ ไม่ยุ่งยาก\n• จัดเมนูอาหารควบคุมน้ำหนักหรือเพิ่มโปรตีน",
-            usageTips = "• พิมพ์รายชื่อวัตถุดิบที่มีได้เลย เช่น 'มีไข่ไก่ 3 ฟอง หมูสับ กะเพรา พริก กระเทียม'",
-            samplePrompt = "ในตู้เย็นมีอกไก่ ไข่ไก่ 2 ฟอง และบรอกโคลี ช่วยคิดเมนูคลีนทำง่ายๆ พร้อมวิธีทำให้หน่อย"
+            description = "ฐานข้อมูลสูตรซอสผัดอเนกประสงค์ มาตราวัดตวงในครัว และตารางแคลอรี/โปรตีนของวัตถุดิบหลัก",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("สูตรซอสผัดกะเพรา / ผัดอเนกประสงค์ (ต่อเนื้อสัตว์ 200 กรัม)", "ซอสหอยนางรม 1.5 ช้อนโต๊ะ + ซีอิ๊วขาว 1 ช้อนโต๊ะ + น้ำปลา 0.5 ช้อนโต๊ะ + ซีอิ๊วดำหวาน 0.5 ช้อนชา + น้ำตาลทราย 0.5–1 ช้อนชา + น้ำเปล่า 2 ช้อนโต๊ะ"),
+                CartridgeKnowledgeEntry("มาตราวัดตวงมาตรฐานในครัว", "1 ช้อนโต๊ะ (Tbsp) = 15 มล. (3 ช้อนชา), 1 ช้อนชา (Tsp) = 5 มล., 1 ถ้วยตวง (Cup) = 240 มล. (16 ช้อนโต๊ะ)"),
+                CartridgeKnowledgeEntry("ตารางพลังงานและโปรตีนของวัตถุดิบหลัก (ต่อ 100 กรัม)", "อกไก่ลอกหนังดิบ: 110 kcal (โปรตีน 23g), สันในหมู: 143 kcal (โปรตีน 21g), ไข่ไก่ 1 ฟอง: 70–75 kcal (โปรตีน 6g), ข้าวสวย 1 ทัพพี (60g): 80 kcal")
+            ),
+            bestFor = "• คำนวณแคลอรีและโปรตีนต่อมื้ออาหาร\n• ดูสูตรสัดส่วนเครื่องปรุงอาหารไทยและเทียบมาตราวัดช้อนตวง",
+            usageTips = "• บอกชื่อวัตถุดิบและปริมาณที่มี",
+            samplePrompt = "อกไก่ 200 กรัม กับไข่ไก่ 2 ฟอง ให้โปรตีนและพลังงานกี่แคลอรี และขอสูตรซอสผัดกะเพราสำหรับปริมาณนี้"
         ),
         AiCartridge(
-            id = "cart_study_tutor",
-            name = "ตลับติวเตอร์สรุปความรู้ & คู่มือเรียนไว",
-            version = "v1.0",
-            category = "การเรียนรู้",
+            id = "rag_first_aid",
+            name = "ตลับคู่มือปฐมพยาบาล & เบอร์ฉุกเฉิน",
+            version = "v2.0 RAG",
+            category = "สุขภาพ & ความปลอดภัย",
+            colorHex = 0xFFEC407A,
+            description = "ฐานข้อมูลขั้นตอนปฐมพยาบาลเบื้องต้น แผลไฟไหม้ น้ำร้อนลวก ไฟดูด และหมายเลขสายด่วนฉุกเฉินในไทย",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("หมายเลขโทรศัพท์แจ้งเหตุฉุกเฉินในประเทศไทย", "1669 = เจ็บป่วยฉุกเฉิน / กู้ชีพทั่วประเทศ, 191 = ตำรวจ / เหตุด่วนเหตุร้าย, 199 = แจ้งเหตุเพลิงไหม้, 1129 = การไฟฟ้าส่วนภูมิภาค (PEA), 1130 = การไฟฟ้านครหลวง (MEA)"),
+                CartridgeKnowledgeEntry("การปฐมพยาบาลแผลไฟไหม้และน้ำร้อนลวก", "เปิดน้ำสะอาดอุณหภูมิห้องไหลผ่านแผลเบาๆ นาน 10–20 นาที ห้ามใช้น้ำแข็งประคบโดยตรง ห้ามทายาสีฟัน น้ำปลา หรือน้ำมัน ห้ามเจาะตุ่มน้ำพอง"),
+                CartridgeKnowledgeEntry("การช่วยเหลือผู้ถูกไฟฟ้าดูดอย่างปลอดภัย", "ห้ามสัมผัสตัวผู้ถูกไฟดูดด้วยมือเปล่าเด็ดขาด ให้รีบตัดแหล่งจ่ายไฟ หากตัดไฟไม่ได้ให้ใช้ไม้แห้งหรือฉนวนแห้งเขี่ยสายไฟออก แล้วโทร 1669 ทันที")
+            ),
+            bestFor = "• ค้นหาขั้นตอนปฐมพยาบาลที่ถูกต้องในสถานการณ์ฉุกเฉินแบบออฟไลน์\n• เช็กเบอร์สายด่วนฉุกเฉินในประเทศไทย",
+            usageTips = "• ถามอาการหรือเหตุการณ์ตรงๆ เช่น 'วิธีปฐมพยาบาลแผลน้ำร้อนลวก'",
+            samplePrompt = "โดนน้ำร้อนลวกที่แขนควรปฐมพยาบาลเบื้องต้นยังไง และมีข้อห้ามอะไรบ้าง"
+        ),
+        AiCartridge(
+            id = "rag_android_kotlin",
+            name = "ตลับคู่มือพัฒนาแอป Android & Jetpack Compose",
+            version = "v2.0 RAG",
+            category = "เขียนโค้ด & ระบบ",
+            colorHex = 0xFF2979FF,
+            description = "คลังรูปแบบโค้ด Jetpack Compose, Coroutines, Room Database และ Android Service สำหรับนักพัฒนา",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("การจัดการ State และ Coroutines ใน Jetpack Compose", "ใช้ remember { mutableStateOf(...) } สำหรับ State ภายใน Composable ใช้ collectAsState() สำหรับ StateFlow และใช้ LaunchedEffect(key) เมื่อต้องการรันงานแบบ Asynchronous"),
+                CartridgeKnowledgeEntry("ข้อควรระวังเรื่อง Foreign Key ใน Room Database", "หากตารางลูกตั้งค่า @ForeignKey อ้างอิงไปยังตารางแม่ ห้ามส่งค่า ID ที่ไม่มีอยู่จริงในตารางแม่ มิฉะนั้น SQLite จะโยน SQLiteConstraintException ให้ส่ง null แทนเมื่อไม่ต้องการผูก"),
+                CartridgeKnowledgeEntry("การเปิด Activity จาก Service หรือ VoiceInteractionSession", "เมื่อเรียก startActivity(intent) จากภายนอก Activity ต้องเพิ่ม Flag Intent.FLAG_ACTIVITY_NEW_TASK เสมอ และเรียกผ่าน context.startActivity(intent)")
+            ),
+            bestFor = "• อ้างอิงรูปแบบโค้ด Jetpack Compose, Room และ Android Framework\n• แก้ปัญหา Crash ยอดฮิตบน Android อย่างรวดเร็ว",
+            usageTips = "• ถามเรื่องโครงสร้าง Compose, Room หรือ Service ได้ทันที",
+            samplePrompt = "วิธีแก้ปัญหา SQLiteConstraintException Foreign Key failed ใน Room Database และวิธีเรียก startActivity จาก Service"
+        ),
+        AiCartridge(
+            id = "rag_summary_framework",
+            name = "ตลับแม่แบบสรุปงาน & เอกสารมืออาชีพ",
+            version = "v2.0 RAG",
+            category = "เครื่องมือทำงาน",
             colorHex = 0xFF26A69A,
-            description = "อธิบายเรื่องยากให้เข้าใจใน 1 นาทีด้วยการเปรียบเทียบเห็นภาพ พร้อมสร้างแบบทดสอบ 3 ข้อให้ลองทบทวนท้ายบท",
-            systemPrompt = "คุณคือติวเตอร์ที่เก่งเรื่องการย่อยเรื่องซับซ้อนให้เข้าใจง่ายที่สุด\nรูปแบบการตอบ:\n1. อธิบายหลักการสำคัญด้วยภาษาง่ายๆ พร้อมยกตัวอย่างเปรียบเทียบในชีวิตจริง (1-2 ย่อหน้า)\n2. สรุปจุดที่คนมักเข้าใจผิด 2 ข้อ\n3. สร้างแบบทดสอบสั้นๆ 3 ข้อ (พร้อมเฉลยซ่อนไว้ด้านล่างสุด) เพื่อให้ผู้เรียนลองเช็กความเข้าใจ",
-            temperature = 0.45f,
-            topP = 0.88f,
-            bestFor = "• ทำความเข้าใจเรื่องใหม่ๆ เช่น การเขียนโค้ด หลักการทำงานอุปกรณ์ วิทยาศาสตร์ หรือภาษา\n• เตรียมตัวสอบหรือทบทวนความรู้ด้วยแบบทดสอบสั้นๆ",
-            usageTips = "• พิมพ์หัวข้อที่อยากรู้แล้วต่อด้วย 'อธิบายแบบเข้าใจง่าย:' เช่น 'หลักการทำงานของ KV Cache ใน AI อธิบายแบบเข้าใจง่าย'",
-            samplePrompt = "อธิบายหลักการทำงานของระบบ Git (add, commit, push) แบบเปรียบเทียบให้เห็นภาพง่ายๆ พร้อมแบบทดสอบ 3 ข้อ"
+            description = "คลังโครงสร้างการสรุปรายงานการประชุม บทความ และการเขียนอีเมลธุรกิจให้กระชับอ่านจบใน 10 วินาที",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("โครงสร้างสรุปรายงานการประชุมแบบ 3 ส่วน (Actionable Minutes)", "1. ข้อสรุปและมติสำคัญ (Key Decisions) ไม่เกิน 3 ข้อ | 2. รายการสิ่งที่ต้องทำต่อ (Action Items) ระบุผู้รับผิดชอบและกำหนดส่ง | 3. ประเด็นที่ยังค้างหรือต้องติดตามรอบหน้า"),
+                CartridgeKnowledgeEntry("เทคนิคสรุปบทความยาวด้วยหลัก BLUF (Bottom Line Up Front)", "นำข้อสรุปหรือผลลัพธ์สำคัญที่สุดขึ้นบรรทัดแรกสุด ตามด้วยเหตุผลสนับสนุน 3 ข้อ และตัวเลขสถิติสำคัญ โดยตัดคำเกริ่นนำออกทั้งหมด")
+            ),
+            bestFor = "• ใช้เป็นแม่แบบจัดระเบียบข้อความยาวๆ หรือรายงานการประชุม\n• ทำงานร่วมกับไฟล์เอกสาร RAG ที่แนบในห้องแชท",
+            usageTips = "• วางข้อความยาวๆ แล้วสั่งให้สรุปตามโครงสร้าง BLUF",
+            samplePrompt = "สรุปข้อความต่อไปนี้ตามหลัก BLUF โดยเอาข้อสรุปสำคัญขึ้นบรรทัดแรกและแยกเหตุผลเป็น 3 ข้อ:"
+        ),
+        AiCartridge(
+            id = "rag_ai_llm_guide",
+            name = "ตลับคู่มือระบบ AI Local LLM & การจูนโมเดล",
+            version = "v2.0 RAG",
+            category = "AI & เทคโนโลยี",
+            colorHex = 0xFF7C4DFF,
+            description = "ฐานข้อมูลอธิบายค่า Temperature, Top-P, Context Size, Quantization (Q4_K_M / Q8_0) และ KV Cache",
+            knowledge = listOf(
+                CartridgeKnowledgeEntry("ความหมายของค่า Temperature และ Top-P ใน LLM", "Temperature (0.0–1.5) ควบคุมความสร้างสรรค์: ค่าต่ำ (0.1–0.3) เหมาะกับโค้ดและคำนวณ ค่าสูง (0.7–0.9) เหมาะกับแต่งนิยาย ส่วน Top-P ตัดตัวเลือกคำความน่าจะเป็นต่ำทิ้ง โดยทั่วไปตั้งไว้ที่ 0.85–0.95"),
+                CartridgeKnowledgeEntry("รูปแบบไฟล์บีบอัด GGUF Quantization (Q4_K_M vs Q8_0)", "Q4_K_M (4-bit) ใช้แรมน้อยและรันเร็วที่สุดบนมือถือ รักษาความฉลาดได้ >95% ส่วน Q8_0 (8-bit) แม่นยำใกล้เคียงต้นฉบับ 99.9% แต่ใช้แรมมากกว่าเกือบ 2 เท่า"),
+                CartridgeKnowledgeEntry("หลักการทำงานของ Context Size และ KV Cache", "Context Size คือความยาวความจำสูงสุดของบทสนทนา ยิ่งตั้งค่าสูงยิ่งกิน RAM มากขึ้นตามขนาด KV Cache มือถือแรม 6GB–8GB แนะนำตั้งไว้ที่ 2048–4096")
+            ),
+            bestFor = "• ทำความเข้าใจการตั้งค่าโมเดลในแอป ChatLLM (Temp, Top-P, Context Size, GGUF)\n• เลือกดาวน์โหลดไฟล์โมเดล GGUF ให้เหมาะกับสเปกแรมมือถือ",
+            usageTips = "• ถามเรื่องการปรับแต่งค่าพารามิเตอร์หรือเลือกขนาดไฟล์โมเดลได้ทันที",
+            samplePrompt = "ไฟล์ GGUF แบบ Q4_K_M ต่างจาก Q8_0 ยังไง และมือถือแรม 8GB ควรตั้ง Context Size เท่าไหร่"
         )
     )
 
@@ -224,6 +247,48 @@ object CartridgeManager {
 
     fun getActiveCartridge(context: Context): AiCartridge? =
         getActiveCartridgeId(context)?.let { id -> getAllAvailableCartridges(context).find { it.id == id } }
+
+    fun retrieveKnowledge(context: Context, query: String, maxChars: Int = 3000): List<Pair<String, CartridgeKnowledgeEntry>> {
+        val cartridge = getActiveCartridge(context) ?: return emptyList()
+        if (cartridge.knowledge.isEmpty() || maxChars <= 0) return emptyList()
+
+        val qTokens = extractSearchTokens(query)
+        val scored = cartridge.knowledge.mapIndexed { index, entry ->
+            val topicTokens = extractSearchTokens(entry.topic)
+            val bodyTokens = extractSearchTokens(entry.content)
+            var score = 0
+            for (qt in qTokens) {
+                if (topicTokens.contains(qt)) score += 4
+                if (bodyTokens.contains(qt)) score += 2
+            }
+            Triple(score, -index, entry)
+        }.sortedWith(compareByDescending<Triple<Int, Int, CartridgeKnowledgeEntry>> { it.first }.thenByDescending { it.second })
+
+        val results = mutableListOf<Pair<String, CartridgeKnowledgeEntry>>()
+        var usedChars = 0
+        for ((_, _, entry) in scored) {
+            val blockLen = cartridge.name.length + entry.topic.length + entry.content.length + 40
+            if (usedChars + blockLen > maxChars && results.isNotEmpty()) break
+            results.add(cartridge.name to entry)
+            usedChars += blockLen
+            if (results.size >= 4) break
+        }
+        return results
+    }
+
+    private fun extractSearchTokens(text: String): Set<String> {
+        val clean = text.lowercase().replace(Regex("[^a-z0-9ก-๙\\s]"), " ")
+        val tokens = HashSet<String>()
+        for (word in clean.split(Regex("\\s+"))) {
+            if (word.length >= 2) {
+                tokens.add(word)
+                if (word.length > 4) {
+                    for (i in 0..(word.length - 3)) tokens.add(word.substring(i, i + 3))
+                }
+            }
+        }
+        return tokens
+    }
 
     fun importFromUri(context: Context, uri: Uri): Result<AiCartridge> = runCatching {
         val raw = context.contentResolver.openInputStream(uri)?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }

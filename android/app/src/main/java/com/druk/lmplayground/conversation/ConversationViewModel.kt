@@ -29,6 +29,7 @@ import com.druk.ai_offline_llm.download.DownloadRepository
 import com.druk.ai_offline_llm.rag.DocumentTextExtractor
 import com.druk.ai_offline_llm.rag.DocumentTextExtractors
 import com.druk.ai_offline_llm.rag.RagPromptBuilder
+import com.druk.ai_offline_llm.cartridge.CartridgeManager
 import com.druk.ai_offline_llm.rag.RagRepository
 import com.druk.ai_offline_llm.storage.StoragePreferences
 import com.druk.ai_offline_llm.storage.StorageRepository
@@ -964,24 +965,23 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
      * failure degrades to the plain message.
      */
     private suspend fun buildWireContent(sessionId: String, userText: String): String {
-        val rag = ragRepository ?: return userText
-        return try {
-            if (!rag.hasReadyDocuments(sessionId)) return userText
-            val retrieved = rag.retrieve(sessionId, userText)
-            if (retrieved.isEmpty()) return userText
-            val contextSize = _generationParams.value?.contextSize ?: 4096
-            // Excerpt budget: ~25% of the session context, and never past
-            // the binder payload ceiling (the pre-flight check in
-            // addMessage only covered the original text).
-            val budget = minOf(
-                RagPromptBuilder.budgetChars(contextSize),
-                InferenceLimits.MAX_PAYLOAD_BYTES / 2 - userText.length - 500,
-            )
-            RagPromptBuilder.build(userText, retrieved, budget)
-        } catch (t: Throwable) {
-            android.util.Log.w("ConversationViewModel", "Retrieval failed; sending plain message", t)
-            userText
+        val contextSize = _generationParams.value?.contextSize ?: 4096
+        val totalBudget = minOf(RagPromptBuilder.budgetChars(contextSize), InferenceLimits.MAX_PAYLOAD_BYTES / 2 - userText.length - 500)
+        val cartridgeEntries = runCatching { CartridgeManager.retrieveKnowledge(app, userText, totalBudget / 2) }.getOrDefault(emptyList())
+        val docChunks = try {
+            val rag = ragRepository
+            if (rag != null && rag.hasReadyDocuments(sessionId)) rag.retrieve(sessionId, userText) else emptyList()
+        } catch (t: Throwable) { emptyList() }
+        if (cartridgeEntries.isEmpty() && docChunks.isEmpty()) return userText
+        if (cartridgeEntries.isEmpty()) return RagPromptBuilder.build(userText, docChunks, totalBudget)
+        val sb = StringBuilder("Use the following reference knowledge to answer accurately. If not covered, say so clearly.\n\n")
+        for ((cartName, entry) in cartridgeEntries) {
+            sb.append("[Knowledge Cartridge: ").append(cartName).append(" — ").append(entry.topic).append("]\n").append(entry.content).append("\n\n")
         }
+        val rem = totalBudget - sb.length
+        if (docChunks.isNotEmpty() && rem > 200) sb.append(RagPromptBuilder.build(userText, docChunks, rem))
+        else sb.append("Question: ").append(userText)
+        return sb.toString()
     }
 
     private suspend fun persistConversationMetadata(sessionId: String) {

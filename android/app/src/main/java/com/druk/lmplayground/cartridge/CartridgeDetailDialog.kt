@@ -45,60 +45,35 @@ fun CartridgeDetailDialog(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(cartridge.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text("${cartridge.category} • ${cartridge.version} • โดย ${cartridge.author}", style = MaterialTheme.typography.labelSmall, color = accent)
+                    Text("${cartridge.category} • ${cartridge.version} • ${cartridge.knowledge.size} หัวข้อความรู้", style = MaterialTheme.typography.labelSmall, color = accent)
                 }
             }
         },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 420.dp)
-                    .verticalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 430.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(cartridge.description, style = MaterialTheme.typography.bodyMedium)
 
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text("เหมาะกับงานแบบไหน", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = accent)
-                        Text(
-                            cartridge.bestFor.ifBlank { "• งานเฉพาะทางในหมวด ${cartridge.category}\n• ปรับจูนคำตอบให้ตรงประเด็นและเสถียรขึ้น" },
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        Text(cartridge.bestFor.ifBlank { "• ใช้เป็นฐานข้อมูลอ้างอิงเฉพาะทาง (Knowledge / RAG)\n• ใช้ควบคู่กับบุคลิก AI ใดก็ได้โดยไม่ทับคำสั่งระบบเดิม" }, style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("วิธีใช้งานให้ได้คำตอบตรงจุดที่สุด", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(
-                            cartridge.usageTips.ifBlank { "• เสียบตลับในกระเป๋าของฉันก่อนเริ่มพิมพ์คำถาม\n• ระบุเป้าหมายหรือข้อมูลตั้งต้นให้ชัดเจนในประโยคเดียว" },
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        Text("วิธีใช้งานให้ดึงข้อมูลได้แม่นยำ", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                        Text(cartridge.usageTips.ifBlank { "• เสียบตลับในกระเป๋าของฉัน แล้วพิมพ์ถามคำสำคัญที่อยู่ในตลับ\n• ระบบ RAG จะดึงเฉพาะย่อหน้าที่ตรงกับคำถามให้ AI ตอบอัตโนมัติ" }, style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
                 if (cartridge.samplePrompt.isNotBlank()) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f), modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 Text("ตัวอย่างคำถามพร้อมใช้", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                                 TextButton(
                                     onClick = {
@@ -119,35 +94,32 @@ fun CartridgeDetailDialog(
                     }
                 }
 
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("ค่าจูนสมอง & คำสั่งเบื้องหลัง", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-                        Text("Temperature: ${cartridge.temperature}  |  Top-P: ${cartridge.topP}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                        Text(cartridge.systemPrompt, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerLow, modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("ฐานข้อมูลอ้างอิงในตลับ (${cartridge.knowledge.size} หัวข้อ)", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                        if (cartridge.knowledge.isEmpty()) {
+                            Text("ยังไม่มีข้อมูลอ้างอิงในตลับนี้", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        } else {
+                            cartridge.knowledge.forEachIndexed { idx, entry ->
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text("${idx + 1}. ${entry.topic}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = accent)
+                                    Text(entry.content, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         confirmButton = {
             if (primaryActionLabel != null && onPrimaryAction != null) {
-                Button(onClick = {
-                    onPrimaryAction()
-                    onDismiss()
-                }) {
-                    Text(primaryActionLabel)
-                }
+                Button(onClick = { onPrimaryAction(); onDismiss() }) { Text(primaryActionLabel) }
             } else {
                 TextButton(onClick = onDismiss) { Text("ปิด") }
             }
         },
         dismissButton = {
-            if (primaryActionLabel != null && onPrimaryAction != null) {
-                TextButton(onClick = onDismiss) { Text("ปิด") }
-            }
+            if (primaryActionLabel != null && onPrimaryAction != null) TextButton(onClick = onDismiss) { Text("ปิด") }
         }
     )
 }

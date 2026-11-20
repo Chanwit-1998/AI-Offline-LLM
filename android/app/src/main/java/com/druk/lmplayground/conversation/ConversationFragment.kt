@@ -303,21 +303,14 @@ class ConversationFragment : Fragment() {
             val cartridgeContext = LocalContext.current
             var activeCartridge by remember { mutableStateOf(CartridgeManager.getActiveCartridge(cartridgeContext)) }
             val insertCartridgeAction: (AiCartridge) -> Unit = { cartridge ->
-                runCatching {
-                    CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
-                    activeCartridge = cartridge
-                    viewModel.updateGenerationParams(generationParams.copy(temperature = cartridge.temperature, topP = cartridge.topP))
-                    viewModel.applySystemPrompt(null, cartridge.systemPrompt)
-                    Toast.makeText(cartridgeContext, "เสียบตลับ: ${cartridge.name} แล้ว", Toast.LENGTH_SHORT).show()
-                }.onFailure { err ->
-                    Toast.makeText(cartridgeContext, "เสียบตลับไม่สำเร็จ: ${err.message}", Toast.LENGTH_SHORT).show()
-                }
+                CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
+                activeCartridge = cartridge
+                Toast.makeText(cartridgeContext, "เสียบตลับความรู้: ${cartridge.name} (${cartridge.knowledge.size} หัวข้อ)", Toast.LENGTH_SHORT).show()
             }
             val ejectCartridgeAction: () -> Unit = {
                 CartridgeManager.setActiveCartridgeId(cartridgeContext, null)
                 activeCartridge = null
-                viewModel.clearSystemPrompt()
-                Toast.makeText(cartridgeContext, "ถอดตลับออกแล้ว", Toast.LENGTH_SHORT).show()
+                Toast.makeText(cartridgeContext, "ถอดตลับข้อมูลออกแล้ว", Toast.LENGTH_SHORT).show()
             }
             val systemPromptId by viewModel.systemPromptId.observeAsState()
             val recentSystemPrompts by viewModel.recentSystemPrompts.observeAsState(emptyList())
@@ -535,7 +528,6 @@ class ConversationFragment : Fragment() {
                     if (ejectCartridgeRequested == true) {
                         navBackStackEntry?.savedStateHandle?.remove<Boolean>("eject_cartridge_requested")
                         activeCartridge = null
-                        viewModel.clearSystemPrompt()
                     }
                 }
 
