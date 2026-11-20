@@ -537,7 +537,7 @@ class ConversationFragment : Fragment() {
                     val pending = assistantPrompt ?: return@LaunchedEffect
                     if (isModelReady) {
                         AssistantBridge.consumePrompt()
-                        viewModel.addMessage(com.druk.ai_offline_llm.conversation.Message(message = pending, isSentByUser = true))
+                        viewModel.addMessage(com.druk.ai_offline_llm.conversation.Message(msg = pending, isUserMe = true))
                     } else {
                         Toast.makeText(cartridgeContext, "คำสั่งจากผู้ช่วย: $pending (โปรดเลือกโมเดลก่อน)", Toast.LENGTH_LONG).show()
                     }
