@@ -302,11 +302,15 @@ class ConversationFragment : Fragment() {
             val cartridgeContext = LocalContext.current
             var activeCartridge by remember { mutableStateOf(CartridgeManager.getActiveCartridge(cartridgeContext)) }
             val insertCartridgeAction: (AiCartridge) -> Unit = { cartridge ->
-                CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
-                activeCartridge = cartridge
-                viewModel.applySystemPrompt("cartridge_${cartridge.id}", cartridge.systemPrompt)
-                viewModel.updateGenerationParams(generationParams.copy(temperature = cartridge.temperature, topP = cartridge.topP))
-                Toast.makeText(cartridgeContext, "เสียบตลับ: ${cartridge.name} แล้ว", Toast.LENGTH_SHORT).show()
+                runCatching {
+                    CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
+                    activeCartridge = cartridge
+                    viewModel.updateGenerationParams(generationParams.copy(temperature = cartridge.temperature, topP = cartridge.topP))
+                    viewModel.applySystemPrompt(null, cartridge.systemPrompt)
+                    Toast.makeText(cartridgeContext, "เสียบตลับ: ${cartridge.name} แล้ว", Toast.LENGTH_SHORT).show()
+                }.onFailure { err ->
+                    Toast.makeText(cartridgeContext, "เสียบตลับไม่สำเร็จ: ${err.message}", Toast.LENGTH_SHORT).show()
+                }
             }
             val ejectCartridgeAction: () -> Unit = {
                 CartridgeManager.setActiveCartridgeId(cartridgeContext, null)
