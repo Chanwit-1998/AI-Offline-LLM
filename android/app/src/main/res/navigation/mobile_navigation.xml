@@ -22,7 +22,15 @@
         <action
             android:id="@+id/action_home_to_ai_skills"
             app:destination="@id/nav_ai_skills" />
+        <action
+            android:id="@+id/action_home_to_cartridge_store"
+            app:destination="@id/nav_cartridge_store" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_cartridge_store"
+        android:name="com.druk.ai_offline_llm.cartridge.CartridgeStoreFragment"
+        android:label="ร้านค้าตลับ AI" />
 
     <fragment
         android:id="@+id/nav_ai_skills"

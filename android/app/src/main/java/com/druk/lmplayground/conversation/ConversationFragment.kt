@@ -84,6 +84,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.druk.ai_offline_llm.cartridge.*
 import com.druk.ai_offline_llm.dictation.DictationState
 import kotlinx.coroutines.launch
 
@@ -298,6 +299,21 @@ class ConversationFragment : Fragment() {
             val sessionModelHint by viewModel.sessionModelHint.observeAsState()
             val visionModuleHint by viewModel.visionModuleHint.observeAsState()
             val systemPrompt by viewModel.systemPrompt.observeAsState("")
+            val cartridgeContext = LocalContext.current
+            var activeCartridge by remember { mutableStateOf(CartridgeManager.getActiveCartridge(cartridgeContext)) }
+            val insertCartridgeAction: (AiCartridge) -> Unit = { cartridge ->
+                CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
+                activeCartridge = cartridge
+                viewModel.applySystemPrompt("cartridge_${cartridge.id}", cartridge.systemPrompt)
+                viewModel.updateGenerationParams(generationParams.copy(temperature = cartridge.temperature, topP = cartridge.topP))
+                Toast.makeText(cartridgeContext, "เสียบตลับ: ${cartridge.name} แล้ว", Toast.LENGTH_SHORT).show()
+            }
+            val ejectCartridgeAction: () -> Unit = {
+                CartridgeManager.setActiveCartridgeId(cartridgeContext, null)
+                activeCartridge = null
+                viewModel.clearSystemPrompt()
+                Toast.makeText(cartridgeContext, "ถอดตลับออกแล้ว", Toast.LENGTH_SHORT).show()
+            }
             val systemPromptId by viewModel.systemPromptId.observeAsState()
             val recentSystemPrompts by viewModel.recentSystemPrompts.observeAsState(emptyList())
             val userError by viewModel.userError.observeAsState()
@@ -502,6 +518,12 @@ class ConversationFragment : Fragment() {
                         viewModel.applySystemPrompt(pId, pText)
                         Toast.makeText(toastContext, R.string.persona_applied_toast, Toast.LENGTH_SHORT).show()
                     }
+                }
+                val insertedCartridgeId by (navBackStackEntry?.savedStateHandle?.getLiveData<String>("insert_cartridge_id")?.observeAsState() ?: remember { mutableStateOf(null) })
+                LaunchedEffect(insertedCartridgeId) {
+                    val cId = insertedCartridgeId ?: return@LaunchedEffect
+                    navBackStackEntry?.savedStateHandle?.remove<String>("insert_cartridge_id")
+                    CartridgeManager.getAllAvailableCartridges(cartridgeContext).find { it.id == cId }?.let { insertCartridgeAction(it) }
                 }
 
                 // Check if storage is configured on first launch
@@ -925,6 +947,7 @@ class ConversationFragment : Fragment() {
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
                             }
+                            CartridgeSlotBar(activeCartridge = activeCartridge, onInsertCartridge = insertCartridgeAction, onEjectCartridge = ejectCartridgeAction, onOpenCartridgeStore = { val nav = findNavController(); if (nav.currentDestination?.id == R.id.nav_home) nav.navigate(R.id.action_home_to_cartridge_store) }, modifier = Modifier.padding(bottom = 6.dp))
                             if (sessionDocuments.isNotEmpty()) {
                                 DocumentChipsRow(
                                     documents = sessionDocuments,
@@ -1171,6 +1194,7 @@ class ConversationFragment : Fragment() {
                                         )
                                     }
                                 },
+                                onCartridgeStoreClicked = { if (findNavController().currentDestination?.id == R.id.nav_home) findNavController().navigate(R.id.action_home_to_cartridge_store) },
                                 onAiSkillsClicked = {
                                     if (findNavController().currentDestination?.id == R.id.nav_home) {
                                         findNavController().navigate(R.id.action_home_to_ai_skills)
@@ -1232,6 +1256,7 @@ class ConversationFragment : Fragment() {
                                         }
                                     }
                                 },
+                                onCartridgeStoreClicked = { scope.launch { drawerState.close(); if (findNavController().currentDestination?.id == R.id.nav_home) findNavController().navigate(R.id.action_home_to_cartridge_store) } },
                                 onAiSkillsClicked = {
                                     scope.launch {
                                         drawerState.close()

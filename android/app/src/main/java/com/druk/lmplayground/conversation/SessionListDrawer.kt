@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -80,6 +81,7 @@ fun SessionListDrawer(
     onSettingsClicked: () -> Unit,
     onModelsClicked: () -> Unit = {},
     onModelStoreClicked: () -> Unit = {},
+    onCartridgeStoreClicked: () -> Unit = {},
     onAiSkillsClicked: () -> Unit = {},
     onNewChatClicked: () -> Unit = {}
 ) {
@@ -96,6 +98,7 @@ fun SessionListDrawer(
             onPinSession = onPinSession,
             onModelsClicked = onModelsClicked,
             onModelStoreClicked = onModelStoreClicked,
+            onCartridgeStoreClicked = onCartridgeStoreClicked,
             onAiSkillsClicked = onAiSkillsClicked,
             onSettingsClicked = onSettingsClicked,
             onNewChatClicked = onNewChatClicked
@@ -114,6 +117,7 @@ fun PermanentSessionList(
     onSettingsClicked: () -> Unit,
     onModelsClicked: () -> Unit = {},
     onModelStoreClicked: () -> Unit = {},
+    onCartridgeStoreClicked: () -> Unit = {},
     onAiSkillsClicked: () -> Unit = {},
     onNewChatClicked: () -> Unit = {},
     width: Dp = 320.dp
@@ -140,6 +144,7 @@ fun PermanentSessionList(
                 onPinSession = onPinSession,
                 onModelsClicked = onModelsClicked,
                 onModelStoreClicked = onModelStoreClicked,
+                onCartridgeStoreClicked = onCartridgeStoreClicked,
                 onAiSkillsClicked = onAiSkillsClicked,
                 onSettingsClicked = onSettingsClicked,
                 onNewChatClicked = onNewChatClicked,
@@ -160,6 +165,7 @@ private fun SessionListContent(
     onPinSession: (String, Boolean) -> Unit,
     onModelsClicked: () -> Unit,
     onModelStoreClicked: () -> Unit,
+    onCartridgeStoreClicked: () -> Unit,
     onAiSkillsClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onNewChatClicked: () -> Unit,
@@ -218,6 +224,11 @@ private fun SessionListContent(
                 icon = Icons.Outlined.Download,
                 title = stringResource(R.string.menu_model_store),
                 onClick = onModelStoreClicked
+            )
+            DrawerNavMenuItem(
+                icon = Icons.Outlined.Extension,
+                title = "ร้านค้าตลับ",
+                onClick = onCartridgeStoreClicked
             )
             DrawerNavMenuItem(
                 icon = Icons.Outlined.AutoAwesome,
