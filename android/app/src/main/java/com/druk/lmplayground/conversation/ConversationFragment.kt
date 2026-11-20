@@ -546,7 +546,7 @@ class ConversationFragment : Fragment() {
                         AssistantBridge.consumePrompt()
                         viewModel.addMessage(pending)
                     } else {
-                        Toast.makeText(cartridgeContext, "คำสั่งจากผู้ช่วย: "$pending" (โปรดเลือกโมเดลก่อน)", Toast.LENGTH_LONG).show()
+                        Toast.makeText(cartridgeContext, "คำสั่งจากผู้ช่วย: $pending (โปรดเลือกโมเดลก่อน)", Toast.LENGTH_LONG).show()
                     }
                 }
 

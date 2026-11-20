@@ -360,7 +360,7 @@ class AssistantVoiceInteractionSession(context: Context) : VoiceInteractionSessi
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             if (!prompt.isNullOrBlank()) putExtra("assistant_prompt", prompt)
         }
-        startActivity(launchIntent)
+        context.startActivity(launchIntent)
         hide()
     }
 }
