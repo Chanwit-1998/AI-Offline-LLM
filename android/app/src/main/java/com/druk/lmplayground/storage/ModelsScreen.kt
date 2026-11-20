@@ -254,7 +254,7 @@ fun ModelsContent(
             CartridgeManager.importFromUri(bagContext, uri)
                 .onSuccess { imported ->
                     onInstallCustomCartridge(imported)
-                    Toast.makeText(bagContext, "นำเข้าตลับ "${imported.name}" สำเร็จ!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(bagContext, "นำเข้าตลับ ${imported.name} สำเร็จ!", Toast.LENGTH_SHORT).show()
                 }
                 .onFailure { Toast.makeText(bagContext, "ไฟล์ตลับไม่ถูกต้อง: ${it.message}", Toast.LENGTH_LONG).show() }
         }
