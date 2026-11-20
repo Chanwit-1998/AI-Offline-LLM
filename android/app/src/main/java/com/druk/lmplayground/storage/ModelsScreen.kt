@@ -91,6 +91,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.Color
 import com.druk.ai_offline_llm.R
 import com.druk.ai_offline_llm.cartridge.AiCartridge
+import androidx.compose.material.icons.outlined.Info
+import com.druk.ai_offline_llm.cartridge.CartridgeDetailDialog
 import com.druk.ai_offline_llm.cartridge.CartridgeManager
 import com.druk.ai_offline_llm.models.ModelCapabilityIcons
 import com.druk.ai_offline_llm.models.ModelInfo
@@ -248,6 +250,7 @@ fun ModelsContent(
     var downloadChoiceModel by remember { mutableStateOf<ModelInfo?>(null) }
     var bagTab by remember { mutableIntStateOf(0) }
     var showCreateCartridgeDialog by remember { mutableStateOf(false) }
+    var inspectingBagCartridge by remember { mutableStateOf<AiCartridge?>(null) }
     val bagContext = LocalContext.current
     val importCartridgeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
@@ -488,7 +491,19 @@ fun ModelsContent(
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(cart.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    OutlinedButton(
+                                        onClick = { inspectingBagCartridge = cart },
+                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                                    ) {
+                                        Icon(Icons.Outlined.Info, null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("รายละเอียด")
+                                    }
                                     if (isInserted) {
                                         OutlinedButton(
                                             onClick = onEjectCartridge,
@@ -856,6 +871,16 @@ fun ModelsContent(
                 }
             },
             confirmButton = { }
+        )
+    }
+
+    inspectingBagCartridge?.let { cart ->
+        val isInserted = activeCartridgeId == cart.id
+        CartridgeDetailDialog(
+            cartridge = cart,
+            onDismiss = { inspectingBagCartridge = null },
+            primaryActionLabel = if (isInserted) null else "เสียบตลับใช้งาน",
+            onPrimaryAction = if (isInserted) null else { { onInsertCartridge(cart) } }
         )
     }
 

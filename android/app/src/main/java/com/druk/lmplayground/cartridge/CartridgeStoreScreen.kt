@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Extension
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,11 +31,12 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
     val context = LocalContext.current
     var installedCartridges by remember { mutableStateOf(CartridgeManager.getInstalledCartridges(context)) }
     val installedIds = remember(installedCartridges) { installedCartridges.map { it.id }.toSet() }
+    var inspectingCartridge by remember { mutableStateOf<AiCartridge?>(null) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ร้านค้าตลับข้อมูล") },
+                title = { Text("ร้านค้าตลับข้อมูล (${CartridgeManager.storeCatalog.size})") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "กลับ")
@@ -83,7 +85,20 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedButton(
+                                onClick = { inspectingCartridge = item },
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Icon(Icons.Outlined.Info, null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("รายละเอียด")
+                            }
+
                             if (isInstalled) {
                                 OutlinedButton(onClick = {}, enabled = false) {
                                     Icon(Icons.Default.Check, null, modifier = Modifier.size(16.dp))
@@ -105,5 +120,20 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
                 }
             }
         }
+    }
+
+    inspectingCartridge?.let { cart ->
+        val isInstalled = installedIds.contains(cart.id)
+        CartridgeDetailDialog(
+            cartridge = cart,
+            onDismiss = { inspectingCartridge = null },
+            primaryActionLabel = if (isInstalled) null else "รับตลับเข้ากระเป๋า",
+            onPrimaryAction = if (isInstalled) null else {
+                {
+                    installedCartridges = CartridgeManager.installCartridge(context, cart)
+                    Toast.makeText(context, "รับตลับ \"${cart.name}\" เข้ากระเป๋าแล้ว", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
     }
 }
