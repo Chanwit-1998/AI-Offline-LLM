@@ -901,19 +901,13 @@ class ConversationFragment : Fragment() {
                                 // Fade the frost in as content scrolls under the
                                 // bar; flush (no tint/elevation) at the top.
                                 .hazeEffect(hazeState, hazeStyle) { alpha = topBarFrost }
-                                .drawWithContent {
-                                    drawContent()
-                                    // Model-loading progress hairline along the
-                                    // bar's bottom edge.
-                                    val strokeWidth = 2.dp.toPx()
-                                    val y = size.height - strokeWidth / 2f
-                                    drawLine(
-                                        colorScheme.primary,
-                                        start = Offset(0f, y),
-                                        end = Offset(size.width * progress, y),
-                                        strokeWidth = strokeWidth
-                                    )
-                                }
+
+                        )
+
+                        ModelLoadOrbEffect(
+                            progress = progress,
+                            modelName = modelInfo?.name,
+                            modifier = Modifier.align(Alignment.Center)
                         )
 
                         // ---- Bottom dock (picker + frosted input) ----

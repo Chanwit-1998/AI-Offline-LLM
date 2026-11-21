@@ -398,7 +398,7 @@ fun ChatItemBubble(
                 if (onRegenerate != null) {
                     IconButton(
                         onClick = {
-                            ttsInstance?.stop()
+                            F5TtsEngine.stop()
                             isSpeaking = false
                             onRegenerate()
                         },
