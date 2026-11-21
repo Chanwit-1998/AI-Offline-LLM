@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
+import com.druk.ai_offline_llm.voice.OfflineVoiceAssistantManager
+import androidx.compose.runtime.DisposableEffect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
@@ -302,6 +304,41 @@ class ConversationFragment : Fragment() {
             val visionModuleHint by viewModel.visionModuleHint.observeAsState()
             val systemPrompt by viewModel.systemPrompt.observeAsState("")
             val cartridgeContext = LocalContext.current
+
+            val voiceContext = LocalContext.current
+            val voiceAssistant = remember {
+                OfflineVoiceAssistantManager(voiceContext) {
+                    viewModel.dictation.onMicPressed()
+                    startDictation()
+                }
+            }
+            DisposableEffect(voiceAssistant) {
+                onDispose { voiceAssistant.shutdown() }
+            }
+            val voiceReplyEnabled by voiceAssistant.voiceReplyEnabled.collectAsState()
+            val continuousLoopEnabled by voiceAssistant.continuousLoopEnabled.collectAsState()
+            val isSpeaking by voiceAssistant.isSpeaking.collectAsState()
+            val pendingAssistantPrompt by AssistantBridge.pendingPrompt.collectAsState()
+
+            LaunchedEffect(pendingAssistantPrompt, isModelReady) {
+                val prompt = pendingAssistantPrompt ?: return@LaunchedEffect
+                if (isModelReady) {
+                    AssistantBridge.consumePrompt()
+                    viewModel.addMessage(com.druk.ai_offline_llm.conversation.Message(author = "user", content = prompt))
+                }
+            }
+
+            LaunchedEffect(isGenerating) {
+                if (isGenerating == false && voiceReplyEnabled) {
+                    val lastAssistantMsg = messages.lastOrNull { it.author != "user" && it.content.isNotBlank() }
+                    if (lastAssistantMsg != null) {
+                        voiceAssistant.speakResponse(lastAssistantMsg.content)
+                    }
+                } else if (isGenerating == true) {
+                    voiceAssistant.stopSpeaking()
+                }
+            }
+
             var activeCartridge by remember { mutableStateOf(CartridgeManager.getActiveCartridge(cartridgeContext)) }
             val insertCartridgeAction: (AiCartridge) -> Unit = { cartridge ->
                 CartridgeManager.setActiveCartridgeId(cartridgeContext, cartridge.id)
@@ -857,6 +894,18 @@ class ConversationFragment : Fragment() {
                             modelInfo = modelInfo,
                             modelStatus = modelStatus,
                             activeCartridge = activeCartridge,
+                        voiceReplyEnabled = voiceReplyEnabled,
+                        continuousLoopEnabled = continuousLoopEnabled,
+                        isSpeaking = isSpeaking,
+                        onToggleVoiceMode = {
+                            voiceAssistant.toggleVoiceMode()
+                            val msg = when {
+                                voiceAssistant.continuousLoopEnabled.value -> "เปิดโหมดคุยต่อเนื่อง (พูดจบฟังต่ออัตโนมัติ)"
+                                voiceAssistant.voiceReplyEnabled.value -> "เปิดเสียงพูดตอบกลับ (Offline TTS)"
+                                else -> "ปิดเสียงพูดตอบกลับ"
+                            }
+                            Toast.makeText(toastContext, msg, Toast.LENGTH_SHORT).show()
+                        },
                             onBagClicked = {
                                 if (findNavController().currentDestination?.id == R.id.nav_home) {
                                     findNavController().navigate(

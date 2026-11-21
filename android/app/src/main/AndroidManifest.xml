@@ -11,6 +11,8 @@
     <!-- Voice dictation: audio is recorded to app-private storage and
          transcribed on device by the bundled speech model. Never uploaded. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <!-- Large-screen / Chromebook posture: app works without touch input and
          supports freeform window management. Keeping these as required="false"
