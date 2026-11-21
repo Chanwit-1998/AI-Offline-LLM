@@ -248,11 +248,22 @@ object CartridgeManager {
     fun getActiveCartridge(context: Context): AiCartridge? =
         getActiveCartridgeId(context)?.let { id -> getAllAvailableCartridges(context).find { it.id == id } }
 
+    private val greetingOnlySet = setOf(
+        "สวัสดี", "สวัสดีครับ", "สวัสดีค่ะ", "สวัสดีจ้า", "หวัดดี", "ดีครับ", "ดีค่ะ",
+        "hi", "hello", "hey", "yo", "ขอบคุณ", "ขอบคุณครับ", "ขอบคุณค่ะ", "ok", "โอเค", "เค"
+    )
+
     fun retrieveKnowledge(context: Context, query: String, maxChars: Int = 3000): List<Pair<String, CartridgeKnowledgeEntry>> {
         val cartridge = getActiveCartridge(context) ?: return emptyList()
         if (cartridge.knowledge.isEmpty() || maxChars <= 0) return emptyList()
 
+        val trimmed = query.trim().lowercase()
+        if (trimmed.isEmpty() || trimmed in greetingOnlySet) return emptyList()
+
         val qTokens = extractSearchTokens(query)
+        if (qTokens.isEmpty()) return emptyList()
+
+        val minScore = 6
         val scored = cartridge.knowledge.mapIndexed { index, entry ->
             val topicTokens = extractSearchTokens(entry.topic)
             val bodyTokens = extractSearchTokens(entry.content)
@@ -262,7 +273,10 @@ object CartridgeManager {
                 if (bodyTokens.contains(qt)) score += 2
             }
             Triple(score, -index, entry)
-        }.sortedWith(compareByDescending<Triple<Int, Int, CartridgeKnowledgeEntry>> { it.first }.thenByDescending { it.second })
+        }.filter { it.first >= minScore }
+         .sortedWith(compareByDescending<Triple<Int, Int, CartridgeKnowledgeEntry>> { it.first }.thenByDescending { it.second })
+
+        if (scored.isEmpty()) return emptyList()
 
         val results = mutableListOf<Pair<String, CartridgeKnowledgeEntry>>()
         var usedChars = 0
@@ -271,7 +285,7 @@ object CartridgeManager {
             if (usedChars + blockLen > maxChars && results.isNotEmpty()) break
             results.add(cartridge.name to entry)
             usedChars += blockLen
-            if (results.size >= 4) break
+            if (results.size >= 3) break
         }
         return results
     }

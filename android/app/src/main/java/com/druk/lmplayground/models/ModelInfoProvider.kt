@@ -61,6 +61,16 @@ object ModelInfoProvider {
      */
     private val rawModels: List<ModelInfo> = listOf(
         ModelInfo(
+            name = "SDXS 512 TinySD Distilled",
+            filename = "sdxs-512-tinySDdistilled_Q8_0.gguf",
+            remoteUri = null,
+            releaseDate = LocalDate.parse("2026-11-14"),
+            description = "Stable Diffusion · 1-step image generator · 651Mb",
+            logoRes = R.drawable.logo_huggingface,
+            supportedLanguages = ENGLISH_ONLY
+        ),
+
+        ModelInfo(
             name = "Qwen 3 0.6B",
             filename = "Qwen3-0.6B-Q4_K_M.gguf",
             remoteUri = Uri.parse("https://huggingface.co/lmstudio-community/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf"),
