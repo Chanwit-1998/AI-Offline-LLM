@@ -146,7 +146,7 @@ fun ModelsScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val screenTitle = when (mode) {
-        ModelsScreenMode.DOWNLOADED_ONLY -> "กระเป๋าของฉัน"
+        ModelsScreenMode.DOWNLOADED_ONLY -> "คลังของฉัน"
         ModelsScreenMode.STORE_ONLY -> stringResource(R.string.menu_model_store)
         ModelsScreenMode.ALL -> stringResource(R.string.models)
     }
@@ -533,7 +533,7 @@ fun ModelsContent(
                         ) {
                             Icon(Icons.Outlined.Download, null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("ไปที่ร้านค้าตลับข้อมูล")
+                            Text("ไปที่ร้านค้าแพ็กข้อมูล RAG")
                         }
                     }
                 }

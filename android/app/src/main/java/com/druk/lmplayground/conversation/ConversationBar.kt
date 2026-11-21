@@ -147,7 +147,7 @@ fun ConversationBar(
             IconButton(onClick = onBagClicked) {
                 Icon(
                     imageVector = Icons.Outlined.WorkOutline,
-                    contentDescription = "กระเป๋าของฉัน",
+                    contentDescription = "คลังของฉัน",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(22.dp)
                 )

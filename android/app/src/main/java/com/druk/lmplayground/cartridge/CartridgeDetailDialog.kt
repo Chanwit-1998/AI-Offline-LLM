@@ -66,7 +66,7 @@ fun CartridgeDetailDialog(
                 Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text("วิธีใช้งานให้ดึงข้อมูลได้แม่นยำ", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(cartridge.usageTips.ifBlank { "• เสียบตลับในกระเป๋าของฉัน แล้วพิมพ์ถามคำสำคัญที่อยู่ในตลับ\n• ระบบ RAG จะดึงเฉพาะย่อหน้าที่ตรงกับคำถามให้ AI ตอบอัตโนมัติ" }, style = MaterialTheme.typography.bodySmall)
+                        Text(cartridge.usageTips.ifBlank { "• เสียบแพ็กข้อมูลในคลังของฉัน แล้วพิมพ์ถามคำสำคัญที่อยู่ในแพ็กข้อมูล\n• ระบบ RAG จะดึงเฉพาะย่อหน้าที่ตรงกับคำถามให้ AI ตอบอัตโนมัติ" }, style = MaterialTheme.typography.bodySmall)
                     }
                 }
 

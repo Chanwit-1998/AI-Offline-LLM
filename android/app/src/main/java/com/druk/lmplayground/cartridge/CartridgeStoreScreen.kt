@@ -36,7 +36,7 @@ fun CartridgeStoreScreen(onBackClick: () -> Unit, onInsertAndReturnToChat: (AiCa
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ร้านค้าตลับข้อมูล RAG (${CartridgeManager.storeCatalog.size})") },
+                title = { Text("ร้านค้าแพ็กข้อมูล RAG (${CartridgeManager.storeCatalog.size})") },
                 navigationIcon = { IconButton(onClick = onBackClick) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "กลับ") } }
             )
         }

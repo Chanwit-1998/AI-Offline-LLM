@@ -684,7 +684,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         prompt: String,
         imageModel: ModelInfo,
         messageId: Long,
-        sessionId: Long,
+        sessionId: String,
     ) {
         val startMs = System.currentTimeMillis()
         try {

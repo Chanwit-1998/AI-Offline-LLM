@@ -218,7 +218,7 @@ private fun SessionListContent(
         ) {
             DrawerNavMenuItem(
                 icon = Icons.Outlined.WorkOutline,
-                title = "กระเป๋าของฉัน",
+                title = "คลังของฉัน",
                 onClick = onModelsClicked
             )
             DrawerNavMenuItem(
@@ -228,7 +228,7 @@ private fun SessionListContent(
             )
             DrawerNavMenuItem(
                 icon = Icons.Outlined.Extension,
-                title = "ร้านค้าตลับข้อมูล",
+                title = "ร้านค้าแพ็กข้อมูล RAG",
                 onClick = onCartridgeStoreClicked
             )
             DrawerNavMenuItem(
