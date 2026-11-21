@@ -692,12 +692,12 @@ object ModelInfoProvider {
      * pipeline when the user first attaches a document.
      */
     val embeddingModel: ModelInfo = ModelInfo(
-        name = "EmbeddingGemma 300M",
-        filename = "embeddinggemma-300m-Q4_0.gguf",
-        remoteUri = Uri.parse("https://huggingface.co/unsloth/embeddinggemma-300m-GGUF/resolve/main/embeddinggemma-300m-Q4_0.gguf"),
-        releaseDate = LocalDate.parse("2025-09-04"),
-        description = "Google · Document embedding model · 278Mb",
-        logoRes = R.drawable.logo_google,
+        name = "BGE-M3",
+        filename = "bge-m3-Q4_K_M.gguf",
+        remoteUri = Uri.parse("https://huggingface.co/gpustack/bge-m3-GGUF/resolve/main/bge-m3-Q4_K_M.gguf"),
+        releaseDate = LocalDate.parse("2024-01-30"),
+        description = "BAAI · Multilingual document embedding model (Thai supported) · 438Mb",
+        logoRes = R.drawable.logo_huggingface,
     )
 
     /**

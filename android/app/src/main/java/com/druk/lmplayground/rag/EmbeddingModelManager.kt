@@ -71,12 +71,13 @@ class EmbeddingModelManager(
 
     override suspend fun embedDocumentChunks(chunks: List<String>): List<FloatArray>? =
         withSession { session ->
-            session.embed(chunks.map { "title: none | text: $it" })
+            // BGE-M3 is trained without task prefixes: embed the raw text.
+            session.embed(chunks)
         }
 
     override suspend fun embedQuery(query: String): FloatArray? =
         withSession { session ->
-            session.embed(listOf("task: search result | query: $query"))?.firstOrNull()
+            session.embed(listOf(query))?.firstOrNull()
         }
 
     suspend fun unload() = mutex.withLock {

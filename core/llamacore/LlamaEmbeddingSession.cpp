@@ -48,13 +48,22 @@ bool LlamaEmbeddingSession::init(llama_model *newModel, int nCtx) {
     ctx_params.n_threads = n_threads;
     ctx_params.n_threads_batch = n_threads;
     ctx_params.embeddings = true;
-    ctx_params.pooling_type = LLAMA_POOLING_TYPE_MEAN;
+    // Let the GGUF decide: BGE-M3 pools with CLS, EmbeddingGemma with mean.
+    ctx_params.pooling_type = LLAMA_POOLING_TYPE_UNSPECIFIED;
 
     ctx = llama_init_from_model(model, ctx_params);
+    if (ctx != nullptr && llama_pooling_type(ctx) == LLAMA_POOLING_TYPE_NONE) {
+        // No pooling type in metadata: fall back to mean pooling (old behaviour).
+        LOGw("GGUF has no pooling type, falling back to mean pooling");
+        llama_free(ctx);
+        ctx_params.pooling_type = LLAMA_POOLING_TYPE_MEAN;
+        ctx = llama_init_from_model(model, ctx_params);
+    }
     if (ctx == nullptr) {
         LOGe("Failed to create embedding llama_context");
         return false;
     }
+    LOGi("Embedding pooling type: %d", (int) llama_pooling_type(ctx));
     return true;
 }
 
