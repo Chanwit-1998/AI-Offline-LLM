@@ -113,7 +113,6 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
             ctx_params.model_path = modelPath.c_str();
             ctx_params.n_threads = threads > 0 ? threads : 4;
             ctx_params.enable_mmap = false;
-            ctx_params.free_params_immediately = true;
             ctx_params.vae_conv_direct = true;
             ctx_params.diffusion_conv_direct = true;
 
