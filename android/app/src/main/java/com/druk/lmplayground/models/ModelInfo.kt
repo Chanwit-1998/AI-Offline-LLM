@@ -57,9 +57,24 @@ data class ModelInfo(
     // marks the model as vision-capable ([isVision]).
     val mmprojFilename: String? = null,
     val mmprojUri: Uri? = null,
+    // Image generation model flag (e.g. Stable Diffusion / SDXS GGUF models).
+    val isImageModel: Boolean = false,
 ) {
     val isCustom: Boolean get() = remoteUri == null
     val isVision: Boolean get() = mmprojFilename != null
+    val isImageGenerator: Boolean
+        get() = isImageModel || looksLikeImageModelFilename(filename)
+}
+
+fun looksLikeImageModelFilename(filename: String): Boolean {
+    val lower = filename.lowercase()
+    return lower.startsWith("sdxs") ||
+        lower.startsWith("sd-") ||
+        lower.startsWith("sd_") ||
+        lower.contains("stable-diffusion") ||
+        lower.contains("tinisd") ||
+        lower.contains("tinysd") ||
+        lower.contains("flux")
 }
 
 fun ModelInfo.supportsLanguage(lang: String): Boolean =

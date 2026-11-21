@@ -99,6 +99,30 @@ class ConversationUiState(
         _messages.clear()
     }
 
+    fun updateMessageContent(messageId: Long, content: String) {
+        val idx = _messages.indexOfFirst { it.id == messageId }
+        if (idx >= 0) _messages[idx] = _messages[idx].copy(content = content)
+    }
+
+    fun updateMessageImage(
+        messageId: Long,
+        content: String,
+        imageUri: Uri?,
+        imagePath: String?,
+        responseDurationSeconds: Float = 0f,
+    ) {
+        val idx = _messages.indexOfFirst { it.id == messageId }
+        if (idx >= 0) {
+            _messages[idx] = _messages[idx].copy(
+                content = content,
+                imageUri = imageUri,
+                imagePath = imagePath,
+                responseDurationSeconds = responseDurationSeconds,
+                responseStartTimeMs = 0L,
+            )
+        }
+    }
+
     fun removeLastMessage() {
         if (_messages.isNotEmpty()) {
             _messages.removeAt(_messages.size - 1)

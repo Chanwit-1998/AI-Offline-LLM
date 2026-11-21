@@ -25,3 +25,4 @@ rootProject.name = "AI-Offline-LLM"
 include(":app")
 include(":llamacpp")
 include(":model-harness")
+include(":sdcpp")

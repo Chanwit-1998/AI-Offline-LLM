@@ -25,6 +25,12 @@ open class ChatImageStore(private val app: Application) {
      * so reopened conversations keep their images.
      * Returns the persisted file, or null on failure.
      */
+    fun createGeneratedImageFile(): File {
+        val imagesDir = File(app.filesDir, "chat_images")
+        imagesDir.mkdirs()
+        return File(imagesDir, "gen_${System.currentTimeMillis()}.png")
+    }
+
     fun persistImageFile(sourceUri: Uri): File? {
         return try {
             val imagesDir = File(app.filesDir, "chat_images")

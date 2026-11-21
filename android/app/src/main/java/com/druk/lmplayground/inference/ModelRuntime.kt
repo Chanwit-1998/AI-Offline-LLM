@@ -130,6 +130,25 @@ class ModelRuntime(
      * [messagesToReplay] is invoked right before history replay so it sees
      * the messages as of that moment.
      */
+    suspend fun unloadCurrentModel() {
+        cancelAndJoinGeneration()
+
+        // Capture and null references on main thread to prevent races
+        val prevSession = session
+        val prevModel = this.model
+        val prevHandle = modelFileHandle
+        session = null
+        this.model = null
+        modelFileHandle = null
+
+        withContext(Dispatchers.Default) {
+            prevSession?.destroy()
+            prevModel?.unloadModel()
+        }
+
+        prevHandle?.close()
+    }
+
     suspend fun loadModel(
         model: ModelInfo,
         disableRepack: Boolean,
@@ -161,22 +180,7 @@ class ModelRuntime(
         }
 
         // Stop any in-flight generation and tear down previous model
-        cancelAndJoinGeneration()
-
-        // Capture and null references on main thread to prevent races
-        val prevSession = session
-        val prevModel = this.model
-        val prevHandle = modelFileHandle
-        session = null
-        this.model = null
-        modelFileHandle = null
-
-        withContext(Dispatchers.Default) {
-            prevSession?.destroy()
-            prevModel?.unloadModel()
-        }
-
-        prevHandle?.close()
+        unloadCurrentModel()
 
         withContext(Dispatchers.Default) {
             listener.onLoadProgress(0f)

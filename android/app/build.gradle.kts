@@ -365,6 +365,7 @@ tasks.withType<Test>().configureEach {
 
 dependencies {
     implementation(project(":llamacpp"))
+    implementation(project(":sdcpp"))
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)

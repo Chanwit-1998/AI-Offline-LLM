@@ -1,6 +1,8 @@
 package com.druk.ai_offline_llm.conversation
 
 import android.app.Application
+import com.druk.sdcpp.StableDiffusionEngine
+import kotlinx.coroutines.withContext
 import android.text.format.Formatter
 import androidx.annotation.MainThread
 import androidx.lifecycle.AndroidViewModel
@@ -62,6 +64,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
     private val _isModelReady = MutableLiveData(false)
     private val _modelLoadingProgress = MutableLiveData(0f)
     private val _loadedModel = MutableLiveData<ModelInfo?>(null)
+    private var activeImageModel: ModelInfo? = null
     private val _loadedModelStatus = MutableLiveData<String?>(null)
 
     private val _models = MutableLiveData<List<ModelWithStatus>>(emptyList())
@@ -569,6 +572,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         stopObservingEmbeddingDownload()
+        runCatching { StableDiffusionEngine.unload() }
         runtime.shutdown()
         super.onCleared()
     }
@@ -640,6 +644,28 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             _models.postValue(emptyList())
             _isModelReady.postValue(false)
 
+            if (model.isImageGenerator) {
+                // Automatically unload any active LLM before activating the image model
+                runtime.unloadCurrentModel()
+                activeImageModel = model
+                _loadedModel.postValue(model)
+                _thinkingEnabled.postValue(false)
+                _supportsThinking.postValue(false)
+                _thinkingToggleable.postValue(false)
+                _supportsVision.postValue(false)
+                _loadedModelStatus.postValue("Ready")
+                _isModelReady.postValue(true)
+                return@launch
+            }
+
+            // Switching to a chat LLM: clear and unload any active image model immediately
+            if (activeImageModel != null) {
+                activeImageModel = null
+                withContext(Dispatchers.IO) {
+                    runCatching { StableDiffusionEngine.unload() }
+                }
+            }
+
             // Engine-side load: crash acknowledge, previous-model teardown,
             // native load + first session + history replay. Lifecycle events
             // come back through [runtimeListener].
@@ -653,6 +679,80 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
      * one-shot [_userError] and returns false; the caller MUST then abort
      * without mutating session state.
      */
+
+    private suspend fun runImageGenerationTurn(
+        prompt: String,
+        imageModel: ModelInfo,
+        messageId: Long,
+        sessionId: Long,
+    ) {
+        val startMs = System.currentTimeMillis()
+        try {
+            val cleanPrompt = prompt.trim().ifEmpty { "a scenic landscape, high quality" }
+            val preset = StableDiffusionEngine.presetForModel(imageModel.filename)
+            Snapshot.withMutableSnapshot {
+                uiState.updateMessageContent(
+                    messageId,
+                    "Generating ${preset.width}x${preset.height} image (${preset.steps} step)..."
+                )
+            }
+
+            val outputFile = imageStore.createGeneratedImageFile()
+            val generated = withContext(Dispatchers.IO) {
+                val handle = storageRepository.openModelFile(imageModel.filename)
+                    ?: return@withContext false
+                try {
+                    StableDiffusionEngine.generatePng(
+                        fd = handle.pfd.fd,
+                        modelKey = imageModel.filename,
+                        prompt = cleanPrompt,
+                        outputFile = outputFile,
+                        preset = preset,
+                    )
+                } finally {
+                    handle.close()
+                }
+            }
+
+            val elapsedSec = (System.currentTimeMillis() - startMs) / 1000f
+            if (generated && outputFile.exists() && outputFile.length() > 0L) {
+                val contentUri = imageStore.imageContentUri(outputFile)
+                val caption = "Generated in ${String.format("%.1f", elapsedSec)}s (${preset.width}x${preset.height})"
+                Snapshot.withMutableSnapshot {
+                    uiState.updateMessageImage(
+                        messageId = messageId,
+                        content = caption,
+                        imageUri = contentUri,
+                        imagePath = outputFile.absolutePath,
+                        responseDurationSeconds = elapsedSec,
+                    )
+                }
+            } else {
+                outputFile.delete()
+                Snapshot.withMutableSnapshot {
+                    uiState.updateMessageContent(
+                        messageId,
+                        "Failed to generate image with ${imageModel.filename}."
+                    )
+                }
+            }
+
+            val assistantMsg = uiState.messages.find { it.id == messageId }
+            if (assistantMsg != null) {
+                sessionStore.persistMessage(sessionId, assistantMsg, assistantMsg.imagePath)
+            }
+        } catch (t: Throwable) {
+            Snapshot.withMutableSnapshot {
+                uiState.updateMessageContent(
+                    messageId,
+                    "Image generation error: ${t.message ?: t::class.java.simpleName}"
+                )
+            }
+        } finally {
+            _isGenerating.postValue(false)
+        }
+    }
+
     private fun validateReplaySize(systemPrompt: String, messages: List<Message>): Boolean {
         return when (val result = HistoryReplay.validateReplaySize(systemPrompt, messages)) {
             HistoryReplay.ValidationResult.Ok -> true
@@ -812,6 +912,17 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             // Persist user message (with the attached image path, if any)
             val sessionId = ensureSession(message)
             sessionStore.persistMessage(sessionId, userMessage, persistedImageFile?.absolutePath)
+
+            val imageModel = activeImageModel
+            if (imageModel != null) {
+                runImageGenerationTurn(
+                    prompt = message.content,
+                    imageModel = imageModel,
+                    messageId = ourMessageId,
+                    sessionId = sessionId,
+                )
+                return@launch
+            }
 
             generation.runTurn(
                 content = buildWireContent(sessionId, message.content),
@@ -1212,6 +1323,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
 
     @MainThread
     fun cancelGeneration() {
+        if (activeImageModel != null) runCatching { StableDiffusionEngine.cancel() }
         runtime.generatingJob?.cancel()
     }
 
