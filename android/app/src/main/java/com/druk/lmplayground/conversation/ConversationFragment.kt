@@ -318,6 +318,7 @@ class ConversationFragment : Fragment() {
             val voiceReplyEnabled by voiceAssistant.voiceReplyEnabled.collectAsState()
             val continuousLoopEnabled by voiceAssistant.continuousLoopEnabled.collectAsState()
             val isSpeaking by voiceAssistant.isSpeaking.collectAsState()
+            var inCallMode by remember { mutableStateOf(false) }
             val pendingAssistantPrompt by AssistantBridge.pendingPrompt.collectAsState()
 
             LaunchedEffect(pendingAssistantPrompt, isModelReady) {
@@ -590,7 +591,35 @@ class ConversationFragment : Fragment() {
                 
 
                 // Migration confirmation dialog
-                pendingMigration?.let { migration ->
+                
+            if (inCallMode) {
+                val listeningText = when (val s = dictationState) {
+                    is DictationState.Listening -> s.text
+                    else -> ""
+                }
+                VoiceCallOverlay(
+                    modelName = modelInfo?.name ?: "Offline LLM",
+                    isListening = micOn || dictationState is DictationState.Listening,
+                    isGenerating = isGenerating == true,
+                    isSpeaking = isSpeaking,
+                    liveText = listeningText,
+                    onMicClick = {
+                        if (micOn) {
+                            viewModel.dictation.onMicReleased()
+                        } else {
+                            viewModel.dictation.onMicPressed()
+                            startDictation()
+                        }
+                    },
+                    onEndCall = {
+                        inCallMode = false
+                        voiceAssistant.disableCallMode()
+                        viewModel.dictation.onMicReleased()
+                    }
+                )
+            }
+
+            pendingMigration?.let { migration ->
                     val totalSize = migration.modelsToMigrate.sumOf { it.sizeBytes }
                     val sizeFormatted = android.text.format.Formatter.formatFileSize(context, totalSize)
 
@@ -897,6 +926,12 @@ class ConversationFragment : Fragment() {
                         voiceReplyEnabled = voiceReplyEnabled,
                         continuousLoopEnabled = continuousLoopEnabled,
                         isSpeaking = isSpeaking,
+                        onStartCallMode = {
+                            voiceAssistant.enableCallMode()
+                            inCallMode = true
+                            viewModel.dictation.onMicPressed()
+                            startDictation()
+                        },
                         onToggleVoiceMode = {
                             voiceAssistant.toggleVoiceMode()
                             val msg = when {

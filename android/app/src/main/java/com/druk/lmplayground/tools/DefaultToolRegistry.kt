@@ -10,6 +10,7 @@ fun ToolRegistry.Companion.createDefault(context: Context): ToolRegistry =
         register(AlarmTimerTool(context))
         register(NotesTool(context))
         register(ContactsTool(context))
+        register(MakeCallTool(context))
         register(JavaScriptTool(context))
         register(WebSearchTool(webLinkStore))
         register(WebFetchTool(webLinkStore))

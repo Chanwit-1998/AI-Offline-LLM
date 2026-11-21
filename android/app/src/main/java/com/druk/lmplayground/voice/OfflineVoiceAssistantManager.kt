@@ -51,25 +51,50 @@ class OfflineVoiceAssistantManager(
 
     fun toggleVoiceMode() {
         when {
-            !_voiceReplyEnabled.value -> { _voiceReplyEnabled.value = true; _continuousLoopEnabled.value = false }
-            _voiceReplyEnabled.value && !_continuousLoopEnabled.value -> { _continuousLoopEnabled.value = true }
-            else -> { _voiceReplyEnabled.value = false; _continuousLoopEnabled.value = false; stopSpeaking() }
+            !_voiceReplyEnabled.value -> {
+                _voiceReplyEnabled.value = true
+                _continuousLoopEnabled.value = false
+            }
+            _voiceReplyEnabled.value && !_continuousLoopEnabled.value -> {
+                _continuousLoopEnabled.value = true
+            }
+            else -> {
+                _voiceReplyEnabled.value = false
+                _continuousLoopEnabled.value = false
+                stopSpeaking()
+            }
         }
+    }
+
+    fun enableCallMode() {
+        _voiceReplyEnabled.value = true
+        _continuousLoopEnabled.value = true
+    }
+
+    fun disableCallMode() {
+        _continuousLoopEnabled.value = false
+        stopSpeaking()
     }
 
     fun speakResponse(rawMarkdown: String) {
         if (!_voiceReplyEnabled.value || !isReady) return
+        val codeBlockRegex = Regex("```[\\s\\S]*?```")
+        val inlineCodeRegex = Regex("`([^`]+)`")
+        val mdSymbolRegex = Regex("[*_~#>]")
+        val linkRegex = Regex("\\[([^\\]]+)]\\([^)]+\\)")
+        val spaceRegex = Regex("\\s+")
+
         val clean = rawMarkdown
-            .replace(Regex("```[\s\S]*?```"), " โค้ดตัวอย่าง ")
-            .replace(Regex("`([^`]+)`"), "$1")
-            .replace(Regex("\*\*|__|~~|#+|>"), "")
-            .replace(Regex("\[([^\]]+)]\([^)]+\)"), "$1")
-            .replace(Regex("\s+"), " ")
+            .replace(codeBlockRegex, " โค้ดตัวอย่าง ")
+            .replace(inlineCodeRegex, "$1")
+            .replace(mdSymbolRegex, "")
+            .replace(linkRegex, "$1")
+            .replace(spaceRegex, " ")
             .trim()
             .take(1200)
         if (clean.isBlank()) return
 
-        val hasThai = clean.any { it in '฀'..'๿' }
+        val hasThai = clean.any { it.code in 0x0E00..0x0E7F }
         val targetLocale = if (hasThai) Locale("th", "TH") else Locale.US
         if ((tts?.isLanguageAvailable(targetLocale) ?: -1) >= TextToSpeech.LANG_AVAILABLE) {
             tts?.language = targetLocale

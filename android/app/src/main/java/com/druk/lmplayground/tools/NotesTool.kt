@@ -56,7 +56,8 @@ class NotesTool(context: Context) : Tool {
                 else -> """{"error":"Unknown action"}"""
             }
         } catch (e: Exception) {
-            """{"error":"${(e.message ?: "Notes error").replace(""", "'")}"}"""
+            val msg = (e.message ?: "Notes error").replace("\"", "'")
+            """{"error":"$msg"}"""
         }
     }
 }

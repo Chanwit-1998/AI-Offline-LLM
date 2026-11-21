@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ fun ConversationBar(
     continuousLoopEnabled: Boolean = false,
     isSpeaking: Boolean = false,
     onToggleVoiceMode: () -> Unit = { },
+    onStartCallMode: () -> Unit = { },
     modifier: Modifier = Modifier,
     colors: TopAppBarColors? = null,
     showNavIcon: Boolean = true,
@@ -143,6 +145,13 @@ fun ConversationBar(
             }
         },
         actions = {
+            IconButton(onClick = onStartCallMode) {
+                Icon(
+                    imageVector = Icons.Filled.Call,
+                    contentDescription = "โหมดคุยสายสด",
+                    tint = Color(0xFF4ADE80)
+                )
+            }
             IconButton(onClick = onToggleVoiceMode) {
                 val icon = when {
                     continuousLoopEnabled -> Icons.Outlined.RecordVoiceOver
