@@ -364,6 +364,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.20.0")
     implementation(project(":llamacpp"))
     implementation(project(":sdcpp"))
     val composeBom = platform(libs.androidx.compose.bom)

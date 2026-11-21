@@ -57,6 +57,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,44 +94,13 @@ fun ChatItemBubble(
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
-    // Text-to-Speech (อ่านออกเสียง) state and lifecycle management
+    // F5-TTS V4 Offline Engine state and lifecycle management
     var isSpeaking by remember { mutableStateOf(false) }
-    var ttsInstance by remember { mutableStateOf<TextToSpeech?>(null) }
+    val ttsScope = rememberCoroutineScope()
 
-    DisposableEffect(context) {
-        var engine: TextToSpeech? = null
-        engine = TextToSpeech(context.applicationContext) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                val thaiLocale = Locale("th", "TH")
-                val result = engine?.setLanguage(thaiLocale)
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    engine?.language = Locale.getDefault()
-                }
-                engine?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onStart(utteranceId: String?) {
-                        isSpeaking = true
-                    }
-
-                    override fun onDone(utteranceId: String?) {
-                        isSpeaking = false
-                    }
-
-                    @Deprecated("Deprecated in Java")
-                    override fun onError(utteranceId: String?) {
-                        isSpeaking = false
-                    }
-
-                    override fun onError(utteranceId: String?, errorCode: Int) {
-                        isSpeaking = false
-                    }
-                })
-                ttsInstance = engine
-            }
-        }
+    DisposableEffect(Unit) {
         onDispose {
-            engine?.stop()
-            engine?.shutdown()
-            ttsInstance = null
+            F5TtsEngine.stop()
             isSpeaking = false
         }
     }
@@ -343,25 +314,22 @@ fun ChatItemBubble(
                     // 4. Read Aloud (ปุ่มอ่านออกเสียง)
                     IconButton(
                         onClick = {
-                            val tts = ttsInstance ?: return@IconButton
                             if (isSpeaking) {
-                                tts.stop()
+                                F5TtsEngine.stop()
                                 isSpeaking = false
                             } else {
                                 val textToRead = cleanTextForSpeech(
                                     split.responseContent.ifBlank { stripThinkTags(message.content) }
                                 )
                                 if (textToRead.isNotBlank()) {
-                                    isSpeaking = true
-                                    val hasThai = textToRead.any { ch -> ch in '\u0E00'..'\u0E7F' }
-                                    val targetLocale = if (hasThai) Locale("th", "TH") else Locale.getDefault()
-                                    configureNaturalSpeech(tts, targetLocale)
                                     val chunks = splitSpeechChunks(textToRead)
-                                    val params = Bundle()
-                                    chunks.forEachIndexed { index, chunk ->
-                                        val queueMode = if (index == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
-                                        val utteranceId = UUID.randomUUID().toString()
-                                        tts.speak(chunk, queueMode, params, utteranceId)
+                                    ttsScope.launch {
+                                        F5TtsEngine.speakChunks(
+                                            context = context,
+                                            chunks = chunks,
+                                            onStart = { isSpeaking = true },
+                                            onDone = { isSpeaking = false }
+                                        )
                                     }
                                 }
                             }
