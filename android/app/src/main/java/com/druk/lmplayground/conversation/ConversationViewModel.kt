@@ -690,6 +690,52 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
         try {
             val cleanPrompt = prompt.trim().ifEmpty { "a scenic landscape, high quality" }
             val preset = StableDiffusionEngine.presetForModel(imageModel.filename)
+
+            val localModelFile = withContext(Dispatchers.IO) {
+                val cacheDir = java.io.File(app.filesDir, "sd_models").apply { mkdirs() }
+                cacheDir.listFiles()?.forEach { existing ->
+                    if (existing.name != imageModel.filename && existing.name != "${imageModel.filename}.tmp") {
+                        existing.delete()
+                    }
+                }
+                val targetFile = java.io.File(cacheDir, imageModel.filename)
+                val expectedSize = storageRepository.getModelFiles()
+                    .find { it.name == imageModel.filename }?.sizeBytes ?: -1L
+                val isCached = targetFile.exists() &&
+                    targetFile.length() > 0L &&
+                    (expectedSize <= 0L || targetFile.length() == expectedSize)
+
+                if (!isCached) {
+                    Snapshot.withMutableSnapshot {
+                        uiState.updateMessageContent(
+                            messageId,
+                            "Preparing ${imageModel.filename}..."
+                        )
+                    }
+                    val tmpFile = java.io.File(cacheDir, "${imageModel.filename}.tmp")
+                    tmpFile.delete()
+                    if (!storageRepository.copyModelToFile(imageModel.filename, tmpFile)) {
+                        tmpFile.delete()
+                        return@withContext null
+                    }
+                    targetFile.delete()
+                    if (!tmpFile.renameTo(targetFile)) {
+                        return@withContext tmpFile
+                    }
+                }
+                targetFile
+            }
+
+            if (localModelFile == null || !localModelFile.exists()) {
+                Snapshot.withMutableSnapshot {
+                    uiState.updateMessageContent(
+                        messageId,
+                        "Failed to copy ${imageModel.filename} from storage."
+                    )
+                }
+                return
+            }
+
             Snapshot.withMutableSnapshot {
                 uiState.updateMessageContent(
                     messageId,
@@ -698,24 +744,18 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             }
 
             val outputFile = imageStore.createGeneratedImageFile()
-            val generated = withContext(Dispatchers.IO) {
-                val handle = storageRepository.openModelFile(imageModel.filename)
-                    ?: return@withContext false
-                try {
-                    StableDiffusionEngine.generatePng(
-                        fd = handle.pfd.fd,
-                        modelKey = imageModel.filename,
-                        prompt = cleanPrompt,
-                        outputFile = outputFile,
-                        preset = preset,
-                    )
-                } finally {
-                    handle.close()
-                }
+            val errorMsg = withContext(Dispatchers.IO) {
+                StableDiffusionEngine.generatePng(
+                    modelFile = localModelFile,
+                    modelKey = imageModel.filename,
+                    prompt = cleanPrompt,
+                    outputFile = outputFile,
+                    preset = preset,
+                )
             }
 
             val elapsedSec = (System.currentTimeMillis() - startMs) / 1000f
-            if (generated && outputFile.exists() && outputFile.length() > 0L) {
+            if (errorMsg == null && outputFile.exists() && outputFile.length() > 0L) {
                 val contentUri = imageStore.imageContentUri(outputFile)
                 val caption = "Generated in ${String.format("%.1f", elapsedSec)}s (${preset.width}x${preset.height})"
                 Snapshot.withMutableSnapshot {
@@ -729,10 +769,11 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 }
             } else {
                 outputFile.delete()
+                val detail = if (!errorMsg.isNullOrBlank()) ": $errorMsg" else "."
                 Snapshot.withMutableSnapshot {
                     uiState.updateMessageContent(
                         messageId,
-                        "Failed to generate image with ${imageModel.filename}."
+                        "Failed to generate image with ${imageModel.filename}$detail"
                     )
                 }
             }

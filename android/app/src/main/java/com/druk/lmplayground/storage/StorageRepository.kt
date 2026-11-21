@@ -21,14 +21,24 @@ class StorageRepository(
      * Check if storage folder is configured.
      * User MUST select a folder before using the app.
      */
+    private fun ensureDefaultStorage(): Uri {
+        prefs.modelStorageUri?.let { return it }
+        val defaultDir = (context.getExternalFilesDir("models")
+            ?: java.io.File(context.filesDir, "models")).apply { mkdirs() }
+        val fallbackUri = Uri.fromFile(defaultDir)
+        prefs.modelStorageUri = fallbackUri
+        return fallbackUri
+    }
+
     fun isStorageConfigured(): Boolean {
-        return prefs.modelStorageUri != null
+        ensureDefaultStorage()
+        return true
     }
 
     /**
      * Get the configured storage URI.
      */
-    fun getStorageUri(): Uri? = prefs.modelStorageUri
+    fun getStorageUri(): Uri? = ensureDefaultStorage()
 
     /**
      * Set the storage folder.

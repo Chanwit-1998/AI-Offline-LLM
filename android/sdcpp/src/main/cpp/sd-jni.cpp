@@ -24,13 +24,30 @@ namespace {
 std::mutex g_sd_mutex;
 sd_ctx_t* g_sd_ctx = nullptr;
 std::string g_loaded_key;
+std::string g_last_error;
 std::atomic<bool> g_cancel_requested{false};
+
+std::string trim_msg(const char* text) {
+    std::string s = text ? text : "";
+    while (!s.empty() && (s.back() == '\n' || s.back() == '\r' || s.back() == ' ')) {
+        s.pop_back();
+    }
+    return s;
+}
 
 void sd_android_log_cb(enum sd_log_level_t level, const char* text, void* /*data*/) {
     if (!text) return;
-    if (level == SD_LOG_ERROR) LOGE("%s", text);
-    else if (level == SD_LOG_WARN) LOGW("%s", text);
-    else LOGI("%s", text);
+    if (level == SD_LOG_ERROR) {
+        LOGE("%s", text);
+        std::string msg = trim_msg(text);
+        if (!msg.empty()) {
+            g_last_error = msg;
+        }
+    } else if (level == SD_LOG_WARN) {
+        LOGW("%s", text);
+    } else {
+        LOGI("%s", text);
+    }
 }
 
 void free_context_locked() {
@@ -59,7 +76,7 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeCancel(JNIEnv* /*env*/, jobject 
     }
 }
 
-extern "C" JNIEXPORT jboolean JNICALL
+extern "C" JNIEXPORT jstring JNICALL
 Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
     JNIEnv* env,
     jobject /*thiz*/,
@@ -76,8 +93,7 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
     jint threads
 ) {
     if (!jModelPath || !jPrompt || !jOutputPngPath) {
-        LOGE("Invalid null arguments passed to nativeGeneratePng");
-        return JNI_FALSE;
+        return env->NewStringUTF("Invalid null arguments passed to nativeGeneratePng");
     }
 
     const char* cModelPath = env->GetStringUTFChars(jModelPath, nullptr);
@@ -100,6 +116,7 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
 
     std::lock_guard<std::mutex> lock(g_sd_mutex);
     g_cancel_requested.store(false);
+    g_last_error.clear();
     sd_set_log_callback(sd_android_log_cb, nullptr);
 
     LOGI("nativeGeneratePng start: path=%s key=%s w=%d h=%d steps=%d cfg=%.2f threads=%d out=%s",
@@ -112,21 +129,21 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
             sd_ctx_params_init(&ctx_params);
             ctx_params.model_path = modelPath.c_str();
             ctx_params.n_threads = threads > 0 ? threads : 4;
-            ctx_params.enable_mmap = false;
+            ctx_params.enable_mmap = true;
             ctx_params.vae_conv_direct = true;
             ctx_params.diffusion_conv_direct = true;
 
             g_sd_ctx = new_sd_ctx(&ctx_params);
             if (g_sd_ctx == nullptr) {
-                LOGE("new_sd_ctx returned null for model=%s path=%s", modelKey.c_str(), modelPath.c_str());
-                return JNI_FALSE;
+                std::string err = g_last_error.empty() ? "new_sd_ctx returned null" : g_last_error;
+                LOGE("new_sd_ctx failed: %s", err.c_str());
+                return env->NewStringUTF(err.c_str());
             }
             g_loaded_key = modelKey;
         }
 
         if (g_cancel_requested.load()) {
-            LOGW("Generation cancelled before start");
-            return JNI_FALSE;
+            return env->NewStringUTF("Generation cancelled");
         }
         sd_cancel_generation(g_sd_ctx, SD_CANCEL_RESET);
 
@@ -146,12 +163,10 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
         sd_image_generation_result_t* result = nullptr;
         bool ok = generate_image(g_sd_ctx, &gen_params, &result);
         if (!ok || result == nullptr || result->count <= 0 || result->items[0].image.data == nullptr) {
-            LOGE("generate_image failed: ok=%d result=%p count=%d",
-                 ok ? 1 : 0,
-                 static_cast<void*>(result),
-                 result ? result->count : -1);
+            std::string err = g_last_error.empty() ? "generate_image returned false" : g_last_error;
+            LOGE("generate_image failed: %s", err.c_str());
             if (result != nullptr) free_sd_image_generation_result(result);
-            return JNI_FALSE;
+            return env->NewStringUTF(err.c_str());
         }
 
         const sd_image_t& img = result->items[0].image;
@@ -168,15 +183,14 @@ Java_com_druk_sdcpp_StableDiffusionEngine_nativeGeneratePng(
         );
         free_sd_image_generation_result(result);
         if (wrote == 0) {
-            LOGE("stbi_write_png failed for %s", outPath.c_str());
-            return JNI_FALSE;
+            return env->NewStringUTF("stbi_write_png failed");
         }
-        return JNI_TRUE;
+        return nullptr;
     } catch (const std::exception& e) {
         LOGE("Exception in nativeGeneratePng: %s", e.what());
-        return JNI_FALSE;
+        return env->NewStringUTF(e.what());
     } catch (...) {
         LOGE("Unknown exception in nativeGeneratePng");
-        return JNI_FALSE;
+        return env->NewStringUTF("Unknown native exception");
     }
 }

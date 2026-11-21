@@ -31,13 +31,10 @@ import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Extension
-import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -98,8 +95,6 @@ fun SessionListDrawer(
             onRenameSession = onRenameSession,
             onPinSession = onPinSession,
             onModelsClicked = onModelsClicked,
-            onModelStoreClicked = onModelStoreClicked,
-            onCartridgeStoreClicked = onCartridgeStoreClicked,
             onAiSkillsClicked = onAiSkillsClicked,
             onSettingsClicked = onSettingsClicked,
             onNewChatClicked = onNewChatClicked
@@ -144,8 +139,6 @@ fun PermanentSessionList(
                 onRenameSession = onRenameSession,
                 onPinSession = onPinSession,
                 onModelsClicked = onModelsClicked,
-                onModelStoreClicked = onModelStoreClicked,
-                onCartridgeStoreClicked = onCartridgeStoreClicked,
                 onAiSkillsClicked = onAiSkillsClicked,
                 onSettingsClicked = onSettingsClicked,
                 onNewChatClicked = onNewChatClicked,
@@ -165,8 +158,6 @@ private fun SessionListContent(
     onRenameSession: (String, String) -> Unit,
     onPinSession: (String, Boolean) -> Unit,
     onModelsClicked: () -> Unit,
-    onModelStoreClicked: () -> Unit,
-    onCartridgeStoreClicked: () -> Unit,
     onAiSkillsClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onNewChatClicked: () -> Unit,
@@ -193,7 +184,6 @@ private fun SessionListContent(
             .fillMaxHeight()
             .statusBarsPadding()
     ) {
-        // 1. หัวข้อชื่อแอป ChatLLM (รูป A1 / รูป B1)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,7 +199,6 @@ private fun SessionListContent(
             )
         }
 
-        // 2. เมนูหลัก 4 ช่อง (รูป A1 / รูป B1)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -220,16 +209,6 @@ private fun SessionListContent(
                 icon = Icons.Outlined.WorkOutline,
                 title = "คลังของฉัน",
                 onClick = onModelsClicked
-            )
-            DrawerNavMenuItem(
-                icon = Icons.Outlined.Download,
-                title = stringResource(R.string.menu_model_store),
-                onClick = onModelStoreClicked
-            )
-            DrawerNavMenuItem(
-                icon = Icons.Outlined.Extension,
-                title = "ร้านค้าแพ็กข้อมูล RAG",
-                onClick = onCartridgeStoreClicked
             )
             DrawerNavMenuItem(
                 icon = Icons.Outlined.AutoAwesome,
@@ -251,7 +230,6 @@ private fun SessionListContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 3. ประวัติการสนทนา (รูป A1 มีประวัติ / รูป B1 ว่างเปล่า)
         if (sessions.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -369,8 +347,6 @@ private fun SessionListContent(
                 }
             }
         }
-
-        // 4. แถบปุ่มด้านล่างสุด: กรอบ 1 ปุ่ม "✎ แชท" และ กรอบ 2 ปุ่ม "ปิดแอป" ขนาดเท่ากัน
         Row(
             modifier = Modifier
                 .fillMaxWidth()

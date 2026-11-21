@@ -29,8 +29,12 @@ object StableDiffusionEngine {
         }
     }
 
+    /**
+     * Generates a PNG image using a real filesystem [modelFile].
+     * Returns `null` on success, or an error description on failure.
+     */
     fun generatePng(
-        fd: Int,
+        modelFile: File,
         modelKey: String,
         prompt: String,
         outputFile: File,
@@ -38,10 +42,10 @@ object StableDiffusionEngine {
         preset: GenPreset = presetForModel(modelKey),
         seed: Long = -1L,
         threads: Int = Runtime.getRuntime().availableProcessors().coerceIn(2, 6),
-    ): Boolean {
+    ): String? {
         outputFile.parentFile?.mkdirs()
         return nativeGeneratePng(
-            modelPath = "/proc/self/fd/$fd",
+            modelPath = modelFile.absolutePath,
             modelKey = modelKey,
             prompt = prompt,
             negativePrompt = negativePrompt,
@@ -70,7 +74,7 @@ object StableDiffusionEngine {
         cfgScale: Float,
         seed: Long,
         threads: Int,
-    ): Boolean
+    ): String?
 
     private external fun nativeCancel()
     private external fun nativeUnload()

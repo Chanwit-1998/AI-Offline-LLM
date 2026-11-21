@@ -548,56 +548,9 @@ class ConversationFragment : Fragment() {
                     storageViewModel.checkStorageConfigured()
                 }
 
-                // Show setup dialog if storage not configured
-                LaunchedEffect(isStorageConfigured) {
-                    if (!isStorageConfigured) {
-                        showStorageSetupDialog = true
-                    }
-                }
+                
 
-                // Storage Setup Dialog
-                if (showStorageSetupDialog && !isStorageConfigured && pendingMigration == null) {
-                    AlertDialog(
-                        onDismissRequest = { /* Cannot dismiss - must choose folder */ },
-                        title = { Text(stringResource(R.string.choose_storage_folder)) },
-                        text = {
-                            Text(stringResource(R.string.choose_storage_folder_message))
-                        },
-                        confirmButton = {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                TextButton(
-                                    onClick = {
-                                        showStorageSetupDialog = false
-                                        runCatching {
-                                            if (findNavController().currentDestination?.id == R.id.nav_home) {
-                                                findNavController().navigate(
-                                                    R.id.action_home_to_models,
-                                                    bundleOf("mode" to "store")
-                                                )
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Text(stringResource(R.string.menu_model_store))
-                                }
-                                TextButton(
-                                    onClick = {
-                                        (activity as? MainActivity)?.launchFolderPicker { uri ->
-                                            if (uri != null) {
-                                                storageViewModel.requestStorageFolderChange(uri)
-                                                showStorageSetupDialog = false
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Text(stringResource(R.string.choose_folder))
-                                }
-                            }
-                        }
-                    )
-                }
+                
 
                 // Migration confirmation dialog
                 pendingMigration?.let { migration ->
