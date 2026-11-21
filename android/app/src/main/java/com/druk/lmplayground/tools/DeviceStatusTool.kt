@@ -45,7 +45,8 @@ class DeviceStatusTool(private val context: Context) : Tool {
                 put("network_status", net)
             }.toString()
         } catch (e: Exception) {
-            """{"error":"${(e.message ?: "Status error").replace(""", "'")}"}"""
+            val err = (e.message ?: "Status error").replace("\"", "'")
+            """{"error":"$err"}"""
         }
     }
 }
