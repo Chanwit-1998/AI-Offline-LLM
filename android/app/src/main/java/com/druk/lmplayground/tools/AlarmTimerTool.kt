@@ -40,7 +40,7 @@ class AlarmTimerTool(private val context: Context) : Tool {
                 """{"status":"success","mode":"timer","duration_seconds":$sec}"""
             }
         } catch (e: Exception) {
-            """{"error":"${(e.message ?: "Clock unavailable").replace(""", "'")}"}"""
+            org.json.JSONObject().put("error", e.message ?: "Clock unavailable").toString()
         }
     }
 }

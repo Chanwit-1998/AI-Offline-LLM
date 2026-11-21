@@ -38,7 +38,7 @@ class ContactsTool(private val context: Context) : Tool {
             }
             JSONObject().put("query", query).put("matches", results).toString()
         } catch (e: Exception) {
-            """{"error":"${(e.message ?: "Contacts error").replace(""", "'")}"}"""
+            org.json.JSONObject().put("error", e.message ?: "Contacts error").toString()
         }
     }
 }

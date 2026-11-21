@@ -25,7 +25,7 @@ class DateTimeTool : Tool {
                 put("timezone", now.zone.id)
             }.toString()
         } catch (e: Exception) {
-            """{"error":"${(e.message ?: "Time error").replace(""", "'")}"}"""
+            JSONObject().put("error", e.message ?: "Time error").toString()
         }
     }
 }
