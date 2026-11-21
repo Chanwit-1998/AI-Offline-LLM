@@ -7,14 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
@@ -39,11 +32,6 @@ fun ConversationBar(
     modelInfo: ModelInfo?,
     modelStatus: String? = null,
     activeCartridge: AiCartridge? = null,
-    voiceReplyEnabled: Boolean = false,
-    continuousLoopEnabled: Boolean = false,
-    isSpeaking: Boolean = false,
-    onToggleVoiceMode: () -> Unit = { },
-    onStartCallMode: () -> Unit = { },
     modifier: Modifier = Modifier,
     colors: TopAppBarColors? = null,
     showNavIcon: Boolean = true,
@@ -105,8 +93,6 @@ fun ConversationBar(
                             overflow = TextOverflow.Ellipsis
                         )
                         val sub = when {
-                            continuousLoopEnabled -> "โหมดคุยต่อเนื่อง (Hands-Free)"
-                            voiceReplyEnabled -> if (isSpeaking) "กำลังอ่านคำตอบ..." else "เปิดเสียงพูดตอบกลับ"
                             activeCartridge != null -> "ตลับ: ${activeCartridge.name}"
                             !modelStatus.isNullOrBlank() -> modelStatus
                             else -> "ตลับ: ยังไม่เสียบตลับ"
@@ -114,10 +100,8 @@ fun ConversationBar(
                         Text(
                             text = sub,
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = if (voiceReplyEnabled || activeCartridge != null) FontWeight.SemiBold else FontWeight.Normal,
+                            fontWeight = if (activeCartridge != null) FontWeight.SemiBold else FontWeight.Normal,
                             color = when {
-                                continuousLoopEnabled -> Color(0xFF4ADE80)
-                                voiceReplyEnabled -> MaterialTheme.colorScheme.primary
                                 activeCartridge != null -> Color(activeCartridge.colorHex)
                                 else -> MaterialTheme.colorScheme.onSurfaceVariant
                             },
@@ -144,31 +128,5 @@ fun ConversationBar(
                 }
             }
         },
-        actions = {
-            IconButton(onClick = onStartCallMode) {
-                Icon(
-                    imageVector = Icons.Filled.Call,
-                    contentDescription = "โหมดคุยสายสด",
-                    tint = Color(0xFF4ADE80)
-                )
-            }
-            IconButton(onClick = onToggleVoiceMode) {
-                val icon = when {
-                    continuousLoopEnabled -> Icons.Outlined.RecordVoiceOver
-                    voiceReplyEnabled -> Icons.AutoMirrored.Filled.VolumeUp
-                    else -> Icons.AutoMirrored.Filled.VolumeOff
-                }
-                val tint = when {
-                    continuousLoopEnabled -> Color(0xFF4ADE80)
-                    voiceReplyEnabled -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "สลับโหมดเสียงพูดตอบกลับ",
-                    tint = tint
-                )
-            }
-        }
     )
 }

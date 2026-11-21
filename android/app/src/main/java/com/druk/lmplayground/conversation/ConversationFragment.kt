@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
-import com.druk.ai_offline_llm.voice.OfflineVoiceAssistantManager
 import androidx.compose.runtime.DisposableEffect
 import android.view.View
 import android.view.ViewGroup
@@ -305,20 +304,6 @@ class ConversationFragment : Fragment() {
             val systemPrompt by viewModel.systemPrompt.observeAsState("")
             val cartridgeContext = LocalContext.current
 
-            val voiceContext = LocalContext.current
-            val voiceAssistant = remember {
-                OfflineVoiceAssistantManager(voiceContext) {
-                    viewModel.dictation.onMicPressed()
-                    startDictation()
-                }
-            }
-            DisposableEffect(voiceAssistant) {
-                onDispose { voiceAssistant.shutdown() }
-            }
-            val voiceReplyEnabled by voiceAssistant.voiceReplyEnabled.collectAsState()
-            val continuousLoopEnabled by voiceAssistant.continuousLoopEnabled.collectAsState()
-            val isSpeaking by voiceAssistant.isSpeaking.collectAsState()
-            var inCallMode by remember { mutableStateOf(false) }
             val pendingAssistantPrompt by AssistantBridge.pendingPrompt.collectAsState()
 
             LaunchedEffect(pendingAssistantPrompt, isModelReady) {
@@ -329,16 +314,6 @@ class ConversationFragment : Fragment() {
                 }
             }
 
-            LaunchedEffect(isGenerating) {
-                if (isGenerating == false && voiceReplyEnabled) {
-                    val lastAssistantMsg = messages.lastOrNull { it.author != "user" && it.content.isNotBlank() }
-                    if (lastAssistantMsg != null) {
-                        voiceAssistant.speakResponse(lastAssistantMsg.content)
-                    }
-                } else if (isGenerating == true) {
-                    voiceAssistant.stopSpeaking()
-                }
-            }
 
             var activeCartridge by remember { mutableStateOf(CartridgeManager.getActiveCartridge(cartridgeContext)) }
             val insertCartridgeAction: (AiCartridge) -> Unit = { cartridge ->
@@ -592,32 +567,6 @@ class ConversationFragment : Fragment() {
 
                 // Migration confirmation dialog
                 
-            if (inCallMode) {
-                val listeningText = when (val s = dictationState) {
-                    is DictationState.Listening -> s.text
-                    else -> ""
-                }
-                VoiceCallOverlay(
-                    modelName = modelInfo?.name ?: "Offline LLM",
-                    isListening = micOn || dictationState is DictationState.Listening,
-                    isGenerating = isGenerating == true,
-                    isSpeaking = isSpeaking,
-                    liveText = listeningText,
-                    onMicClick = {
-                        if (micOn) {
-                            viewModel.dictation.onMicReleased()
-                        } else {
-                            viewModel.dictation.onMicPressed()
-                            startDictation()
-                        }
-                    },
-                    onEndCall = {
-                        inCallMode = false
-                        voiceAssistant.disableCallMode()
-                        viewModel.dictation.onMicReleased()
-                    }
-                )
-            }
 
             pendingMigration?.let { migration ->
                     val totalSize = migration.modelsToMigrate.sumOf { it.sizeBytes }
@@ -923,24 +872,6 @@ class ConversationFragment : Fragment() {
                             modelInfo = modelInfo,
                             modelStatus = modelStatus,
                             activeCartridge = activeCartridge,
-                        voiceReplyEnabled = voiceReplyEnabled,
-                        continuousLoopEnabled = continuousLoopEnabled,
-                        isSpeaking = isSpeaking,
-                        onStartCallMode = {
-                            voiceAssistant.enableCallMode()
-                            inCallMode = true
-                            viewModel.dictation.onMicPressed()
-                            startDictation()
-                        },
-                        onToggleVoiceMode = {
-                            voiceAssistant.toggleVoiceMode()
-                            val msg = when {
-                                voiceAssistant.continuousLoopEnabled.value -> "เปิดโหมดคุยต่อเนื่อง (พูดจบฟังต่ออัตโนมัติ)"
-                                voiceAssistant.voiceReplyEnabled.value -> "เปิดเสียงพูดตอบกลับ (Offline TTS)"
-                                else -> "ปิดเสียงพูดตอบกลับ"
-                            }
-                            Toast.makeText(toastContext, msg, Toast.LENGTH_SHORT).show()
-                        },
                             onBagClicked = {
                                 if (findNavController().currentDestination?.id == R.id.nav_home) {
                                     findNavController().navigate(
