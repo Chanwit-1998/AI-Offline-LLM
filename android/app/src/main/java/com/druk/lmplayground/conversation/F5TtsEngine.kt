@@ -72,6 +72,7 @@ object F5TtsEngine {
             i++
         }
         return sb.toString().replace(Regex("\\s+"), " ").trim()
+    }
     
 
     private val speakingFlag = AtomicBoolean(false)
@@ -84,7 +85,7 @@ object F5TtsEngine {
         speakingFlag.set(false)
         try { activeTrack?.pause(); activeTrack?.flush(); activeTrack?.release() } catch (_: Exception) {}
         activeTrack = null
-        try { fallbackTts?.stop() } catch (_: Exception) }
+        try { fallbackTts?.stop() } catch (_: Exception) {}
     }
 
     private fun findModelDir(): File? = MODEL_DIRS.map(::File).firstOrNull { dir ->
@@ -283,3 +284,5 @@ object F5TtsEngine {
             speakingFlag.set(false)
             withContext(Dispatchers.Main) { onDone() }
         }
+}
+}
