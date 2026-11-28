@@ -352,6 +352,47 @@ private fun OnlineApiConfigPanel(
             }
         }
 
+        var customSkill by remember(chosenProvider) {
+            mutableStateOf(OnlineApiPrefsStore.getCustomSkill(context, chosenProvider))
+        }
+
+        OutlinedTextField(
+            value = customSkill,
+            onValueChange = {
+                customSkill = it
+                savedFeedback = null
+                OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, it)
+            },
+            label = { Text("ทักษะของ AI (Skill / บทบาทเฉพาะ)") },
+            placeholder = { Text("เช่น เขียน Kotlin/Android, รีวิวหาบั๊ก, อ่าน Error Log") },
+            minLines = 2,
+            maxLines = 4,
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            listOf(
+                "ผู้เชี่ยวชาญ Kotlin & Android" to "เชี่ยวชาญ Kotlin, Jetpack Compose, Coroutines, ViewModel และแก้บั๊ก Android อย่างแม่นยำ",
+                "นักรีวิวและหาบั๊กโค้ด" to "หา Root Cause, Edge cases, Race condition และ Memory leak แล้วเสนอวิธีแก้ที่ชัดเจน",
+                "วิเคราะห์ Build & Error Log" to "สกัดสาเหตุหลักจาก Build/Compiler/Runtime log แบบตรงจุดไม่เดา"
+            ).forEach { (chipTitle, skillPrompt) ->
+                AssistChip(
+                    onClick = {
+                        customSkill = skillPrompt
+                        savedFeedback = null
+                        OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, skillPrompt)
+                    },
+                    label = { Text(chipTitle, style = MaterialTheme.typography.labelSmall) }
+                )
+            }
+        }
+
         OutlinedTextField(
             value = baseUrl,
             onValueChange = { baseUrl = it; savedFeedback = null },
@@ -385,7 +426,8 @@ private fun OnlineApiConfigPanel(
                         model = modelName.trim().ifEmpty { chosenProvider.defaultModel },
                     )
                     onSaveAndActivate(cfg, false)
-                    savedFeedback = "บันทึกค่า ${chosenProvider.displayName} แล้ว"
+                    OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, customSkill.trim())
+                    savedFeedback = "บันทึกค่าและทักษะ ${chosenProvider.displayName} แล้ว"
                 },
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.weight(1f)
@@ -399,6 +441,7 @@ private fun OnlineApiConfigPanel(
                         baseUrl = baseUrl.trim().ifEmpty { chosenProvider.defaultBaseUrl },
                         model = modelName.trim().ifEmpty { chosenProvider.defaultModel },
                     )
+                    OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, customSkill.trim())
                     onSaveAndActivate(cfg, true)
                 },
                 shape = RoundedCornerShape(14.dp),

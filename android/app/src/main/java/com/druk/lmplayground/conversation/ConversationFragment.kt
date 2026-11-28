@@ -990,27 +990,7 @@ class ConversationFragment : Fragment() {
                                     hazeStyle = hazeStyle
                                 )
                             }
-                            if (onlineModeEnabled) {
-                                OnlineSkillsBar(
-                                    webSearchEnabled = onlineWebSearchEnabled,
-                                    promptCacheEnabled = onlinePromptCacheEnabled,
-                                    cacheHits = onlineCacheStats.localHits,
-                                    onToggleWebSearch = { viewModel.setOnlineWebSearchEnabled(!onlineWebSearchEnabled) },
-                                    onTogglePromptCache = { viewModel.setOnlinePromptCacheEnabled(!onlinePromptCacheEnabled) },
-                                    onAttachCodeOrDoc = {
-                                        try {
-                                            openDocumentLauncher.launch(arrayOf("*/*"))
-                                        } catch (_: ActivityNotFoundException) {
-                                            Toast.makeText(requireContext(), R.string.document_open_failed, Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onAttachImage = {
-                                        pickMediaLauncher.launch(
-                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                        )
-                                    },
-                                )
-                            }
+
                             UserInput(
                                 integrateWithSurface = showPermanent,
                                 hazeState = hazeState,

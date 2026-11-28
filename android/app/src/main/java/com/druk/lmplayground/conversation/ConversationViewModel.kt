@@ -1073,7 +1073,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 modelFilename = _loadedModel.value?.filename,
                 supportsToolCalling = _supportsToolCalling.value == true,
                 supportsThinking = _supportsThinking.value == true,
-                systemPrompt = _systemPrompt.value.orEmpty(),
+                systemPrompt = effectiveSystemPrompt,
                 messageId = ourMessageId,
                 sessionId = sessionId,
                 ourJob = ourJob,
@@ -1986,6 +1986,14 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 userText = userText,
                 hasAttachedFiles = _onlineAttachedFiles.value.orEmpty().isNotEmpty(),
             )
+            val customSkillText = OnlineApiPrefsStore.getCustomSkill(app, config.provider)
+            val effectiveSystemPrompt = if (customSkillText.isNotBlank()) {
+                val baseSys = _systemPrompt.value.orEmpty()
+                if (baseSys.isBlank()) "ทักษะเฉพาะที่ผู้ใช้กำหนด:\n$customSkillText"
+                else "$baseSys\n\nทักษะเฉพาะที่ผู้ใช้กำหนด:\n$customSkillText"
+            } else {
+                _systemPrompt.value.orEmpty()
+            }
             val result = OnlineChatClient.streamChatCompletion(
                 config = config,
                 systemPrompt = _systemPrompt.value.orEmpty(),

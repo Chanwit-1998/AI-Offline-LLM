@@ -97,6 +97,15 @@ data class OnlineAttachedFile(
 )
 
 object OnlineApiPrefsStore {
+    private const val KEY_CUSTOM_SKILL_PREFIX = "custom_skill_"
+    fun getCustomSkill(context: Context, provider: OnlineProvider): String =
+        context.getSharedPreferences("online_api_prefs", Context.MODE_PRIVATE)
+            .getString(KEY_CUSTOM_SKILL_PREFIX + provider.name, "").orEmpty()
+    fun setCustomSkill(context: Context, provider: OnlineProvider, skill: String) {
+        context.getSharedPreferences("online_api_prefs", Context.MODE_PRIVATE)
+            .edit().putString(KEY_CUSTOM_SKILL_PREFIX + provider.name, skill.trim()).apply()
+    }
+
     private const val PREF_NAME = "online_api_secure_prefs"
     private const val KEY_ONLINE_ENABLED = "online_mode_enabled"
     private const val KEY_ACTIVE_PROVIDER = "active_provider"

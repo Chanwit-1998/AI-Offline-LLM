@@ -593,6 +593,32 @@ private fun UserInputText(
                                         onAttachDocument()
                                     }
                                 )
+                                if (onlineModeEnabled) {
+                                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                                    DropdownMenuItem(
+                                        text = { Text(if (webSearchEnabled) "ค้นหาเว็บ (เปิด)" else "ค้นหาเว็บ (ปิด)") },
+                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Language, contentDescription = null) },
+                                        onClick = { menuExpanded = false; onToggleWebSearch() }
+                                    )
+                                    DropdownMenuItem(
+                                        text = {
+                                            val cLabel = if (cacheHits > 0) "แคชคำสั่ง ($cacheHits)" else "แคชคำสั่ง"
+                                            Text(if (promptCacheEnabled) "$cLabel (เปิด)" else "$cLabel (ปิด)")
+                                        },
+                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Cached, contentDescription = null) },
+                                        onClick = { menuExpanded = false; onTogglePromptCache() }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("โค้ด/เอกสาร") },
+                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Description, contentDescription = null) },
+                                        onClick = { menuExpanded = false; onAttachDocument() }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("วิเคราะห์ภาพ") },
+                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Image, contentDescription = null) },
+                                        onClick = { menuExpanded = false; onAttachImage() }
+                                    )
+                                }
                             }
                         }
                     }
