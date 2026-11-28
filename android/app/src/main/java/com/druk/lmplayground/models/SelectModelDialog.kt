@@ -248,6 +248,7 @@ private fun OnlineApiConfigPanel(
     onSaveAndActivate: (OnlineProviderConfig, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val appContext = LocalContext.current
     var chosenProvider by remember { mutableStateOf(initialProvider) }
     val loadedCfg = remember(chosenProvider) { loadConfigForProvider(chosenProvider) }
 
@@ -353,7 +354,7 @@ private fun OnlineApiConfigPanel(
         }
 
         var customSkill by remember(chosenProvider) {
-            mutableStateOf(OnlineApiPrefsStore.getCustomSkill(context, chosenProvider))
+            mutableStateOf(OnlineApiPrefsStore.getCustomSkill(appContext, chosenProvider))
         }
 
         OutlinedTextField(
@@ -361,7 +362,7 @@ private fun OnlineApiConfigPanel(
             onValueChange = {
                 customSkill = it
                 savedFeedback = null
-                OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, it)
+                OnlineApiPrefsStore.setCustomSkill(appContext, chosenProvider, it)
             },
             label = { Text("ทักษะของ AI (Skill / บทบาทเฉพาะ)") },
             placeholder = { Text("เช่น เขียน Kotlin/Android, รีวิวหาบั๊ก, อ่าน Error Log") },
@@ -386,7 +387,7 @@ private fun OnlineApiConfigPanel(
                     onClick = {
                         customSkill = skillPrompt
                         savedFeedback = null
-                        OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, skillPrompt)
+                        OnlineApiPrefsStore.setCustomSkill(appContext, chosenProvider, skillPrompt)
                     },
                     label = { Text(chipTitle, style = MaterialTheme.typography.labelSmall) }
                 )
@@ -426,7 +427,7 @@ private fun OnlineApiConfigPanel(
                         model = modelName.trim().ifEmpty { chosenProvider.defaultModel },
                     )
                     onSaveAndActivate(cfg, false)
-                    OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, customSkill.trim())
+                    OnlineApiPrefsStore.setCustomSkill(appContext, chosenProvider, customSkill.trim())
                     savedFeedback = "บันทึกค่าและทักษะ ${chosenProvider.displayName} แล้ว"
                 },
                 shape = RoundedCornerShape(14.dp),
@@ -441,7 +442,7 @@ private fun OnlineApiConfigPanel(
                         baseUrl = baseUrl.trim().ifEmpty { chosenProvider.defaultBaseUrl },
                         model = modelName.trim().ifEmpty { chosenProvider.defaultModel },
                     )
-                    OnlineApiPrefsStore.setCustomSkill(context, chosenProvider, customSkill.trim())
+                    OnlineApiPrefsStore.setCustomSkill(appContext, chosenProvider, customSkill.trim())
                     onSaveAndActivate(cfg, true)
                 },
                 shape = RoundedCornerShape(14.dp),
