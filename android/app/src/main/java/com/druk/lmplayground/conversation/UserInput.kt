@@ -601,14 +601,6 @@ private fun UserInputText(
                                         onClick = { menuExpanded = false; onToggleWebSearch() }
                                     )
                                     DropdownMenuItem(
-                                        text = {
-                                            val cLabel = if (cacheHits > 0) "แคชคำสั่ง ($cacheHits)" else "แคชคำสั่ง"
-                                            Text(if (promptCacheEnabled) "$cLabel (เปิด)" else "$cLabel (ปิด)")
-                                        },
-                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Cached, contentDescription = null) },
-                                        onClick = { menuExpanded = false; onTogglePromptCache() }
-                                    )
-                                    DropdownMenuItem(
                                         text = { Text("โค้ด/เอกสาร") },
                                         leadingIcon = { Icon(imageVector = Icons.Outlined.Description, contentDescription = null) },
                                         onClick = { menuExpanded = false; onAttachDocument() }
