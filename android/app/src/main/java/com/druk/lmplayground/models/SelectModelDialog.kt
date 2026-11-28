@@ -22,9 +22,9 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.PhoneAndroid
+import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -71,8 +71,8 @@ fun SelectModelDialog(
 ) {
     val context = LocalContext.current
     val downloadedModels = models.filter { it.isDownloaded }
-    var selectedSection by remember { mutableIntStateOf(if (onlineModeEnabled) 1 else 0) } // 0=Offline, 1=Online API
-    var selectedFilter by remember { mutableIntStateOf(0) } // 0=All, 1=Chat, 2=Vision, 3=Image
+    var selectedSection by remember { mutableIntStateOf(if (onlineModeEnabled) 1 else 0) }
+    var selectedFilter by remember { mutableIntStateOf(0) }
 
     val filteredModels = remember(downloadedModels, selectedFilter) {
         when (selectedFilter) {
@@ -113,7 +113,6 @@ fun SelectModelDialog(
                 .fillMaxWidth()
                 .navigationBarsPadding()
         ) {
-            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -142,7 +141,6 @@ fun SelectModelDialog(
                 }
             }
 
-            // Mode switcher: Offline vs Online API
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -165,45 +163,25 @@ fun SelectModelDialog(
                         Icon(Icons.Outlined.Cloud, contentDescription = null, modifier = Modifier.size(16.dp))
                     },
                     label = {
-                        Text(
-                            if (onlineModeEnabled) "API ออนไลน์ (เปิดอยู่)" else "API ออนไลน์"
-                        )
+                        Text(if (onlineModeEnabled) "API ออนไลน์ (เปิดอยู่)" else "API ออนไลน์")
                     },
                     modifier = Modifier.weight(1f)
                 )
             }
 
             if (selectedSection == 0) {
-                // Filter chips for offline models
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    FilterChip(
-                        selected = selectedFilter == 0,
-                        onClick = { selectedFilter = 0 },
-                        label = { Text("ทั้งหมด") }
-                    )
-                    FilterChip(
-                        selected = selectedFilter == 1,
-                        onClick = { selectedFilter = 1 },
-                        label = { Text("แชท (LLM)") }
-                    )
-                    FilterChip(
-                        selected = selectedFilter == 2,
-                        onClick = { selectedFilter = 2 },
-                        label = { Text("Vision") }
-                    )
-                    FilterChip(
-                        selected = selectedFilter == 3,
-                        onClick = { selectedFilter = 3 },
-                        label = { Text("สร้างภาพ") }
-                    )
+                    FilterChip(selected = selectedFilter == 0, onClick = { selectedFilter = 0 }, label = { Text("ทั้งหมด") })
+                    FilterChip(selected = selectedFilter == 1, onClick = { selectedFilter = 1 }, label = { Text("แชท (LLM)") })
+                    FilterChip(selected = selectedFilter == 2, onClick = { selectedFilter = 2 }, label = { Text("Vision") })
+                    FilterChip(selected = selectedFilter == 3, onClick = { selectedFilter = 3 }, label = { Text("สร้างภาพ") })
                 }
 
-                // Offline model list
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -222,10 +200,7 @@ fun SelectModelDialog(
                             )
                         }
                     } else {
-                        items(
-                            items = filteredModels,
-                            key = { it.model.filename }
-                        ) { modelWithStatus ->
+                        items(items = filteredModels, key = { it.model.filename }) { modelWithStatus ->
                             val isCurrent = !onlineModeEnabled && modelWithStatus.model.filename == currentModelFilename
                             ModelBottomSheetCard(
                                 model = modelWithStatus.model,
@@ -237,9 +212,7 @@ fun SelectModelDialog(
                                 },
                                 onClick = {
                                     onDismissRequest()
-                                    if (onlineModeEnabled) {
-                                        onOnlineModeChanged(false)
-                                    }
+                                    if (onlineModeEnabled) onOnlineModeChanged(false)
                                     onLoadModel(modelWithStatus.model)
                                 }
                             )
@@ -254,9 +227,7 @@ fun SelectModelDialog(
                     onOnlineModeChanged = onOnlineModeChanged,
                     onSaveAndActivate = { config, activate ->
                         onSaveOnlineConfig(config, activate)
-                        if (activate) {
-                            onDismissRequest()
-                        }
+                        if (activate) onDismissRequest()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -292,7 +263,6 @@ private fun OnlineApiConfigPanel(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Provider selector chips (Gemini, OpenAI, OpenRouter, Grok)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -311,7 +281,6 @@ private fun OnlineApiConfigPanel(
             }
         }
 
-        // Active mode status row
         Surface(
             shape = RoundedCornerShape(14.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
@@ -335,19 +304,13 @@ private fun OnlineApiConfigPanel(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Switch(
-                    checked = onlineModeEnabled,
-                    onCheckedChange = { onOnlineModeChanged(it) }
-                )
+                Switch(checked = onlineModeEnabled, onCheckedChange = { onOnlineModeChanged(it) })
             }
         }
 
         OutlinedTextField(
             value = apiKey,
-            onValueChange = {
-                apiKey = it
-                savedFeedback = null
-            },
+            onValueChange = { apiKey = it; savedFeedback = null },
             label = { Text("API Key (${chosenProvider.displayName})") },
             placeholder = { Text("วาง API Key ที่นี่") },
             singleLine = true,
@@ -367,10 +330,7 @@ private fun OnlineApiConfigPanel(
 
         OutlinedTextField(
             value = modelName,
-            onValueChange = {
-                modelName = it
-                savedFeedback = null
-            },
+            onValueChange = { modelName = it; savedFeedback = null },
             label = { Text("ชื่อโมเดล (Model ID)") },
             placeholder = { Text(chosenProvider.defaultModel) },
             singleLine = true,
@@ -378,7 +338,6 @@ private fun OnlineApiConfigPanel(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Suggested model chips
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -387,10 +346,7 @@ private fun OnlineApiConfigPanel(
         ) {
             chosenProvider.suggestedModels.forEach { suggestion ->
                 AssistChip(
-                    onClick = {
-                        modelName = suggestion
-                        savedFeedback = null
-                    },
+                    onClick = { modelName = suggestion; savedFeedback = null },
                     label = { Text(suggestion, style = MaterialTheme.typography.labelSmall) }
                 )
             }
@@ -398,10 +354,7 @@ private fun OnlineApiConfigPanel(
 
         OutlinedTextField(
             value = baseUrl,
-            onValueChange = {
-                baseUrl = it
-                savedFeedback = null
-            },
+            onValueChange = { baseUrl = it; savedFeedback = null },
             label = { Text("Base URL") },
             placeholder = { Text(chosenProvider.defaultBaseUrl) },
             singleLine = true,
@@ -436,9 +389,7 @@ private fun OnlineApiConfigPanel(
                 },
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.weight(1f)
-            ) {
-                Text("บันทึกคีย์")
-            }
+            ) { Text("บันทึกคีย์") }
 
             Button(
                 onClick = {
@@ -452,9 +403,7 @@ private fun OnlineApiConfigPanel(
                 },
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.weight(1f)
-            ) {
-                Text("บันทึกและใช้งาน")
-            }
+            ) { Text("บันทึกและใช้งาน") }
         }
     }
 }
@@ -489,14 +438,11 @@ private fun ModelBottomSheetCard(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Logo
             if (model.logoRes != 0) {
                 Image(
                     painter = painterResource(id = model.logoRes),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape),
+                    modifier = Modifier.size(42.dp).clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
             } else {
@@ -507,11 +453,7 @@ private fun ModelBottomSheetCard(
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Outlined.AutoAwesome,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -535,23 +477,6 @@ private fun ModelBottomSheetCard(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
-                        Spacer(Modifier.width(6.dp))
-                        TextButton(
-                            onClick = onUnload,
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                            modifier = Modifier.height(28.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.StopCircle,
-                                contentDescription = "หยุดใช้งานโมเดล",
-                                modifier = Modifier.size(14.dp),
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = "หยุดใช้งาน",
-                                style = MaterialTheme.typography.labelSmall,
-                            )
-                        }
                     }
                 }
 
@@ -563,7 +488,6 @@ private fun ModelBottomSheetCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Capability badges
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -603,6 +527,34 @@ private fun ModelBottomSheetCard(
                         )
                     }
                 }
+
+                if (isCurrent) {
+                    Spacer(Modifier.height(10.dp))
+                    Button(
+                        onClick = onUnload,
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        ),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 42.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.StopCircle,
+                            contentDescription = "หยุดใช้งานโมเดล",
+                            modifier = Modifier.size(18.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "หยุดใช้งาน",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                    }
+                }
             }
 
             Icon(
@@ -634,11 +586,7 @@ private fun SmallBadge(
                 icon()
                 Spacer(Modifier.width(3.dp))
             }
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Medium
-            )
+            Text(text = text, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
         }
     }
 }
