@@ -1073,7 +1073,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
                 modelFilename = _loadedModel.value?.filename,
                 supportsToolCalling = _supportsToolCalling.value == true,
                 supportsThinking = _supportsThinking.value == true,
-                systemPrompt = effectiveSystemPrompt,
+                systemPrompt = _systemPrompt.value.orEmpty(),
                 messageId = ourMessageId,
                 sessionId = sessionId,
                 ourJob = ourJob,
@@ -1996,7 +1996,7 @@ class ConversationViewModel(val app: Application) : AndroidViewModel(app) {
             }
             val result = OnlineChatClient.streamChatCompletion(
                 config = config,
-                systemPrompt = _systemPrompt.value.orEmpty(),
+                systemPrompt = effectiveSystemPrompt,
                 historyMessages = historySnapshot,
                 currentUserText = userText,
                 temperature = temp,

@@ -593,24 +593,6 @@ private fun UserInputText(
                                         onAttachDocument()
                                     }
                                 )
-                                if (onlineModeEnabled) {
-                                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-                                    DropdownMenuItem(
-                                        text = { Text(if (webSearchEnabled) "ค้นหาเว็บ (เปิด)" else "ค้นหาเว็บ (ปิด)") },
-                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Language, contentDescription = null) },
-                                        onClick = { menuExpanded = false; onToggleWebSearch() }
-                                    )
-                                    DropdownMenuItem(
-                                        text = { Text("โค้ด/เอกสาร") },
-                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Description, contentDescription = null) },
-                                        onClick = { menuExpanded = false; onAttachDocument() }
-                                    )
-                                    DropdownMenuItem(
-                                        text = { Text("วิเคราะห์ภาพ") },
-                                        leadingIcon = { Icon(imageVector = Icons.Outlined.Image, contentDescription = null) },
-                                        onClick = { menuExpanded = false; onAttachImage() }
-                                    )
-                                }
                             }
                         }
                     }
